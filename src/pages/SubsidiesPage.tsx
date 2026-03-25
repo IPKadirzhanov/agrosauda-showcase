@@ -1,5 +1,6 @@
-import { Search, Sparkles, ArrowRight, HelpCircle } from 'lucide-react';
+import { Search, Sparkles, HelpCircle } from 'lucide-react';
 import AnimatedSection from '@/components/AnimatedSection';
+import AIChatWidget from '@/components/AIChatWidget';
 import { subsidyPrograms } from '@/data/mockData';
 import { useState } from 'react';
 
@@ -35,6 +36,20 @@ export default function SubsidiesPage() {
                 className="w-full pl-12 pr-4 py-4 rounded-xl border border-border bg-card text-base focus:outline-none focus:ring-2 focus:ring-primary/30 shadow-lg"
               />
             </div>
+          </AnimatedSection>
+        </div>
+      </section>
+
+      {/* AI Chat Assistant */}
+      <section className="section-padding bg-muted/20">
+        <div className="container-main max-w-2xl">
+          <AnimatedSection>
+            <h2 className="font-display font-bold text-3xl text-center mb-6">Спросите СубсидияГид</h2>
+            <AIChatWidget
+              agentType="subsidiya_gid"
+              agentName="СубсидияГид"
+              placeholder="Какие субсидии доступны для начинающих фермеров?"
+            />
           </AnimatedSection>
         </div>
       </section>
