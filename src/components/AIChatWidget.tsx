@@ -35,7 +35,13 @@ export default function AIChatWidget({
   const inputRef = useRef<HTMLInputElement>(null);
 
   useEffect(() => {
-    messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
+    const messagesContainer = messagesEndRef.current?.parentElement;
+    if (!messagesContainer) return;
+
+    messagesContainer.scrollTo({
+      top: messagesContainer.scrollHeight,
+      behavior: 'smooth',
+    });
   }, [messages]);
 
   const sendMessage = async (overrideText?: string) => {
