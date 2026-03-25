@@ -1,6 +1,7 @@
 import { useState, useRef, useEffect } from 'react';
-import { MessageCircle, Send, Loader2, X, Bot } from 'lucide-react';
+import { Send, Loader2, X, Bot, RotateCcw, Sparkles } from 'lucide-react';
 import ReactMarkdown from 'react-markdown';
+import { motion, AnimatePresence } from 'framer-motion';
 
 type Msg = { role: 'user' | 'assistant'; content: string };
 
@@ -9,6 +10,8 @@ interface AIChatWidgetProps {
   agentName: string;
   placeholder?: string;
   className?: string;
+  accentColor?: string;
+  suggestions?: string[];
 }
 
 const CHAT_URL_MAP = {
@@ -16,7 +19,13 @@ const CHAT_URL_MAP = {
   subsidiya_gid: 'subsidiya-gid',
 };
 
-export default function AIChatWidget({ agentType, agentName, placeholder = 'Задайте вопрос...', className = '' }: AIChatWidgetProps) {
+export default function AIChatWidget({
+  agentType,
+  agentName,
+  placeholder = 'Задайте вопрос...',
+  className = '',
+  suggestions = [],
+}: AIChatWidgetProps) {
   const [messages, setMessages] = useState<Msg[]>([]);
   const [input, setInput] = useState('');
   const [isLoading, setIsLoading] = useState(false);
@@ -29,11 +38,12 @@ export default function AIChatWidget({ agentType, agentName, placeholder = 'За
     messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
   }, [messages]);
 
-  const sendMessage = async () => {
-    if (!input.trim() || isLoading) return;
+  const sendMessage = async (overrideText?: string) => {
+    const text = overrideText || input.trim();
+    if (!text || isLoading) return;
     setError(null);
 
-    const userMsg: Msg = { role: 'user', content: input.trim() };
+    const userMsg: Msg = { role: 'user', content: text };
     setMessages(prev => [...prev, userMsg]);
     setInput('');
     setIsLoading(true);
@@ -61,7 +71,7 @@ export default function AIChatWidget({ agentType, agentName, placeholder = 'За
       if (!resp.ok) {
         const errData = await resp.json().catch(() => ({ error: 'Unknown error' }));
         if (resp.status === 429) {
-          setError('Слишком много запросов. Пожалуйста, подождите.');
+          setError('Слишком много запросов. Подождите немного.');
         } else if (resp.status === 402) {
           setError('Сервис временно недоступен.');
         } else {
@@ -71,7 +81,6 @@ export default function AIChatWidget({ agentType, agentName, placeholder = 'За
         return;
       }
 
-      // Get conversation ID from header
       const newConvId = resp.headers.get('X-Conversation-Id');
       if (newConvId) setConversationId(newConvId);
 
@@ -115,7 +124,6 @@ export default function AIChatWidget({ agentType, agentName, placeholder = 'За
         }
       }
 
-      // Flush remaining
       if (textBuffer.trim()) {
         for (let raw of textBuffer.split('\n')) {
           if (!raw) continue;
@@ -138,63 +146,129 @@ export default function AIChatWidget({ agentType, agentName, placeholder = 'За
     }
   };
 
+  const resetChat = () => {
+    setMessages([]);
+    setConversationId(null);
+    setError(null);
+  };
+
   return (
-    <div className={`premium-card rounded-2xl overflow-hidden flex flex-col ${className}`}>
+    <div className={`rounded-2xl overflow-hidden flex flex-col border border-border/50 bg-card/80 backdrop-blur-sm shadow-xl ${className}`}>
       {/* Header */}
-      <div className="bg-foreground/5 px-5 py-3 border-b border-border flex items-center gap-2">
-        <div className="w-3 h-3 rounded-full bg-primary animate-pulse-soft" />
-        <span className="text-sm font-medium">{agentName}</span>
-        {conversationId && (
+      <div className="px-5 py-4 border-b border-border/50 flex items-center gap-3 bg-gradient-to-r from-primary/5 to-transparent">
+        <div className="relative">
+          <div className="w-10 h-10 rounded-xl bg-primary/10 flex items-center justify-center">
+            <Bot className="w-5 h-5 text-primary" />
+          </div>
+          <div className="absolute -bottom-0.5 -right-0.5 w-3 h-3 rounded-full bg-primary border-2 border-card animate-pulse" />
+        </div>
+        <div className="flex-1">
+          <span className="text-sm font-semibold">{agentName}</span>
+          <p className="text-xs text-muted-foreground">
+            {isLoading ? 'Печатает...' : 'Онлайн'}
+          </p>
+        </div>
+        {messages.length > 0 && (
           <button
-            onClick={() => { setMessages([]); setConversationId(null); setError(null); }}
-            className="ml-auto text-muted-foreground hover:text-foreground transition-colors"
+            onClick={resetChat}
+            className="p-2 rounded-lg text-muted-foreground hover:text-foreground hover:bg-muted/50 transition-all"
             title="Новый чат"
           >
-            <X className="w-4 h-4" />
+            <RotateCcw className="w-4 h-4" />
           </button>
         )}
       </div>
 
       {/* Messages */}
-      <div className="p-5 space-y-4 min-h-[200px] max-h-[400px] overflow-y-auto">
-        {messages.length === 0 && (
-          <div className="text-center text-muted-foreground text-sm py-8">
-            <Bot className="w-8 h-8 mx-auto mb-2 opacity-50" />
-            <p>Задайте вопрос {agentName}</p>
-          </div>
-        )}
-        {messages.map((msg, j) => (
-          <div key={j} className={`flex ${msg.role === 'user' ? 'justify-end' : 'justify-start'}`}>
-            <div className={`max-w-[85%] px-4 py-3 rounded-2xl text-sm ${
-              msg.role === 'user'
-                ? 'bg-primary text-primary-foreground rounded-br-md'
-                : 'bg-muted rounded-bl-md'
-            }`}>
-              {msg.role === 'assistant' ? (
-                <div className="prose prose-sm dark:prose-invert max-w-none [&>p]:mb-1 [&>ul]:mt-1 [&>ol]:mt-1">
-                  <ReactMarkdown>{msg.content}</ReactMarkdown>
+      <div className="p-5 space-y-4 min-h-[280px] max-h-[420px] overflow-y-auto scrollbar-thin">
+        <AnimatePresence mode="popLayout">
+          {messages.length === 0 && (
+            <motion.div
+              initial={{ opacity: 0, y: 10 }}
+              animate={{ opacity: 1, y: 0 }}
+              exit={{ opacity: 0 }}
+              className="text-center py-6"
+            >
+              <div className="w-14 h-14 rounded-2xl bg-primary/10 flex items-center justify-center mx-auto mb-4">
+                <Sparkles className="w-7 h-7 text-primary" />
+              </div>
+              <p className="text-sm font-medium mb-1">Привет! Я {agentName}</p>
+              <p className="text-xs text-muted-foreground mb-5">Задайте мне вопрос или выберите тему ниже</p>
+              {suggestions.length > 0 && (
+                <div className="flex flex-wrap gap-2 justify-center">
+                  {suggestions.map((s, i) => (
+                    <button
+                      key={i}
+                      onClick={() => sendMessage(s)}
+                      className="px-3 py-1.5 rounded-full text-xs border border-primary/20 bg-primary/5 text-primary hover:bg-primary/10 transition-colors"
+                    >
+                      {s}
+                    </button>
+                  ))}
                 </div>
-              ) : (
-                msg.content
               )}
-            </div>
-          </div>
-        ))}
+            </motion.div>
+          )}
+
+          {messages.map((msg, j) => (
+            <motion.div
+              key={j}
+              initial={{ opacity: 0, y: 8 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.2 }}
+              className={`flex ${msg.role === 'user' ? 'justify-end' : 'justify-start'}`}
+            >
+              {msg.role === 'assistant' && (
+                <div className="w-7 h-7 rounded-lg bg-primary/10 flex items-center justify-center mr-2 mt-1 shrink-0">
+                  <Bot className="w-3.5 h-3.5 text-primary" />
+                </div>
+              )}
+              <div className={`max-w-[80%] px-4 py-3 rounded-2xl text-sm leading-relaxed ${
+                msg.role === 'user'
+                  ? 'bg-primary text-primary-foreground rounded-br-md shadow-md'
+                  : 'bg-muted/70 border border-border/30 rounded-bl-md'
+              }`}>
+                {msg.role === 'assistant' ? (
+                  <div className="prose prose-sm dark:prose-invert max-w-none [&>p]:mb-1.5 [&>p:last-child]:mb-0 [&>ul]:mt-1 [&>ol]:mt-1 [&>h3]:text-sm [&>h3]:font-semibold [&>h3]:mt-2 [&>h3]:mb-1">
+                    <ReactMarkdown>{msg.content}</ReactMarkdown>
+                  </div>
+                ) : (
+                  msg.content
+                )}
+              </div>
+            </motion.div>
+          ))}
+        </AnimatePresence>
+
         {isLoading && messages[messages.length - 1]?.role !== 'assistant' && (
-          <div className="flex justify-start">
-            <div className="bg-muted px-4 py-3 rounded-2xl rounded-bl-md">
-              <Loader2 className="w-4 h-4 animate-spin text-muted-foreground" />
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            className="flex justify-start"
+          >
+            <div className="w-7 h-7 rounded-lg bg-primary/10 flex items-center justify-center mr-2 mt-1 shrink-0">
+              <Bot className="w-3.5 h-3.5 text-primary" />
             </div>
-          </div>
+            <div className="bg-muted/70 border border-border/30 px-4 py-3 rounded-2xl rounded-bl-md">
+              <div className="flex gap-1.5 items-center">
+                <span className="w-2 h-2 rounded-full bg-primary/40 animate-bounce [animation-delay:0ms]" />
+                <span className="w-2 h-2 rounded-full bg-primary/40 animate-bounce [animation-delay:150ms]" />
+                <span className="w-2 h-2 rounded-full bg-primary/40 animate-bounce [animation-delay:300ms]" />
+              </div>
+            </div>
+          </motion.div>
         )}
+
         {error && (
-          <div className="text-center text-destructive text-xs py-2">{error}</div>
+          <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="text-center text-destructive text-xs py-2 bg-destructive/5 rounded-lg px-3">
+            {error}
+          </motion.div>
         )}
         <div ref={messagesEndRef} />
       </div>
 
       {/* Input */}
-      <div className="px-5 pb-5">
+      <div className="px-4 pb-4 pt-2 border-t border-border/30">
         <form onSubmit={e => { e.preventDefault(); sendMessage(); }} className="flex gap-2">
           <input
             ref={inputRef}
@@ -203,12 +277,12 @@ export default function AIChatWidget({ agentType, agentName, placeholder = 'За
             value={input}
             onChange={e => setInput(e.target.value)}
             disabled={isLoading}
-            className="flex-1 px-4 py-2.5 rounded-xl border border-border bg-background text-sm focus:outline-none focus:ring-2 focus:ring-primary/30 disabled:opacity-50"
+            className="flex-1 px-4 py-3 rounded-xl border border-border/50 bg-background/80 text-sm focus:outline-none focus:ring-2 focus:ring-primary/30 focus:border-primary/30 disabled:opacity-50 transition-all"
           />
           <button
             type="submit"
             disabled={isLoading || !input.trim()}
-            className="p-2.5 rounded-xl bg-primary text-primary-foreground hover:opacity-90 transition-opacity disabled:opacity-50"
+            className="p-3 rounded-xl bg-primary text-primary-foreground hover:opacity-90 transition-all disabled:opacity-40 shadow-md hover:shadow-lg"
           >
             {isLoading ? <Loader2 className="w-5 h-5 animate-spin" /> : <Send className="w-5 h-5" />}
           </button>
