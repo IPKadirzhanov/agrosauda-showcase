@@ -14,7 +14,473 @@ export type Database = {
   }
   public: {
     Tables: {
-      [_ in never]: never
+      ai_conversations: {
+        Row: {
+          agent_type: string
+          created_at: string
+          id: string
+          language: string | null
+          updated_at: string
+          user_id: string | null
+        }
+        Insert: {
+          agent_type: string
+          created_at?: string
+          id?: string
+          language?: string | null
+          updated_at?: string
+          user_id?: string | null
+        }
+        Update: {
+          agent_type?: string
+          created_at?: string
+          id?: string
+          language?: string | null
+          updated_at?: string
+          user_id?: string | null
+        }
+        Relationships: []
+      }
+      ai_knowledge_base: {
+        Row: {
+          agent_type: string
+          content: string
+          created_at: string
+          id: string
+          is_active: boolean | null
+          language: string
+          tags: string[] | null
+          topic: string
+          updated_at: string
+        }
+        Insert: {
+          agent_type: string
+          content: string
+          created_at?: string
+          id?: string
+          is_active?: boolean | null
+          language?: string
+          tags?: string[] | null
+          topic: string
+          updated_at?: string
+        }
+        Update: {
+          agent_type?: string
+          content?: string
+          created_at?: string
+          id?: string
+          is_active?: boolean | null
+          language?: string
+          tags?: string[] | null
+          topic?: string
+          updated_at?: string
+        }
+        Relationships: []
+      }
+      ai_messages: {
+        Row: {
+          content: string
+          conversation_id: string
+          created_at: string
+          id: string
+          role: string
+        }
+        Insert: {
+          content: string
+          conversation_id: string
+          created_at?: string
+          id?: string
+          role: string
+        }
+        Update: {
+          content?: string
+          conversation_id?: string
+          created_at?: string
+          id?: string
+          role?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "ai_messages_conversation_id_fkey"
+            columns: ["conversation_id"]
+            isOneToOne: false
+            referencedRelation: "ai_conversations"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      categories: {
+        Row: {
+          count: number | null
+          created_at: string
+          icon: string | null
+          id: string
+          name: string
+          slug: string
+        }
+        Insert: {
+          count?: number | null
+          created_at?: string
+          icon?: string | null
+          id?: string
+          name: string
+          slug: string
+        }
+        Update: {
+          count?: number | null
+          created_at?: string
+          icon?: string | null
+          id?: string
+          name?: string
+          slug?: string
+        }
+        Relationships: []
+      }
+      courses: {
+        Row: {
+          category: string | null
+          created_at: string
+          description: string | null
+          duration: string | null
+          id: string
+          image: string | null
+          instructor: string | null
+          lessons: number | null
+          level: string | null
+          title: string
+        }
+        Insert: {
+          category?: string | null
+          created_at?: string
+          description?: string | null
+          duration?: string | null
+          id?: string
+          image?: string | null
+          instructor?: string | null
+          lessons?: number | null
+          level?: string | null
+          title: string
+        }
+        Update: {
+          category?: string | null
+          created_at?: string
+          description?: string | null
+          duration?: string | null
+          id?: string
+          image?: string | null
+          instructor?: string | null
+          lessons?: number | null
+          level?: string | null
+          title?: string
+        }
+        Relationships: []
+      }
+      favorites: {
+        Row: {
+          created_at: string
+          id: string
+          product_id: string
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          product_id: string
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          product_id?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "favorites_product_id_fkey"
+            columns: ["product_id"]
+            isOneToOne: false
+            referencedRelation: "products"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      inquiries: {
+        Row: {
+          created_at: string
+          email: string | null
+          id: string
+          message: string
+          name: string
+          phone: string | null
+          product_id: string | null
+          sender_id: string | null
+          status: string | null
+        }
+        Insert: {
+          created_at?: string
+          email?: string | null
+          id?: string
+          message: string
+          name: string
+          phone?: string | null
+          product_id?: string | null
+          sender_id?: string | null
+          status?: string | null
+        }
+        Update: {
+          created_at?: string
+          email?: string | null
+          id?: string
+          message?: string
+          name?: string
+          phone?: string | null
+          product_id?: string | null
+          sender_id?: string | null
+          status?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "inquiries_product_id_fkey"
+            columns: ["product_id"]
+            isOneToOne: false
+            referencedRelation: "products"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      news_articles: {
+        Row: {
+          category: string | null
+          content: string | null
+          created_at: string
+          date: string | null
+          excerpt: string | null
+          id: string
+          image: string | null
+          read_time: string | null
+          title: string
+        }
+        Insert: {
+          category?: string | null
+          content?: string | null
+          created_at?: string
+          date?: string | null
+          excerpt?: string | null
+          id?: string
+          image?: string | null
+          read_time?: string | null
+          title: string
+        }
+        Update: {
+          category?: string | null
+          content?: string | null
+          created_at?: string
+          date?: string | null
+          excerpt?: string | null
+          id?: string
+          image?: string | null
+          read_time?: string | null
+          title?: string
+        }
+        Relationships: []
+      }
+      products: {
+        Row: {
+          category_slug: string
+          condition: string
+          created_at: string
+          description: string | null
+          featured: boolean | null
+          id: string
+          image: string | null
+          location: string
+          price: number
+          seller_name: string
+          seller_user_id: string | null
+          specs: Json | null
+          status: string | null
+          title: string
+          updated_at: string
+        }
+        Insert: {
+          category_slug: string
+          condition?: string
+          created_at?: string
+          description?: string | null
+          featured?: boolean | null
+          id?: string
+          image?: string | null
+          location: string
+          price: number
+          seller_name: string
+          seller_user_id?: string | null
+          specs?: Json | null
+          status?: string | null
+          title: string
+          updated_at?: string
+        }
+        Update: {
+          category_slug?: string
+          condition?: string
+          created_at?: string
+          description?: string | null
+          featured?: boolean | null
+          id?: string
+          image?: string | null
+          location?: string
+          price?: number
+          seller_name?: string
+          seller_user_id?: string | null
+          specs?: Json | null
+          status?: string | null
+          title?: string
+          updated_at?: string
+        }
+        Relationships: []
+      }
+      profiles: {
+        Row: {
+          avatar_url: string | null
+          created_at: string
+          display_name: string | null
+          id: string
+          phone: string | null
+          preferred_language: string | null
+          updated_at: string
+          user_id: string | null
+        }
+        Insert: {
+          avatar_url?: string | null
+          created_at?: string
+          display_name?: string | null
+          id?: string
+          phone?: string | null
+          preferred_language?: string | null
+          updated_at?: string
+          user_id?: string | null
+        }
+        Update: {
+          avatar_url?: string | null
+          created_at?: string
+          display_name?: string | null
+          id?: string
+          phone?: string | null
+          preferred_language?: string | null
+          updated_at?: string
+          user_id?: string | null
+        }
+        Relationships: []
+      }
+      regions: {
+        Row: {
+          created_at: string
+          id: string
+          name: string
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          name: string
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          name?: string
+        }
+        Relationships: []
+      }
+      safe_deal_orders: {
+        Row: {
+          amount: number
+          buyer_id: string | null
+          created_at: string
+          id: string
+          product_id: string | null
+          seller_id: string | null
+          status: string
+          updated_at: string
+        }
+        Insert: {
+          amount: number
+          buyer_id?: string | null
+          created_at?: string
+          id?: string
+          product_id?: string | null
+          seller_id?: string | null
+          status?: string
+          updated_at?: string
+        }
+        Update: {
+          amount?: number
+          buyer_id?: string | null
+          created_at?: string
+          id?: string
+          product_id?: string | null
+          seller_id?: string | null
+          status?: string
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "safe_deal_orders_product_id_fkey"
+            columns: ["product_id"]
+            isOneToOne: false
+            referencedRelation: "products"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      subsidy_programs: {
+        Row: {
+          amount: string | null
+          category: string | null
+          created_at: string
+          deadline: string | null
+          description: string | null
+          documents_needed: string | null
+          eligibility: string | null
+          id: string
+          is_active: boolean | null
+          region: string | null
+          requirements: string | null
+          source_url: string | null
+          title: string
+          updated_at: string
+        }
+        Insert: {
+          amount?: string | null
+          category?: string | null
+          created_at?: string
+          deadline?: string | null
+          description?: string | null
+          documents_needed?: string | null
+          eligibility?: string | null
+          id?: string
+          is_active?: boolean | null
+          region?: string | null
+          requirements?: string | null
+          source_url?: string | null
+          title: string
+          updated_at?: string
+        }
+        Update: {
+          amount?: string | null
+          category?: string | null
+          created_at?: string
+          deadline?: string | null
+          description?: string | null
+          documents_needed?: string | null
+          eligibility?: string | null
+          id?: string
+          is_active?: boolean | null
+          region?: string | null
+          requirements?: string | null
+          source_url?: string | null
+          title?: string
+          updated_at?: string
+        }
+        Relationships: []
+      }
     }
     Views: {
       [_ in never]: never
