@@ -5,6 +5,8 @@ import { Menu, X, Heart, ChevronDown } from 'lucide-react';
 
 const navLinks = [
   { name: 'Маркетплейс', path: '/marketplace' },
+  { name: 'Agro Shop', path: '/agro-shop' },
+  { name: 'Объявления', path: '/classifieds' },
   { name: 'Безопасная сделка', path: '/safe-deal' },
   { name: 'Субсидии', path: '/subsidies' },
   { name: 'AI Ассистенты', path: '/ai-assistants' },
