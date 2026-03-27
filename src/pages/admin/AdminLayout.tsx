@@ -1,4 +1,3 @@
-import { useEffect } from 'react';
 import { Outlet, useNavigate, Link, useLocation } from 'react-router-dom';
 import { useAdmin } from '@/hooks/useAdmin';
 import {
@@ -22,11 +21,8 @@ export default function AdminLayout() {
   const navigate = useNavigate();
   const location = useLocation();
 
-  useEffect(() => {
-    if (!loading && !isAdmin) {
-      navigate('/admin', { replace: true });
-    }
-  }, [loading, isAdmin, navigate]);
+  // If on the login index route (/admin), just render the Outlet (which is AdminLoginPage)
+  const isLoginRoute = location.pathname === '/admin' || location.pathname === '/admin/';
 
   if (loading) {
     return (
@@ -36,7 +32,27 @@ export default function AdminLayout() {
     );
   }
 
-  if (!isAdmin) return null;
+  // For login page, render without sidebar
+  if (isLoginRoute) {
+    return <Outlet />;
+  }
+
+  // For all other admin routes, require admin auth
+  if (!isAdmin) {
+    return (
+      <div className="min-h-screen bg-background flex items-center justify-center">
+        <div className="text-center space-y-4">
+          <p className="text-muted-foreground">Доступ запрещён</p>
+          <button
+            onClick={() => navigate('/admin')}
+            className="text-primary hover:underline text-sm"
+          >
+            Войти в панель управления
+          </button>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="min-h-screen bg-muted/30 flex">
