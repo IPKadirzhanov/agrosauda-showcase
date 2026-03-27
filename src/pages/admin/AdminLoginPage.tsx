@@ -42,7 +42,10 @@ export default function AdminLoginPage() {
     );
   }
 
-  if (isAdmin) return null;
+  if (isAdmin) {
+  navigate('/admin/dashboard', { replace: true });
+  return null;
+}
 
   return (
     <div className="min-h-screen bg-background flex items-center justify-center p-4">
