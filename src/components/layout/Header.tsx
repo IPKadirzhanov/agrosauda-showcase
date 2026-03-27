@@ -1,5 +1,5 @@
-import { useState, useEffect } from 'react';
-import { Link, useLocation } from 'react-router-dom';
+import { useState, useEffect, useRef, useCallback } from 'react';
+import { Link, useLocation, useNavigate } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Menu, X, Heart, ChevronDown } from 'lucide-react';
 
@@ -17,6 +17,21 @@ export default function Header() {
   const [scrolled, setScrolled] = useState(false);
   const [mobileOpen, setMobileOpen] = useState(false);
   const location = useLocation();
+  const navigate = useNavigate();
+  const clickCountRef = useRef(0);
+  const clickTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+
+  const handleLogoClick = useCallback((e: React.MouseEvent) => {
+    clickCountRef.current += 1;
+    if (clickTimerRef.current) clearTimeout(clickTimerRef.current);
+    if (clickCountRef.current >= 3) {
+      e.preventDefault();
+      clickCountRef.current = 0;
+      navigate('/admin');
+      return;
+    }
+    clickTimerRef.current = setTimeout(() => { clickCountRef.current = 0; }, 1500);
+  }, [navigate]);
 
   useEffect(() => {
     const onScroll = () => setScrolled(window.scrollY > 20);
@@ -37,7 +52,7 @@ export default function Header() {
     }`}>
       <div className="container-main flex items-center justify-between h-[72px] px-4 sm:px-6 lg:px-8">
         {/* Logo */}
-        <Link to="/" className="flex items-center gap-2.5 group">
+        <Link to="/" className="flex items-center gap-2.5 group" onClick={handleLogoClick}>
           <div className="w-10 h-10 rounded-xl bg-primary flex items-center justify-center text-primary-foreground font-display font-bold text-lg group-hover:scale-105 transition-transform duration-300 shadow-md">
             A
           </div>
