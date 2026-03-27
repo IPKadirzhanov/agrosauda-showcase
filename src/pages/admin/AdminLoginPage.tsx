@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAdmin } from '@/hooks/useAdmin';
 import { Button } from '@/components/ui/button';
@@ -13,13 +13,14 @@ export default function AdminLoginPage() {
   const [showPassword, setShowPassword] = useState(false);
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
-  const { login, isAdmin } = useAdmin();
+  const { login, isAdmin, loading: authLoading } = useAdmin();
   const navigate = useNavigate();
 
-  if (isAdmin) {
-    navigate('/admin/dashboard', { replace: true });
-    return null;
-  }
+  useEffect(() => {
+    if (!authLoading && isAdmin) {
+      navigate('/admin/dashboard', { replace: true });
+    }
+  }, [isAdmin, authLoading, navigate]);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -29,10 +30,19 @@ export default function AdminLoginPage() {
     setLoading(false);
     if (result.error) {
       setError(result.error);
-    } else {
-      navigate('/admin/dashboard', { replace: true });
     }
+    // redirect will happen via useEffect when isAdmin becomes true
   };
+
+  if (authLoading) {
+    return (
+      <div className="min-h-screen bg-background flex items-center justify-center">
+        <div className="animate-spin w-8 h-8 border-2 border-primary border-t-transparent rounded-full" />
+      </div>
+    );
+  }
+
+  if (isAdmin) return null;
 
   return (
     <div className="min-h-screen bg-background flex items-center justify-center p-4">
