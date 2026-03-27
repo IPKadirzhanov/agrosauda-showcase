@@ -13,7 +13,7 @@ Deno.serve(async (req) => {
   try {
     const { username, password } = await req.json();
 
-    if (username !== 'Admin' || password !== 'admin') {
+    if (username.toLowerCase() !== 'admin' || password !== 'admin') {
       return new Response(JSON.stringify({ error: 'Неверные учётные данные' }), {
         status: 401,
         headers: { ...corsHeaders, 'Content-Type': 'application/json' }
