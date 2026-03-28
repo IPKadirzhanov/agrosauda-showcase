@@ -23,7 +23,7 @@ export default function HomePage() {
             className="w-full h-full object-cover"
             poster="https://images.unsplash.com/photo-1500382017468-9049fed747ef?w=1920&h=1080&fit=crop"
           >
-            <source src="https://videos.pexels.com/video-files/2518401/2518401-uhd_2560_1440_30fps.mp4" type="video/mp4" />
+            <source src="https://cdn.pixabay.com/video/2020/07/30/45349-446275734_large.mp4" type="video/mp4" />
           </video>
           {/* Multi-layer dark overlay for depth */}
           <div className="absolute inset-0 bg-gradient-to-b from-black/70 via-black/50 to-black/80" />
