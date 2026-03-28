@@ -1,5 +1,4 @@
 import { Outlet, useNavigate, Link, useLocation } from 'react-router-dom';
-import { useAdmin } from '@/hooks/useAdmin';
 import {
   LayoutDashboard, Users, ShoppingBag, FolderTree, Bot,
   ShieldCheck, LogOut, Package, BarChart3
@@ -17,17 +16,8 @@ const sidebarLinks = [
 ];
 
 export default function AdminLayout() {
-  const { isAdmin, loading, logout, user } = useAdmin();
   const navigate = useNavigate();
   const location = useLocation();
-
-  if (loading) {
-    return (
-      <div className="min-h-screen bg-background flex items-center justify-center">
-        <div className="animate-spin w-8 h-8 border-2 border-primary border-t-transparent rounded-full" />
-      </div>
-    );
-  }
 
   return (
     <div className="min-h-screen bg-muted/30 flex">
