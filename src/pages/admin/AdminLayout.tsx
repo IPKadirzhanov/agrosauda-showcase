@@ -53,10 +53,10 @@ export default function AdminLayout() {
 
         <div className="p-3 border-t border-border">
           <div className="px-3 py-2 text-xs text-muted-foreground truncate mb-2">
-            {user?.email}
+            Администратор
           </div>
           <button
-            onClick={() => { logout(); navigate('/'); }}
+            onClick={() => navigate('/')}
             className="flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium text-muted-foreground hover:text-destructive hover:bg-destructive/10 transition-colors w-full"
           >
             <LogOut className="w-4 h-4" />
