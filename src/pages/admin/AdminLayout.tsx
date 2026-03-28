@@ -21,35 +21,10 @@ export default function AdminLayout() {
   const navigate = useNavigate();
   const location = useLocation();
 
-  // If on the login index route (/admin), just render the Outlet (which is AdminLoginPage)
-  const isLoginRoute = location.pathname === '/admin' || location.pathname === '/admin/';
-
   if (loading) {
     return (
       <div className="min-h-screen bg-background flex items-center justify-center">
         <div className="animate-spin w-8 h-8 border-2 border-primary border-t-transparent rounded-full" />
-      </div>
-    );
-  }
-
-  // For login page, render without sidebar
-  if (isLoginRoute) {
-    return <Outlet />;
-  }
-
-  // For all other admin routes, require admin auth
-  if (!isAdmin) {
-    return (
-      <div className="min-h-screen bg-background flex items-center justify-center">
-        <div className="text-center space-y-4">
-          <p className="text-muted-foreground">Доступ запрещён</p>
-          <button
-            onClick={() => navigate('/admin')}
-            className="text-primary hover:underline text-sm"
-          >
-            Войти в панель управления
-          </button>
-        </div>
       </div>
     );
   }

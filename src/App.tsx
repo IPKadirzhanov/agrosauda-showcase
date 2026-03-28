@@ -58,7 +58,7 @@ function AppLayout() {
 
         {/* Admin routes */}
         <Route path="/admin" element={<AdminLayout />}>
-          <Route index element={<AdminLoginPage />} />
+          <Route index element={<AdminDashboardPage />} />
           <Route path="dashboard" element={<AdminDashboardPage />} />
           <Route path="users" element={<AdminUsersPage />} />
           <Route path="listings" element={<AdminListingsPage />} />
