@@ -1,7 +1,8 @@
 import { useState, useEffect, useRef, useCallback } from 'react';
 import { Link, useLocation, useNavigate } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Menu, X, Heart, ChevronDown } from 'lucide-react';
+import { Menu, X, Heart, ChevronDown, User, LogOut } from 'lucide-react';
+import { useAuth } from '@/hooks/useAuth';
 
 const navLinks = [
   { name: 'Agro Shop', path: '/agro-shop' },
@@ -20,6 +21,7 @@ export default function Header() {
   const navigate = useNavigate();
   const clickCountRef = useRef(0);
   const clickTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const { user, profile, signOut } = useAuth();
 
   const handleLogoClick = useCallback((e: React.MouseEvent) => {
     clickCountRef.current += 1;
@@ -91,6 +93,43 @@ export default function Header() {
           }`}>
             <Heart className="w-[18px] h-[18px]" />
           </Link>
+          {user ? (
+            <>
+              <Link
+                to="/dashboard"
+                className={`flex items-center gap-2 px-3.5 py-2 rounded-xl text-sm font-medium transition-all duration-300 ${
+                  showTransparent
+                    ? 'text-white/80 hover:text-white hover:bg-white/10'
+                    : 'text-muted-foreground hover:text-foreground hover:bg-accent/60'
+                }`}
+              >
+                <User className="w-4 h-4" />
+                {profile?.display_name || 'Кабинет'}
+              </Link>
+              <button
+                onClick={async () => { await signOut(); navigate('/'); }}
+                className={`p-2.5 rounded-xl transition-all duration-300 ${
+                  showTransparent
+                    ? 'text-white/70 hover:text-white hover:bg-white/10'
+                    : 'text-muted-foreground hover:text-foreground hover:bg-accent'
+                }`}
+              >
+                <LogOut className="w-[18px] h-[18px]" />
+              </button>
+            </>
+          ) : (
+            <Link
+              to="/auth"
+              className={`flex items-center gap-2 px-4 py-2 rounded-xl text-sm font-medium border transition-all duration-300 ${
+                showTransparent
+                  ? 'text-white border-white/30 hover:bg-white/10'
+                  : 'text-foreground border-border hover:bg-accent'
+              }`}
+            >
+              <User className="w-4 h-4" />
+              Войти
+            </Link>
+          )}
           <Link
             to="/sell"
             className="btn-premium !px-6 !py-2.5 !rounded-xl !text-sm"
@@ -134,9 +173,15 @@ export default function Header() {
                 </Link>
               ))}
               <div className="flex gap-2 mt-4 pt-4 border-t border-border/50">
-                <Link to="/favorites" className="flex-1 flex items-center justify-center gap-2 px-4 py-3 rounded-xl border border-border text-sm font-medium hover:bg-accent transition-all duration-300">
-                  <Heart className="w-4 h-4" /> Избранное
-                </Link>
+                {user ? (
+                  <Link to="/dashboard" className="flex-1 flex items-center justify-center gap-2 px-4 py-3 rounded-xl border border-border text-sm font-medium hover:bg-accent transition-all duration-300">
+                    <User className="w-4 h-4" /> Кабинет
+                  </Link>
+                ) : (
+                  <Link to="/auth" className="flex-1 flex items-center justify-center gap-2 px-4 py-3 rounded-xl border border-border text-sm font-medium hover:bg-accent transition-all duration-300">
+                    <User className="w-4 h-4" /> Войти
+                  </Link>
+                )}
                 <Link to="/sell" className="flex-1 btn-premium !py-3 !rounded-xl !text-sm text-center">
                   Продать
                 </Link>
