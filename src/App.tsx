@@ -5,6 +5,7 @@ import { TooltipProvider } from "@/components/ui/tooltip";
 import Header from "@/components/layout/Header";
 import Footer from "@/components/layout/Footer";
 import { AdminProvider } from "@/hooks/useAdmin";
+import { AuthProvider } from "@/hooks/useAuth";
 import HomePage from "./pages/HomePage";
 import MarketplacePage from "./pages/MarketplacePage";
 import ProductDetailPage from "./pages/ProductDetailPage";
@@ -19,6 +20,8 @@ import SellPage from "./pages/SellPage";
 import FavoritesPage from "./pages/FavoritesPage";
 import AgroShopPage from "./pages/AgroShopPage";
 import ClassifiedsPage from "./pages/ClassifiedsPage";
+import AuthPage from "./pages/AuthPage";
+import DashboardPage from "./pages/DashboardPage";
 import NotFound from "./pages/NotFound";
 import AdminLoginPage from "./pages/admin/AdminLoginPage";
 import AdminLayout from "./pages/admin/AdminLayout";
@@ -56,6 +59,8 @@ function AppLayout() {
         <Route path="/favorites" element={<FavoritesPage />} />
         <Route path="/agro-shop" element={<AgroShopPage />} />
         <Route path="/classifieds" element={<ClassifiedsPage />} />
+        <Route path="/auth" element={<AuthPage />} />
+        <Route path="/dashboard" element={<DashboardPage />} />
 
         {/* Admin routes */}
         <Route path="/admin" element={<AdminLayout />}>
@@ -83,9 +88,11 @@ const App = () => (
     <TooltipProvider>
       <Sonner />
       <BrowserRouter>
-        <AdminProvider>
-          <AppLayout />
-        </AdminProvider>
+        <AuthProvider>
+          <AdminProvider>
+            <AppLayout />
+          </AdminProvider>
+        </AuthProvider>
       </BrowserRouter>
     </TooltipProvider>
   </QueryClientProvider>
