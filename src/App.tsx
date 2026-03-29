@@ -30,6 +30,7 @@ import AdminAIPage from "./pages/admin/AdminAIPage";
 import AdminOrdersPage from "./pages/admin/AdminOrdersPage";
 import AdminShopsPage from "./pages/admin/AdminShopsPage";
 import AdminAnalyticsPage from "./pages/admin/AdminAnalyticsPage";
+import FloatingAIWidget from "./components/FloatingAIWidget";
 
 const queryClient = new QueryClient();
 
@@ -72,6 +73,7 @@ function AppLayout() {
         <Route path="*" element={<NotFound />} />
       </Routes>
       {!isAdmin && <Footer />}
+      {!isAdmin && <FloatingAIWidget />}
     </>
   );
 }
