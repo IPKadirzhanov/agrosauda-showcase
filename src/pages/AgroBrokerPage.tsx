@@ -165,13 +165,13 @@ export default function AgroBrokerPage() {
         <div className="absolute inset-0 dot-pattern opacity-20" />
         <div className="container-main relative z-10 text-center">
           <AnimatedSection>
-            <Badge className="mb-6 bg-white/10 text-white border-white/20 backdrop-blur-sm px-4 py-1.5 text-sm">
+            <Badge className="mb-6 bg-primary/10 text-primary border-primary/20 backdrop-blur-sm px-4 py-1.5 text-sm">
               <Handshake className="w-4 h-4 mr-2" /> Новая функция платформы
             </Badge>
-            <h1 className="text-4xl md:text-6xl font-display font-bold text-white mb-6 leading-tight">
-              Agro<span className="text-primary">Broker</span>
+            <h1 className="text-4xl md:text-6xl font-display font-bold text-foreground mb-6 leading-tight">
+              Agro<span className="text-gradient">Broker</span>
             </h1>
-            <p className="text-lg md:text-xl text-white/80 max-w-2xl mx-auto mb-10">
+            <p className="text-lg md:text-xl text-muted-foreground max-w-2xl mx-auto mb-10">
               Профессиональная платформа для связи продавцов и покупателей сельхозпродукции. 
               Находите лучшие предложения, заключайте сделки быстро и безопасно.
             </p>
