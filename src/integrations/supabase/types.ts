@@ -109,6 +109,123 @@ export type Database = {
           },
         ]
       }
+      broker_deals: {
+        Row: {
+          buyer_request_id: string | null
+          created_at: string
+          id: string
+          logistics_status:
+            | Database["public"]["Enums"]["logistics_status"]
+            | null
+          notes: string | null
+          seller_request_id: string | null
+          status: Database["public"]["Enums"]["broker_deal_status"] | null
+          updated_at: string
+        }
+        Insert: {
+          buyer_request_id?: string | null
+          created_at?: string
+          id?: string
+          logistics_status?:
+            | Database["public"]["Enums"]["logistics_status"]
+            | null
+          notes?: string | null
+          seller_request_id?: string | null
+          status?: Database["public"]["Enums"]["broker_deal_status"] | null
+          updated_at?: string
+        }
+        Update: {
+          buyer_request_id?: string | null
+          created_at?: string
+          id?: string
+          logistics_status?:
+            | Database["public"]["Enums"]["logistics_status"]
+            | null
+          notes?: string | null
+          seller_request_id?: string | null
+          status?: Database["public"]["Enums"]["broker_deal_status"] | null
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "broker_deals_buyer_request_id_fkey"
+            columns: ["buyer_request_id"]
+            isOneToOne: false
+            referencedRelation: "broker_requests"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "broker_deals_seller_request_id_fkey"
+            columns: ["seller_request_id"]
+            isOneToOne: false
+            referencedRelation: "broker_requests"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      broker_requests: {
+        Row: {
+          contact_email: string | null
+          contact_name: string
+          contact_phone: string | null
+          created_at: string
+          delivery_notes: string | null
+          description: string | null
+          id: string
+          is_flagged: boolean | null
+          location: string
+          needs_delivery: boolean | null
+          price_expectation: string | null
+          product_type: string
+          quantity: string
+          request_type: Database["public"]["Enums"]["broker_request_type"]
+          status: Database["public"]["Enums"]["broker_request_status"] | null
+          trust_level: Database["public"]["Enums"]["trust_level"] | null
+          updated_at: string
+          user_id: string | null
+        }
+        Insert: {
+          contact_email?: string | null
+          contact_name: string
+          contact_phone?: string | null
+          created_at?: string
+          delivery_notes?: string | null
+          description?: string | null
+          id?: string
+          is_flagged?: boolean | null
+          location: string
+          needs_delivery?: boolean | null
+          price_expectation?: string | null
+          product_type: string
+          quantity: string
+          request_type: Database["public"]["Enums"]["broker_request_type"]
+          status?: Database["public"]["Enums"]["broker_request_status"] | null
+          trust_level?: Database["public"]["Enums"]["trust_level"] | null
+          updated_at?: string
+          user_id?: string | null
+        }
+        Update: {
+          contact_email?: string | null
+          contact_name?: string
+          contact_phone?: string | null
+          created_at?: string
+          delivery_notes?: string | null
+          description?: string | null
+          id?: string
+          is_flagged?: boolean | null
+          location?: string
+          needs_delivery?: boolean | null
+          price_expectation?: string | null
+          product_type?: string
+          quantity?: string
+          request_type?: Database["public"]["Enums"]["broker_request_type"]
+          status?: Database["public"]["Enums"]["broker_request_status"] | null
+          trust_level?: Database["public"]["Enums"]["trust_level"] | null
+          updated_at?: string
+          user_id?: string | null
+        }
+        Relationships: []
+      }
       categories: {
         Row: {
           count: number | null
@@ -514,6 +631,20 @@ export type Database = {
     }
     Enums: {
       app_role: "admin" | "moderator" | "user"
+      broker_deal_status:
+        | "pending"
+        | "in_negotiation"
+        | "agreed"
+        | "completed"
+        | "cancelled"
+      broker_request_status:
+        | "active"
+        | "in_negotiation"
+        | "completed"
+        | "cancelled"
+      broker_request_type: "sell" | "buy"
+      logistics_status: "not_needed" | "planned" | "in_progress" | "delivered"
+      trust_level: "new" | "active" | "verified"
     }
     CompositeTypes: {
       [_ in never]: never
@@ -642,6 +773,22 @@ export const Constants = {
   public: {
     Enums: {
       app_role: ["admin", "moderator", "user"],
+      broker_deal_status: [
+        "pending",
+        "in_negotiation",
+        "agreed",
+        "completed",
+        "cancelled",
+      ],
+      broker_request_status: [
+        "active",
+        "in_negotiation",
+        "completed",
+        "cancelled",
+      ],
+      broker_request_type: ["sell", "buy"],
+      logistics_status: ["not_needed", "planned", "in_progress", "delivered"],
+      trust_level: ["new", "active", "verified"],
     },
   },
 } as const

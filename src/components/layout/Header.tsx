@@ -7,6 +7,7 @@ import { useAuth } from '@/hooks/useAuth';
 const navLinks = [
   { name: 'Agro Shop', path: '/agro-shop' },
   { name: 'Объявления', path: '/classifieds' },
+  { name: 'AgroBroker', path: '/agrobroker' },
   { name: 'Безопасная сделка', path: '/safe-deal' },
   { name: 'AI Ассистенты', path: '/ai-assistants' },
   { name: 'Обучение', path: '/education' },
@@ -71,11 +72,11 @@ export default function Header() {
             <Link
               key={link.path}
               to={link.path}
-              className={`px-3.5 py-2 rounded-lg text-[13px] font-medium tracking-wide transition-all duration-300 ${
+              className={`px-3 py-2 rounded-lg text-[13px] font-medium tracking-wide transition-all duration-300 ${
                 location.pathname === link.path
                   ? 'text-primary bg-primary/8'
                   : showTransparent
-                    ? 'text-white/80 hover:text-white hover:bg-white/10'
+                    ? 'text-white/85 hover:text-white hover:bg-white/10'
                     : 'text-muted-foreground hover:text-foreground hover:bg-accent/60'
               }`}
             >
