@@ -7,6 +7,7 @@ import { useAuth } from '@/hooks/useAuth';
 const navLinks = [
   { name: 'Agro Shop', path: '/agro-shop' },
   { name: 'Объявления', path: '/classifieds' },
+  { name: 'AgroBroker', path: '/agrobroker' },
   { name: 'Безопасная сделка', path: '/safe-deal' },
   { name: 'AI Ассистенты', path: '/ai-assistants' },
   { name: 'Обучение', path: '/education' },
