@@ -61,6 +61,7 @@ function AppLayout() {
         <Route path="/favorites" element={<FavoritesPage />} />
         <Route path="/agro-shop" element={<AgroShopPage />} />
         <Route path="/classifieds" element={<ClassifiedsPage />} />
+        <Route path="/agrobroker" element={<AgroBrokerPage />} />
         <Route path="/auth" element={<AuthPage />} />
         <Route path="/dashboard" element={<DashboardPage />} />
 
