@@ -44,9 +44,7 @@ export default function Footer() {
           {/* Brand */}
           <div className="lg:col-span-1">
             <Link to="/" className="flex items-center gap-2.5 mb-5">
-              <div className="w-10 h-10 rounded-xl bg-primary flex items-center justify-center text-primary-foreground font-display font-bold text-lg shadow-lg">
-                A
-              </div>
+              <img src="/logo1.png" alt="Agrosauda" className="w-10 h-10 rounded-xl shadow-lg object-contain" />
               <span className="font-display font-bold text-xl text-background">
                 Agro<span className="text-primary">sauda</span>
               </span>

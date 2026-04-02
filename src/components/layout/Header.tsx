@@ -56,9 +56,7 @@ export default function Header() {
       <div className="container-main flex items-center justify-between h-[72px] px-4 sm:px-6 lg:px-8">
         {/* Logo */}
         <Link to="/" className="flex items-center gap-2.5 group" onClick={handleLogoClick}>
-          <div className="w-10 h-10 rounded-xl bg-primary flex items-center justify-center text-primary-foreground font-display font-bold text-lg group-hover:scale-105 transition-transform duration-300 shadow-md">
-            A
-          </div>
+          <img src="/logo1.png" alt="Agrosauda" className="w-10 h-10 rounded-xl group-hover:scale-105 transition-transform duration-300 shadow-md object-contain" />
           <span className={`font-display font-bold text-[22px] tracking-tight transition-colors duration-300 ${
             showTransparent ? 'text-white' : 'text-foreground'
           }`}>

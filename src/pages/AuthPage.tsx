@@ -118,9 +118,7 @@ export default function AuthPage() {
               transition={{ delay: 0.2 }}
             >
               <Link to="/" className="inline-flex items-center gap-2.5 mb-4">
-                <div className="w-11 h-11 rounded-xl bg-primary flex items-center justify-center text-primary-foreground font-display font-bold text-lg shadow-lg shadow-primary/30">
-                  A
-                </div>
+                <img src="/logo1.png" alt="Agrosauda" className="w-11 h-11 rounded-xl shadow-lg shadow-primary/30 object-contain" />
                 <span className="font-display font-bold text-2xl tracking-tight text-foreground">
                   Agro<span className="text-primary">sauda</span>
                 </span>

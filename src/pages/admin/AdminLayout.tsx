@@ -26,7 +26,7 @@ export default function AdminLayout() {
       <aside className="w-64 bg-card border-r border-border flex flex-col fixed inset-y-0 left-0 z-40">
         <div className="p-6 border-b border-border">
           <Link to="/" className="flex items-center gap-2.5">
-            <div className="w-9 h-9 rounded-xl bg-primary flex items-center justify-center text-primary-foreground font-bold text-base">A</div>
+            <img src="/logo1.png" alt="Agrosauda" className="w-9 h-9 rounded-xl object-contain" />
             <span className="font-display font-bold text-lg">Agro<span className="text-primary">sauda</span></span>
           </Link>
           <p className="text-xs text-muted-foreground mt-2">Панель администратора</p>
