@@ -7,6 +7,7 @@ export const en: TranslationKeys = {
     agroShop: 'Agro Shop', classifieds: 'Classifieds', agroBroker: 'AgroBroker', safeDeal: 'Safe Deal',
     aiAssistants: 'AI Assistants', education: 'Education', news: 'News', about: 'About',
     favorites: 'Favorites', login: 'Sign In', cabinet: 'Dashboard', sell: 'Sell', logout: 'Sign Out',
+    agroShorts: 'AgroShorts',
   },
   auth: {
     loginTitle: 'Sign In', registerTitle: 'Create Account', loginSubtitle: 'Access your personal dashboard',
