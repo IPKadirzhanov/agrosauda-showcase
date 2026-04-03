@@ -3,6 +3,7 @@ import { useNavigate, Link } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useAuth } from '@/hooks/useAuth';
 import { supabase } from '@/integrations/supabase/client';
+import { lovable } from '@/integrations/lovable';
 import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
 import { Mail, Lock, User, Eye, EyeOff, ArrowRight, Sparkles, Check, Phone, Building2 } from 'lucide-react';
@@ -70,18 +71,22 @@ export default function AuthPage() {
     setLoading(true);
     setError('');
     try {
-      const { error } = await supabase.auth.signInWithOAuth({
-        provider: 'google',
-        options: {
-          redirectTo: window.location.origin + '/auth',
-        },
+      const result = await lovable.auth.signInWithOAuth("google", {
+        redirect_uri: window.location.origin,
       });
-      if (error) {
-        setError(error.message);
+
+      if (result.error) {
+        setError(result.error instanceof Error ? result.error.message : String(result.error));
         setLoading(false);
         return;
       }
-      // Browser will redirect to Google
+
+      if (result.redirected) {
+        return;
+      }
+
+      // Session set automatically, navigate
+      navigate('/dashboard', { replace: true });
     } catch (err) {
       setError(t.auth.serverError);
       setLoading(false);
