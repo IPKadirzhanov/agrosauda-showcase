@@ -39,7 +39,7 @@ export default function ProductCard({ product }: Props) {
       </div>
 
       {/* Content */}
-      <div className="p-5">
+      <div className="p-5 flex-1 flex flex-col">
         <p className="text-[11px] text-muted-foreground font-medium uppercase tracking-wider mb-1.5">{product.category}</p>
         <h3 className="font-display font-bold text-[15px] leading-snug mb-2 line-clamp-2 group-hover:text-primary transition-colors duration-300">
           {product.title}
