@@ -38,7 +38,7 @@ export default function NewsPage() {
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
           {rest.map((article, i) => (
             <AnimatedSection key={article.id} delay={i * 0.1}>
-              <div className="premium-card rounded-2xl overflow-hidden group cursor-pointer">
+              <div className="premium-card rounded-2xl overflow-hidden group cursor-pointer h-full flex flex-col">
                 <div className="aspect-video overflow-hidden">
                   <img src={article.image} alt={article.title} className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" loading="lazy" />
                 </div>
