@@ -54,7 +54,7 @@ export default function ProductCard({ product }: Props) {
         <p className="text-[11px] text-muted-foreground mb-4">{product.seller}</p>
         <Link
           to={`/product/${product.id}`}
-          className="block w-full text-center py-3 rounded-xl bg-primary/8 text-primary text-sm font-bold hover:bg-primary hover:text-primary-foreground transition-all duration-400 border border-primary/10 hover:border-primary group/btn"
+          className="mt-auto block w-full text-center py-3 rounded-xl bg-primary/8 text-primary text-sm font-bold hover:bg-primary hover:text-primary-foreground transition-all duration-400 border border-primary/10 hover:border-primary group/btn"
         >
           <span className="inline-flex items-center gap-1.5">
             Подробнее <ArrowRight className="w-3.5 h-3.5 group-hover/btn:translate-x-0.5 transition-transform" />
