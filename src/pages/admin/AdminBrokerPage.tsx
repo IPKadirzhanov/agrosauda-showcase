@@ -3,23 +3,25 @@ import { supabase } from '@/integrations/supabase/client';
 import { Input } from '@/components/ui/input';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { Card, CardContent } from '@/components/ui/card';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
-import { Search, Trash2, AlertTriangle, Shield, Handshake } from 'lucide-react';
+import { Search, Trash2, AlertTriangle, UserCheck, XCircle } from 'lucide-react';
 import { toast } from 'sonner';
 
 const statusLabels: Record<string, string> = {
-  active: 'Активная', in_negotiation: 'В переговорах', completed: 'Завершена', cancelled: 'Отменена',
+  active: 'Активная', in_negotiation: 'В переговорах', in_progress: 'В работе', completed: 'Завершена', cancelled: 'Отменена',
 };
 
 const statusColors: Record<string, string> = {
   active: 'bg-emerald-500/10 text-emerald-600', in_negotiation: 'bg-amber-500/10 text-amber-600',
+  in_progress: 'bg-purple-500/10 text-purple-600',
   completed: 'bg-blue-500/10 text-blue-600', cancelled: 'bg-red-500/10 text-red-600',
 };
 
 export default function AdminBrokerPage() {
   const [requests, setRequests] = useState<any[]>([]);
+  const [profiles, setProfiles] = useState<Record<string, string>>({});
   const [search, setSearch] = useState('');
   const [filterStatus, setFilterStatus] = useState('all');
 
@@ -28,6 +30,14 @@ export default function AdminBrokerPage() {
   async function fetchRequests() {
     const { data } = await supabase.from('broker_requests').select('*').order('created_at', { ascending: false });
     setRequests(data || []);
+    // Fetch broker display names for claimed requests
+    const brokerIds = [...new Set((data || []).filter((r: any) => r.claimed_by).map((r: any) => r.claimed_by))];
+    if (brokerIds.length > 0) {
+      const { data: profs } = await supabase.from('profiles').select('user_id, display_name').in('user_id', brokerIds);
+      const map: Record<string, string> = {};
+      (profs || []).forEach((p: any) => { if (p.user_id) map[p.user_id] = p.display_name || 'Брокер'; });
+      setProfiles(map);
+    }
   }
 
   async function deleteRequest(id: string) {
@@ -51,6 +61,13 @@ export default function AdminBrokerPage() {
     fetchRequests();
   }
 
+  async function unclaimRequest(id: string) {
+    const { error } = await supabase.from('broker_requests').update({ claimed_by: null, claimed_at: null, status: 'active' } as any).eq('id', id);
+    if (error) { toast.error('Ошибка'); return; }
+    toast.success('Назначение снято, заявка снова активна');
+    fetchRequests();
+  }
+
   const filtered = requests.filter(r => {
     if (filterStatus !== 'all' && r.status !== filterStatus) return false;
     if (search) {
@@ -61,16 +78,17 @@ export default function AdminBrokerPage() {
   });
 
   const activeCount = requests.filter(r => r.status === 'active').length;
+  const claimedCount = requests.filter(r => r.claimed_by).length;
   const flaggedCount = requests.filter(r => r.is_flagged).length;
 
   return (
     <div className="space-y-6">
       <div>
         <h1 className="text-2xl font-bold">AgroBroker — Управление</h1>
-        <p className="text-muted-foreground">Управление заявками покупателей и продавцов</p>
+        <p className="text-muted-foreground">Управление заявками, назначениями брокеров и статусами</p>
       </div>
 
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+      <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
         <Card><CardContent className="pt-6 text-center">
           <div className="text-3xl font-bold">{requests.length}</div>
           <div className="text-sm text-muted-foreground">Всего заявок</div>
@@ -78,6 +96,10 @@ export default function AdminBrokerPage() {
         <Card><CardContent className="pt-6 text-center">
           <div className="text-3xl font-bold text-emerald-600">{activeCount}</div>
           <div className="text-sm text-muted-foreground">Активных</div>
+        </CardContent></Card>
+        <Card><CardContent className="pt-6 text-center">
+          <div className="text-3xl font-bold text-purple-600">{claimedCount}</div>
+          <div className="text-sm text-muted-foreground">Взяты брокерами</div>
         </CardContent></Card>
         <Card><CardContent className="pt-6 text-center">
           <div className="text-3xl font-bold text-amber-600">{flaggedCount}</div>
@@ -95,6 +117,7 @@ export default function AdminBrokerPage() {
           <SelectContent>
             <SelectItem value="all">Все статусы</SelectItem>
             <SelectItem value="active">Активные</SelectItem>
+            <SelectItem value="in_progress">В работе</SelectItem>
             <SelectItem value="in_negotiation">В переговорах</SelectItem>
             <SelectItem value="completed">Завершённые</SelectItem>
             <SelectItem value="cancelled">Отменённые</SelectItem>
@@ -111,6 +134,7 @@ export default function AdminBrokerPage() {
               <TableHead>Кол-во</TableHead>
               <TableHead>Регион</TableHead>
               <TableHead>Контакт</TableHead>
+              <TableHead>Брокер</TableHead>
               <TableHead>Статус</TableHead>
               <TableHead>Дата</TableHead>
               <TableHead className="text-right">Действия</TableHead>
@@ -118,7 +142,7 @@ export default function AdminBrokerPage() {
           </TableHeader>
           <TableBody>
             {filtered.length === 0 ? (
-              <TableRow><TableCell colSpan={8} className="text-center py-8 text-muted-foreground">Нет заявок</TableCell></TableRow>
+              <TableRow><TableCell colSpan={9} className="text-center py-8 text-muted-foreground">Нет заявок</TableCell></TableRow>
             ) : filtered.map(r => (
               <TableRow key={r.id} className={r.is_flagged ? 'bg-destructive/5' : ''}>
                 <TableCell>
@@ -131,10 +155,21 @@ export default function AdminBrokerPage() {
                 <TableCell>{r.location}</TableCell>
                 <TableCell>{r.contact_name}</TableCell>
                 <TableCell>
+                  {r.claimed_by ? (
+                    <div className="flex items-center gap-1.5">
+                      <UserCheck className="w-4 h-4 text-purple-600" />
+                      <span className="text-sm text-purple-600 font-medium">{profiles[r.claimed_by] || 'Брокер'}</span>
+                    </div>
+                  ) : (
+                    <span className="text-xs text-muted-foreground">—</span>
+                  )}
+                </TableCell>
+                <TableCell>
                   <Select value={r.status} onValueChange={v => updateStatus(r.id, v)}>
                     <SelectTrigger className="h-8 w-36"><SelectValue /></SelectTrigger>
                     <SelectContent>
                       <SelectItem value="active">Активная</SelectItem>
+                      <SelectItem value="in_progress">В работе</SelectItem>
                       <SelectItem value="in_negotiation">В переговорах</SelectItem>
                       <SelectItem value="completed">Завершена</SelectItem>
                       <SelectItem value="cancelled">Отменена</SelectItem>
@@ -144,6 +179,11 @@ export default function AdminBrokerPage() {
                 <TableCell className="text-sm text-muted-foreground">{new Date(r.created_at).toLocaleDateString('ru')}</TableCell>
                 <TableCell className="text-right">
                   <div className="flex justify-end gap-1">
+                    {r.claimed_by && (
+                      <Button variant="ghost" size="icon" className="h-8 w-8" title="Снять назначение" onClick={() => unclaimRequest(r.id)}>
+                        <XCircle className="w-4 h-4 text-purple-500" />
+                      </Button>
+                    )}
                     <Button variant="ghost" size="icon" className="h-8 w-8" onClick={() => toggleFlag(r.id, r.is_flagged)}>
                       <AlertTriangle className={`w-4 h-4 ${r.is_flagged ? 'text-amber-500' : 'text-muted-foreground'}`} />
                     </Button>

@@ -1,8 +1,9 @@
 import { useState, useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
 import { 
   Handshake, ArrowRightLeft, Send, Filter, MapPin, Package, TrendingUp, 
-  Truck, Shield, User, Phone, Mail, Plus, X, Search, CheckCircle, Clock, AlertTriangle
+  Truck, Shield, User, Phone, Mail, Plus, X, Search, CheckCircle, Clock, AlertTriangle, Lock, CreditCard
 } from 'lucide-react';
 import AnimatedSection from '@/components/AnimatedSection';
 import { Button } from '@/components/ui/button';
@@ -12,11 +13,12 @@ import { Badge } from '@/components/ui/badge';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
-import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { useAuth } from '@/hooks/useAuth';
 import { supabase } from '@/integrations/supabase/client';
 import { toast } from 'sonner';
 import { useLanguage } from '@/i18n/LanguageContext';
+
+const CLAIM_FEE = 5000; // тенге
 
 const productTypes = [
   'Пшеница', 'Ячмень', 'Кукуруза', 'Подсолнечник', 'Рис', 'Овёс',
@@ -57,6 +59,9 @@ interface BrokerRequest {
   trust_level: string;
   is_flagged: boolean | null;
   created_at: string;
+  claimed_by: string | null;
+  claimed_at: string | null;
+  claim_fee: number | null;
 }
 
 const emptyForm = {
@@ -74,8 +79,9 @@ const emptyForm = {
 };
 
 export default function AgroBrokerPage() {
-  const { user } = useAuth();
+  const { user, userRole } = useAuth();
   const { t } = useLanguage();
+  const navigate = useNavigate();
   const [requests, setRequests] = useState<BrokerRequest[]>([]);
   const [loading, setLoading] = useState(true);
   const [dialogOpen, setDialogOpen] = useState(false);
@@ -85,10 +91,15 @@ export default function AgroBrokerPage() {
   const [filterProduct, setFilterProduct] = useState<string>('all');
   const [filterRegion, setFilterRegion] = useState<string>('all');
   const [search, setSearch] = useState('');
+  const [claimingId, setClaimingId] = useState<string | null>(null);
+  const [confirmClaimId, setConfirmClaimId] = useState<string | null>(null);
+
+  const isBroker = userRole === 'broker' || userRole === 'admin';
 
   const statusLabels: Record<string, string> = {
     active: t.agrobroker.statusActive,
     in_negotiation: t.agrobroker.statusNegotiation,
+    in_progress: 'В работе',
     completed: t.agrobroker.statusCompleted,
     cancelled: t.agrobroker.statusCancelled,
   };
@@ -96,6 +107,7 @@ export default function AgroBrokerPage() {
   const statusColors: Record<string, string> = {
     active: 'bg-emerald-500/10 text-emerald-600 border-emerald-500/20',
     in_negotiation: 'bg-amber-500/10 text-amber-600 border-amber-500/20',
+    in_progress: 'bg-purple-500/10 text-purple-600 border-purple-500/20',
     completed: 'bg-blue-500/10 text-blue-600 border-blue-500/20',
     cancelled: 'bg-red-500/10 text-red-600 border-red-500/20',
   };
@@ -106,7 +118,7 @@ export default function AgroBrokerPage() {
     verified: t.agrobroker.trustVerified,
   };
 
-  useEffect(() => { fetchRequests(); }, []);
+  useEffect(() => { fetchRequests(); }, [user]);
 
   async function fetchRequests() {
     setLoading(true);
@@ -138,7 +150,35 @@ export default function AgroBrokerPage() {
     fetchRequests();
   }
 
+  async function handleClaimRequest(requestId: string) {
+    if (!user) { toast.error('Войдите в систему'); return; }
+    setClaimingId(requestId);
+    try {
+      const { data, error } = await supabase.rpc('claim_broker_request', {
+        _request_id: requestId,
+        _broker_id: user.id,
+      });
+      if (error) { toast.error('Ошибка: ' + error.message); return; }
+      const result = data as any;
+      if (result?.success) {
+        toast.success('Заявка успешно взята! Комиссия: ' + (result.fee || CLAIM_FEE).toLocaleString() + ' ₸');
+        setConfirmClaimId(null);
+        fetchRequests();
+      } else {
+        toast.error(result?.error || 'Не удалось взять заявку');
+      }
+    } catch {
+      toast.error('Ошибка сервера');
+    } finally {
+      setClaimingId(null);
+    }
+  }
+
+  // For brokers: show only active (unclaimed) requests
+  // For regular users: they'll only see their own requests (RLS enforced)
   const filtered = requests.filter(r => {
+    // Brokers see only active unclaimed requests in the public feed
+    if (isBroker && r.status !== 'active') return false;
     if (filterType !== 'all' && r.request_type !== filterType) return false;
     if (filterProduct !== 'all' && r.product_type !== filterProduct) return false;
     if (filterRegion !== 'all' && !r.location.includes(filterRegion)) return false;
@@ -157,6 +197,10 @@ export default function AgroBrokerPage() {
     { icon: CheckCircle, title: t.agrobroker.step4Title, desc: t.agrobroker.step4Desc },
   ];
 
+  // Non-broker users who are NOT creating their own request see a restricted view
+  const showBrokerFeed = isBroker;
+  const showUserOwnRequests = !isBroker && user;
+
   return (
     <div className="min-h-screen bg-background">
       {/* Hero */}
@@ -173,6 +217,7 @@ export default function AgroBrokerPage() {
             </h1>
             <p className="text-lg md:text-xl text-muted-foreground max-w-2xl mx-auto mb-10">{t.agrobroker.heroDesc}</p>
             <div className="flex flex-wrap justify-center gap-4">
+              {/* Anyone can create a request */}
               <Dialog open={dialogOpen} onOpenChange={setDialogOpen}>
                 <DialogTrigger asChild>
                   <Button size="lg" className="btn-premium !text-base gap-2"><Plus className="w-5 h-5" /> {t.agrobroker.createRequest}</Button>
@@ -244,119 +289,181 @@ export default function AgroBrokerPage() {
         </div>
       </section>
 
-      {/* Stats */}
-      <section className="py-12 border-b border-border/50">
-        <div className="container-main">
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-            {[
-              { icon: TrendingUp, label: t.agrobroker.sellRequestsLabel, value: sellCount, color: 'text-emerald-500' },
-              { icon: Package, label: t.agrobroker.buyRequestsLabel, value: buyCount, color: 'text-blue-500' },
-              { icon: Handshake, label: t.agrobroker.potentialDeals, value: matchCount, color: 'text-primary' },
-            ].map((stat, i) => (
-              <AnimatedSection key={i} delay={i * 0.1}>
-                <Card className="premium-card text-center">
-                  <CardContent className="pt-6">
-                    <stat.icon className={`w-8 h-8 mx-auto mb-3 ${stat.color}`} />
-                    <div className="text-3xl font-display font-bold">{stat.value}</div>
-                    <div className="text-sm text-muted-foreground mt-1">{stat.label}</div>
-                  </CardContent>
-                </Card>
-              </AnimatedSection>
-            ))}
-          </div>
-        </div>
-      </section>
-
-      {/* Requests */}
-      <section className="section-padding">
-        <div className="container-main">
-          <AnimatedSection>
-            <div className="flex flex-col lg:flex-row justify-between items-start lg:items-center gap-4 mb-8">
-              <h2 className="text-2xl md:text-3xl font-display font-bold">{t.agrobroker.activeRequestsTitle}</h2>
-              <div className="flex flex-wrap gap-3">
-                <div className="relative">
-                  <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
-                  <Input className="pl-9 w-48" placeholder={t.agrobroker.searchPlaceholder} value={search} onChange={e => setSearch(e.target.value)} />
-                </div>
-                <Select value={filterType} onValueChange={setFilterType}>
-                  <SelectTrigger className="w-36"><SelectValue /></SelectTrigger>
-                  <SelectContent>
-                    <SelectItem value="all">{t.agrobroker.allTypes}</SelectItem>
-                    <SelectItem value="sell">{t.agrobroker.sell}</SelectItem>
-                    <SelectItem value="buy">{t.agrobroker.buy}</SelectItem>
-                  </SelectContent>
-                </Select>
-                <Select value={filterProduct} onValueChange={setFilterProduct}>
-                  <SelectTrigger className="w-44"><SelectValue /></SelectTrigger>
-                  <SelectContent>
-                    <SelectItem value="all">{t.agrobroker.allProducts}</SelectItem>
-                    {productTypes.map(p => <SelectItem key={p} value={p}>{p}</SelectItem>)}
-                  </SelectContent>
-                </Select>
-                <Select value={filterRegion} onValueChange={setFilterRegion}>
-                  <SelectTrigger className="w-44"><SelectValue /></SelectTrigger>
-                  <SelectContent>
-                    <SelectItem value="all">{t.agrobroker.allRegions}</SelectItem>
-                    {regions.map(r => <SelectItem key={r} value={r}>{r}</SelectItem>)}
-                  </SelectContent>
-                </Select>
-              </div>
-            </div>
-          </AnimatedSection>
-
-          {loading ? (
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-              {[1,2,3].map(i => (<Card key={i} className="animate-pulse"><CardContent className="pt-6 h-48" /></Card>))}
-            </div>
-          ) : filtered.length === 0 ? (
+      {/* Non-broker message */}
+      {!isBroker && (
+        <section className="py-12 border-b border-border/50">
+          <div className="container-main">
             <AnimatedSection>
-              <div className="text-center py-20">
-                <ArrowRightLeft className="w-16 h-16 mx-auto text-muted-foreground/30 mb-4" />
-                <h3 className="text-xl font-semibold mb-2">{t.agrobroker.noRequestsYet}</h3>
-                <p className="text-muted-foreground mb-6">{t.agrobroker.createFirstDesc}</p>
-                <Button onClick={() => setDialogOpen(true)} className="btn-premium"><Plus className="w-4 h-4 mr-2" /> {t.agrobroker.createRequest}</Button>
+              <Card className="premium-card text-center max-w-2xl mx-auto">
+                <CardContent className="pt-8 pb-8">
+                  <Lock className="w-12 h-12 mx-auto mb-4 text-muted-foreground/50" />
+                  <h3 className="text-xl font-display font-bold mb-2">Доступ только для брокеров</h3>
+                  <p className="text-muted-foreground mb-6">
+                    Активные заявки видны только аккредитованным брокерам. Вы можете создать свою заявку на покупку или продажу — брокер свяжется с вами.
+                  </p>
+                  {!user && (
+                    <Button onClick={() => navigate('/auth/business')} className="btn-premium">
+                      Стать брокером
+                    </Button>
+                  )}
+                  {showUserOwnRequests && requests.length > 0 && (
+                    <div className="mt-8 text-left">
+                      <h4 className="font-semibold mb-4">Ваши заявки:</h4>
+                      <div className="space-y-3">
+                        {requests.map(req => (
+                          <div key={req.id} className="flex items-center gap-4 p-4 rounded-xl bg-accent/20">
+                            <div className="min-w-0 flex-1">
+                              <p className="font-medium text-sm">{req.product_type} — {req.quantity}</p>
+                              <p className="text-xs text-muted-foreground">{req.location} • {statusLabels[req.status] || req.status}</p>
+                            </div>
+                            <Badge variant="outline" className={statusColors[req.status] || ''}>
+                              {statusLabels[req.status] || req.status}
+                            </Badge>
+                          </div>
+                        ))}
+                      </div>
+                    </div>
+                  )}
+                </CardContent>
+              </Card>
+            </AnimatedSection>
+          </div>
+        </section>
+      )}
+
+      {/* Stats — only for brokers */}
+      {showBrokerFeed && (
+        <section className="py-12 border-b border-border/50">
+          <div className="container-main">
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+              {[
+                { icon: TrendingUp, label: t.agrobroker.sellRequestsLabel, value: sellCount, color: 'text-emerald-500' },
+                { icon: Package, label: t.agrobroker.buyRequestsLabel, value: buyCount, color: 'text-blue-500' },
+                { icon: Handshake, label: t.agrobroker.potentialDeals, value: matchCount, color: 'text-primary' },
+              ].map((stat, i) => (
+                <AnimatedSection key={i} delay={i * 0.1}>
+                  <Card className="premium-card text-center">
+                    <CardContent className="pt-6">
+                      <stat.icon className={`w-8 h-8 mx-auto mb-3 ${stat.color}`} />
+                      <div className="text-3xl font-display font-bold">{stat.value}</div>
+                      <div className="text-sm text-muted-foreground mt-1">{stat.label}</div>
+                    </CardContent>
+                  </Card>
+                </AnimatedSection>
+              ))}
+            </div>
+          </div>
+        </section>
+      )}
+
+      {/* Requests — broker only */}
+      {showBrokerFeed && (
+        <section className="section-padding">
+          <div className="container-main">
+            <AnimatedSection>
+              <div className="flex flex-col lg:flex-row justify-between items-start lg:items-center gap-4 mb-8">
+                <h2 className="text-2xl md:text-3xl font-display font-bold">{t.agrobroker.activeRequestsTitle}</h2>
+                <div className="flex flex-wrap gap-3">
+                  <div className="relative">
+                    <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
+                    <Input className="pl-9 w-48" placeholder={t.agrobroker.searchPlaceholder} value={search} onChange={e => setSearch(e.target.value)} />
+                  </div>
+                  <Select value={filterType} onValueChange={setFilterType}>
+                    <SelectTrigger className="w-36"><SelectValue /></SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="all">{t.agrobroker.allTypes}</SelectItem>
+                      <SelectItem value="sell">{t.agrobroker.sell}</SelectItem>
+                      <SelectItem value="buy">{t.agrobroker.buy}</SelectItem>
+                    </SelectContent>
+                  </Select>
+                  <Select value={filterProduct} onValueChange={setFilterProduct}>
+                    <SelectTrigger className="w-44"><SelectValue /></SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="all">{t.agrobroker.allProducts}</SelectItem>
+                      {productTypes.map(p => <SelectItem key={p} value={p}>{p}</SelectItem>)}
+                    </SelectContent>
+                  </Select>
+                  <Select value={filterRegion} onValueChange={setFilterRegion}>
+                    <SelectTrigger className="w-44"><SelectValue /></SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="all">{t.agrobroker.allRegions}</SelectItem>
+                      {regions.map(r => <SelectItem key={r} value={r}>{r}</SelectItem>)}
+                    </SelectContent>
+                  </Select>
+                </div>
               </div>
             </AnimatedSection>
-          ) : (
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-              <AnimatePresence>
-                {filtered.map((req, i) => (
-                  <motion.div key={req.id} initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: i * 0.05 }}>
-                    <Card className="premium-card h-full">
-                      <CardHeader className="pb-3">
-                        <div className="flex items-center justify-between mb-2">
-                          <Badge variant="outline" className={req.request_type === 'sell' ? 'bg-emerald-500/10 text-emerald-600 border-emerald-500/20' : 'bg-blue-500/10 text-blue-600 border-blue-500/20'}>
-                            {req.request_type === 'sell' ? t.agrobroker.saleBadge : t.agrobroker.purchaseBadge}
-                          </Badge>
-                          <Badge variant="outline" className={statusColors[req.status] || ''}>{statusLabels[req.status] || req.status}</Badge>
-                        </div>
-                        <CardTitle className="text-lg">{req.product_type}</CardTitle>
-                      </CardHeader>
-                      <CardContent className="space-y-3">
-                        <div className="flex items-center gap-2 text-sm text-muted-foreground"><Package className="w-4 h-4 shrink-0" /> {req.quantity}</div>
-                        {req.price_expectation && <div className="flex items-center gap-2 text-sm text-muted-foreground"><TrendingUp className="w-4 h-4 shrink-0" /> {req.price_expectation}</div>}
-                        <div className="flex items-center gap-2 text-sm text-muted-foreground"><MapPin className="w-4 h-4 shrink-0" /> {req.location}</div>
-                        <div className="flex items-center gap-2 text-sm text-muted-foreground"><User className="w-4 h-4 shrink-0" /> {req.contact_name}</div>
-                        {req.needs_delivery && <div className="flex items-center gap-2 text-sm text-primary"><Truck className="w-4 h-4 shrink-0" /> {t.agrobroker.needsDeliveryLabel}</div>}
-                        {req.description && <p className="text-sm text-muted-foreground line-clamp-2 pt-1 border-t border-border/50">{req.description}</p>}
-                        <div className="flex items-center justify-between pt-2 border-t border-border/50">
-                          <Badge variant="outline" className="text-xs gap-1">{trustIcons[req.trust_level]} {trustLabels[req.trust_level] || t.agrobroker.trustNew}</Badge>
-                          <span className="text-xs text-muted-foreground">{new Date(req.created_at).toLocaleDateString('ru')}</span>
-                        </div>
-                        {user && req.user_id !== user.id && (
-                          <Button variant="outline" size="sm" className="w-full mt-2" onClick={() => toast.success(t.agrobroker.contactRequest)}>
-                            <Handshake className="w-4 h-4 mr-2" /> {t.agrobroker.contact}
-                          </Button>
-                        )}
-                      </CardContent>
-                    </Card>
-                  </motion.div>
-                ))}
-              </AnimatePresence>
-            </div>
-          )}
-        </div>
-      </section>
+
+            {loading ? (
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                {[1,2,3].map(i => (<Card key={i} className="animate-pulse"><CardContent className="pt-6 h-48" /></Card>))}
+              </div>
+            ) : filtered.length === 0 ? (
+              <AnimatedSection>
+                <div className="text-center py-20">
+                  <ArrowRightLeft className="w-16 h-16 mx-auto text-muted-foreground/30 mb-4" />
+                  <h3 className="text-xl font-semibold mb-2">{t.agrobroker.noRequestsYet}</h3>
+                  <p className="text-muted-foreground mb-6">{t.agrobroker.createFirstDesc}</p>
+                </div>
+              </AnimatedSection>
+            ) : (
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                <AnimatePresence>
+                  {filtered.map((req, i) => (
+                    <motion.div key={req.id} initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: i * 0.05 }}>
+                      <Card className="premium-card h-full flex flex-col">
+                        <CardHeader className="pb-3">
+                          <div className="flex items-center justify-between mb-2">
+                            <Badge variant="outline" className={req.request_type === 'sell' ? 'bg-emerald-500/10 text-emerald-600 border-emerald-500/20' : 'bg-blue-500/10 text-blue-600 border-blue-500/20'}>
+                              {req.request_type === 'sell' ? t.agrobroker.saleBadge : t.agrobroker.purchaseBadge}
+                            </Badge>
+                            <Badge variant="outline" className={statusColors[req.status] || ''}>{statusLabels[req.status] || req.status}</Badge>
+                          </div>
+                          <CardTitle className="text-lg">{req.product_type}</CardTitle>
+                        </CardHeader>
+                        <CardContent className="space-y-3 flex-1 flex flex-col">
+                          <div className="flex items-center gap-2 text-sm text-muted-foreground"><Package className="w-4 h-4 shrink-0" /> {req.quantity}</div>
+                          {req.price_expectation && <div className="flex items-center gap-2 text-sm text-muted-foreground"><TrendingUp className="w-4 h-4 shrink-0" /> {req.price_expectation}</div>}
+                          <div className="flex items-center gap-2 text-sm text-muted-foreground"><MapPin className="w-4 h-4 shrink-0" /> {req.location}</div>
+                          <div className="flex items-center gap-2 text-sm text-muted-foreground"><User className="w-4 h-4 shrink-0" /> {req.contact_name}</div>
+                          {req.needs_delivery && <div className="flex items-center gap-2 text-sm text-primary"><Truck className="w-4 h-4 shrink-0" /> {t.agrobroker.needsDeliveryLabel}</div>}
+                          {req.description && <p className="text-sm text-muted-foreground line-clamp-2 pt-1 border-t border-border/50">{req.description}</p>}
+                          <div className="flex items-center justify-between pt-2 border-t border-border/50">
+                            <Badge variant="outline" className="text-xs gap-1">{trustIcons[req.trust_level]} {trustLabels[req.trust_level] || t.agrobroker.trustNew}</Badge>
+                            <span className="text-xs text-muted-foreground">{new Date(req.created_at).toLocaleDateString('ru')}</span>
+                          </div>
+                          {/* Claim button for brokers */}
+                          <div className="mt-auto pt-3">
+                            {confirmClaimId === req.id ? (
+                              <div className="space-y-2">
+                                <div className="p-3 rounded-lg bg-amber-500/10 border border-amber-500/20 text-sm">
+                                  <p className="font-medium text-amber-700 mb-1">Подтвердите взятие заявки</p>
+                                  <p className="text-muted-foreground">Комиссия: <strong>{(req.claim_fee || CLAIM_FEE).toLocaleString()} ₸</strong></p>
+                                </div>
+                                <div className="flex gap-2">
+                                  <Button size="sm" variant="outline" className="flex-1" onClick={() => setConfirmClaimId(null)}>Отмена</Button>
+                                  <Button size="sm" className="flex-1 gap-1" onClick={() => handleClaimRequest(req.id)} disabled={claimingId === req.id}>
+                                    <CreditCard className="w-4 h-4" />
+                                    {claimingId === req.id ? 'Обработка...' : 'Оплатить и взять'}
+                                  </Button>
+                                </div>
+                              </div>
+                            ) : (
+                              <Button variant="default" size="sm" className="w-full gap-2" onClick={() => setConfirmClaimId(req.id)}>
+                                <Handshake className="w-4 h-4" /> Взять заявку • {(req.claim_fee || CLAIM_FEE).toLocaleString()} ₸
+                              </Button>
+                            )}
+                          </div>
+                        </CardContent>
+                      </Card>
+                    </motion.div>
+                  ))}
+                </AnimatePresence>
+              </div>
+            )}
+          </div>
+        </section>
+      )}
 
       {/* How it works */}
       <section className="section-padding bg-muted/30">
