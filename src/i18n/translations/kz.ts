@@ -8,6 +8,7 @@ export const kz: TranslationKeys = {
     safeDeal: 'Қауіпсіз мәміле', aiAssistants: 'AI Көмекшілер', education: 'Білім',
     news: 'Жаңалықтар', about: 'Біз туралы', favorites: 'Таңдаулылар', login: 'Кіру',
     cabinet: 'Кабинет', sell: 'Тауар сату', logout: 'Шығу',
+    agroShorts: 'AgroShorts',
   },
   auth: {
     loginTitle: 'Аккаунтқа кіру', registerTitle: 'Аккаунт жасау',
