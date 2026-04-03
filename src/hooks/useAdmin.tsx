@@ -74,8 +74,18 @@ export function AdminProvider({ children }: { children: ReactNode }) {
   };
 
   const logout = async () => {
-    await supabase.auth.signOut();
-    setIsAdmin(false);
+    try {
+      const { error } = await supabase.auth.signOut({ scope: 'local' });
+      if (error && error.name !== 'AuthSessionMissingError') {
+        console.error('Admin sign out error:', error);
+      }
+    } catch (error) {
+      console.error('Admin sign out error:', error);
+    } finally {
+      setSession(null);
+      setUser(null);
+      setIsAdmin(false);
+    }
   };
 
   return (
