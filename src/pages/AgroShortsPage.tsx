@@ -38,45 +38,54 @@ export default function AgroShortsPage() {
   const { t } = useLanguage();
 
   const fetchVideos = useCallback(async () => {
-    setLoading(true);
-    const { data, error } = await supabase
-      .from('agro_shorts')
-      .select('*')
-      .eq('status', 'active')
-      .order('created_at', { ascending: false })
-      .limit(50);
+    try {
+      setLoading(true);
+      const { data, error } = await supabase
+        .from('agro_shorts')
+        .select('*')
+        .eq('status', 'active')
+        .order('created_at', { ascending: false })
+        .limit(50);
 
-    if (error) { console.error('Fetch shorts error:', error); setLoading(false); return; }
-    if (!data || data.length === 0) { setVideos([]); setLoading(false); return; }
+      if (error || !data || data.length === 0) {
+        setVideos([]);
+        setLoading(false);
+        return;
+      }
 
-    // Fetch author profiles
-    const userIds = [...new Set(data.map(v => v.user_id))];
-    const { data: profiles } = await supabase
-      .from('profiles')
-      .select('user_id, display_name, avatar_url')
-      .in('user_id', userIds);
-    const profileMap = new Map(profiles?.map(p => [p.user_id, p]) || []);
+      // Fetch author profiles
+      const userIds = [...new Set(data.map(v => v.user_id))];
+      const { data: profiles } = await supabase
+        .from('profiles')
+        .select('user_id, display_name, avatar_url')
+        .in('user_id', userIds);
+      const profileMap = new Map(profiles?.map(p => [p.user_id, p]) || []);
 
-    // Fetch linked products
-    const productIds = data.filter(v => v.product_id).map(v => v.product_id!);
-    let productMap = new Map<string, { title: string; price: number; image: string | null }>();
-    if (productIds.length > 0) {
-      const { data: prods } = await supabase
-        .from('products')
-        .select('id, title, price, image')
-        .in('id', productIds);
-      productMap = new Map(prods?.map(p => [p.id, p]) || []);
+      // Fetch linked products
+      const productIds = data.filter(v => v.product_id).map(v => v.product_id!);
+      let productMap = new Map<string, { title: string; price: number; image: string | null }>();
+      if (productIds.length > 0) {
+        const { data: prods } = await supabase
+          .from('products')
+          .select('id, title, price, image')
+          .in('id', productIds);
+        productMap = new Map(prods?.map(p => [p.id, p]) || []);
+      }
+
+      setVideos(data.map(v => ({
+        ...v,
+        author_name: profileMap.get(v.user_id)?.display_name || undefined,
+        author_avatar: profileMap.get(v.user_id)?.avatar_url || undefined,
+        product_title: v.product_id ? productMap.get(v.product_id)?.title : undefined,
+        product_price: v.product_id ? productMap.get(v.product_id)?.price : undefined,
+        product_image: v.product_id ? productMap.get(v.product_id)?.image : undefined,
+      })));
+    } catch (err) {
+      console.error('Error fetching shorts:', err);
+      setVideos([]);
+    } finally {
+      setLoading(false);
     }
-
-    setVideos(data.map(v => ({
-      ...v,
-      author_name: profileMap.get(v.user_id)?.display_name || undefined,
-      author_avatar: profileMap.get(v.user_id)?.avatar_url || undefined,
-      product_title: v.product_id ? productMap.get(v.product_id)?.title : undefined,
-      product_price: v.product_id ? productMap.get(v.product_id)?.price : undefined,
-      product_image: v.product_id ? productMap.get(v.product_id)?.image : undefined,
-    })));
-    setLoading(false);
   }, []);
 
   useEffect(() => { fetchVideos(); }, [fetchVideos]);
