@@ -16,6 +16,7 @@ export const ru = {
     cabinet: 'Кабинет',
     sell: 'Продать товар',
     logout: 'Выйти',
+    agroShorts: 'AgroShorts',
   },
 
   auth: {
