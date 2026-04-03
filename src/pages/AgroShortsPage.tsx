@@ -32,7 +32,7 @@ export default function AgroShortsPage() {
   const [activeIndex, setActiveIndex] = useState(0);
   const [commentOpen, setCommentOpen] = useState(false);
   const [uploadOpen, setUploadOpen] = useState(false);
-  const [loading, setLoading] = useState(false);
+  const [loading, setLoading] = useState(true);
   const containerRef = useRef<HTMLDivElement>(null);
   const { user } = useAuth();
   const { t } = useLanguage();
