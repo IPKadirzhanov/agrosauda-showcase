@@ -49,7 +49,7 @@ export default function NewsPage() {
                   </div>
                   <h3 className="font-display font-semibold text-lg mb-2 group-hover:text-primary transition-colors line-clamp-2">{article.title}</h3>
                   <p className="text-sm text-muted-foreground line-clamp-2 mb-3">{article.excerpt}</p>
-                  <p className="text-xs text-muted-foreground">{article.date}</p>
+                  <p className="text-xs text-muted-foreground mt-auto">{article.date}</p>
                 </div>
               </div>
             </AnimatedSection>

@@ -60,7 +60,7 @@ export default function EducationPage() {
                     </div>
                     <span className="absolute top-3 left-3 px-2.5 py-1 rounded-lg bg-foreground/80 text-background text-xs font-semibold">{course.level}</span>
                   </div>
-                  <div className="p-5">
+                  <div className="p-5 flex-1 flex flex-col">
                     <span className="text-xs text-primary font-semibold">{course.category}</span>
                     <h3 className="font-display font-semibold text-lg mt-1 mb-2 group-hover:text-primary transition-colors">{course.title}</h3>
                     <p className="text-xs text-muted-foreground mb-3">{course.instructor}</p>
