@@ -39,13 +39,14 @@ export default function AgroShortsPage() {
 
   const fetchVideos = useCallback(async () => {
     setLoading(true);
-    const { data } = await supabase
+    const { data, error } = await supabase
       .from('agro_shorts')
       .select('*')
       .eq('status', 'active')
       .order('created_at', { ascending: false })
       .limit(50);
 
+    if (error) { console.error('Fetch shorts error:', error); setLoading(false); return; }
     if (!data || data.length === 0) { setVideos([]); setLoading(false); return; }
 
     // Fetch author profiles
