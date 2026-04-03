@@ -3,6 +3,7 @@ import { useNavigate, Link } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useAuth } from '@/hooks/useAuth';
 import { supabase } from '@/integrations/supabase/client';
+import { lovable } from '@/integrations/lovable';
 import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
 import { Mail, Lock, User, Eye, EyeOff, ArrowRight, Sparkles, Check, Phone, Building2 } from 'lucide-react';
