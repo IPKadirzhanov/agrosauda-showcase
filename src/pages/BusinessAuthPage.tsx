@@ -57,25 +57,16 @@ export default function BusinessAuthPage() {
           email,
           password,
           options: {
-            data: { display_name: contactPerson, company_name: companyName },
+            data: { display_name: contactPerson, company_name: companyName, account_type: accountType },
             emailRedirectTo: window.location.origin,
           },
         });
         if (signUpError) { setError(signUpError.message); setLoading(false); return; }
         if (data.user) {
-          // Update profile with account_type (trigger already created it)
+          // Update profile with phone (trigger already created profile and assigned roles)
           await supabase.from('profiles')
-            .update({
-              display_name: contactPerson,
-              phone: phone.trim() || null,
-              account_type: accountType,
-            })
+            .update({ phone: phone.trim() || null })
             .eq('user_id', data.user.id);
-          // Assign broker/business role (trigger already added 'user')
-          await supabase.from('user_roles').insert({
-            user_id: data.user.id,
-            role: accountType as any,
-          });
         }
         setSuccess(t.auth.registrationSuccess);
         toast.success(t.auth.accountCreated);
