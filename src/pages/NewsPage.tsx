@@ -1,8 +1,10 @@
-import { Clock, Tag } from 'lucide-react';
+import { Clock } from 'lucide-react';
 import AnimatedSection from '@/components/AnimatedSection';
 import { newsArticles } from '@/data/mockData';
+import { useLanguage } from '@/i18n/LanguageContext';
 
 export default function NewsPage() {
+  const { t } = useLanguage();
   const featured = newsArticles[0];
   const rest = newsArticles.slice(1);
 
@@ -10,11 +12,10 @@ export default function NewsPage() {
     <div className="min-h-screen pt-24 pb-20">
       <div className="container-main px-4 sm:px-6 lg:px-8">
         <AnimatedSection className="mb-10">
-          <h1 className="font-display font-bold text-4xl sm:text-5xl mb-2">Новости АПК</h1>
-          <p className="text-muted-foreground text-lg">Актуальные события сельского хозяйства Казахстана</p>
+          <h1 className="font-display font-bold text-4xl sm:text-5xl mb-2">{t.news.pageTitle}</h1>
+          <p className="text-muted-foreground text-lg">{t.news.pageSubtitle}</p>
         </AnimatedSection>
 
-        {/* Featured */}
         <AnimatedSection className="mb-12">
           <div className="premium-card rounded-2xl overflow-hidden group cursor-pointer">
             <div className="grid grid-cols-1 lg:grid-cols-2">
@@ -34,7 +35,6 @@ export default function NewsPage() {
           </div>
         </AnimatedSection>
 
-        {/* Grid */}
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
           {rest.map((article, i) => (
             <AnimatedSection key={article.id} delay={i * 0.1}>
