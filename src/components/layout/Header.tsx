@@ -1,28 +1,32 @@
 import { useState, useEffect, useRef, useCallback } from 'react';
 import { Link, useLocation, useNavigate } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Menu, X, Heart, ChevronDown, User, LogOut } from 'lucide-react';
+import { Menu, X, Heart, User, LogOut, Globe } from 'lucide-react';
 import { useAuth } from '@/hooks/useAuth';
-
-const navLinks = [
-  { name: 'Agro Shop', path: '/agro-shop' },
-  { name: 'Объявления', path: '/classifieds' },
-  { name: 'AgroBroker', path: '/agrobroker' },
-  { name: 'Безопасная сделка', path: '/safe-deal' },
-  { name: 'AI Ассистенты', path: '/ai-assistants' },
-  { name: 'Обучение', path: '/education' },
-  { name: 'Новости', path: '/news' },
-  { name: 'О нас', path: '/about' },
-];
+import { useLanguage, languages } from '@/i18n';
 
 export default function Header() {
   const [scrolled, setScrolled] = useState(false);
   const [mobileOpen, setMobileOpen] = useState(false);
+  const [langOpen, setLangOpen] = useState(false);
   const location = useLocation();
   const navigate = useNavigate();
   const clickCountRef = useRef(0);
   const clickTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   const { user, profile, signOut } = useAuth();
+  const { t, lang, setLang } = useLanguage();
+  const langRef = useRef<HTMLDivElement>(null);
+
+  const navLinks = [
+    { name: t.nav.agroShop, path: '/agro-shop' },
+    { name: t.nav.classifieds, path: '/classifieds' },
+    { name: t.nav.agroBroker, path: '/agrobroker' },
+    { name: t.nav.safeDeal, path: '/safe-deal' },
+    { name: t.nav.aiAssistants, path: '/ai-assistants' },
+    { name: t.nav.education, path: '/education' },
+    { name: t.nav.news, path: '/news' },
+    { name: t.nav.about, path: '/about' },
+  ];
 
   const handleLogoClick = useCallback((e: React.MouseEvent) => {
     clickCountRef.current += 1;
@@ -44,22 +48,26 @@ export default function Header() {
 
   useEffect(() => { setMobileOpen(false); }, [location]);
 
+  // Close lang dropdown on outside click
+  useEffect(() => {
+    const handler = (e: MouseEvent) => {
+      if (langRef.current && !langRef.current.contains(e.target as Node)) setLangOpen(false);
+    };
+    document.addEventListener('mousedown', handler);
+    return () => document.removeEventListener('mousedown', handler);
+  }, []);
+
   const isHome = location.pathname === '/';
   const showTransparent = isHome && !scrolled;
+  const currentLang = languages.find(l => l.code === lang);
 
   return (
-    <header className={`fixed top-0 left-0 right-0 z-50 transition-all duration-700 ${
-      showTransparent
-        ? 'bg-transparent'
-        : 'glass-header shadow-sm'
-    }`}>
+    <header className={`fixed top-0 left-0 right-0 z-50 transition-all duration-700 ${showTransparent ? 'bg-transparent' : 'glass-header shadow-sm'}`}>
       <div className="container-main flex items-center justify-between h-[72px] px-4 sm:px-6 lg:px-8">
         {/* Logo */}
         <Link to="/" className="flex items-center gap-2.5 group" onClick={handleLogoClick}>
           <img src="/logo1.png" alt="Agrosauda" className="w-10 h-10 rounded-xl group-hover:scale-105 transition-transform duration-300 shadow-md object-contain" />
-          <span className={`font-display font-bold text-[22px] tracking-tight transition-colors duration-300 ${
-            showTransparent ? 'text-white' : 'text-foreground'
-          }`}>
+          <span className={`font-display font-bold text-[22px] tracking-tight transition-colors duration-300 ${showTransparent ? 'text-white' : 'text-foreground'}`}>
             Agro<span className="text-primary">sauda</span>
           </span>
         </Link>
@@ -67,17 +75,11 @@ export default function Header() {
         {/* Desktop Nav */}
         <nav className="hidden lg:flex items-center gap-0.5">
           {navLinks.map(link => (
-            <Link
-              key={link.path}
-              to={link.path}
+            <Link key={link.path} to={link.path}
               className={`px-3 py-2 rounded-lg text-[13px] font-medium tracking-wide transition-all duration-300 ${
-                location.pathname === link.path
-                  ? 'text-primary bg-primary/8'
-                  : showTransparent
-                    ? 'text-white/85 hover:text-white hover:bg-white/10'
-                    : 'text-muted-foreground hover:text-foreground hover:bg-accent/60'
-              }`}
-            >
+                location.pathname === link.path ? 'text-primary bg-primary/8' :
+                showTransparent ? 'text-white/85 hover:text-white hover:bg-white/10' : 'text-muted-foreground hover:text-foreground hover:bg-accent/60'
+              }`}>
               {link.name}
             </Link>
           ))}
@@ -85,63 +87,70 @@ export default function Header() {
 
         {/* Desktop Actions */}
         <div className="hidden lg:flex items-center gap-3">
-          <Link to="/favorites" className={`p-2.5 rounded-xl transition-all duration-300 ${
-            showTransparent
-              ? 'text-white/70 hover:text-white hover:bg-white/10'
-              : 'text-muted-foreground hover:text-foreground hover:bg-accent'
-          }`}>
+          {/* Language Switcher */}
+          <div ref={langRef} className="relative">
+            <button
+              onClick={() => setLangOpen(!langOpen)}
+              className={`flex items-center gap-1.5 px-2.5 py-2 rounded-xl text-xs font-medium transition-all duration-300 ${
+                showTransparent ? 'text-white/70 hover:text-white hover:bg-white/10' : 'text-muted-foreground hover:text-foreground hover:bg-accent'
+              }`}
+            >
+              <Globe className="w-4 h-4" />
+              <span>{currentLang?.flag}</span>
+            </button>
+            <AnimatePresence>
+              {langOpen && (
+                <motion.div
+                  initial={{ opacity: 0, y: 5 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  exit={{ opacity: 0, y: 5 }}
+                  className="absolute right-0 top-full mt-2 w-40 rounded-xl border border-border bg-card shadow-xl overflow-hidden z-50"
+                >
+                  {languages.map(l => (
+                    <button
+                      key={l.code}
+                      onClick={() => { setLang(l.code as any); setLangOpen(false); }}
+                      className={`w-full flex items-center gap-3 px-4 py-2.5 text-sm transition-colors ${lang === l.code ? 'bg-primary/10 text-primary font-medium' : 'text-foreground hover:bg-accent/50'}`}
+                    >
+                      <span>{l.flag}</span>
+                      {l.label}
+                    </button>
+                  ))}
+                </motion.div>
+              )}
+            </AnimatePresence>
+          </div>
+
+          <Link to="/favorites" className={`p-2.5 rounded-xl transition-all duration-300 ${showTransparent ? 'text-white/70 hover:text-white hover:bg-white/10' : 'text-muted-foreground hover:text-foreground hover:bg-accent'}`}>
             <Heart className="w-[18px] h-[18px]" />
           </Link>
           {user ? (
             <>
-              <Link
-                to="/dashboard"
-                className={`flex items-center gap-2 px-3.5 py-2 rounded-xl text-sm font-medium transition-all duration-300 ${
-                  showTransparent
-                    ? 'text-white/80 hover:text-white hover:bg-white/10'
-                    : 'text-muted-foreground hover:text-foreground hover:bg-accent/60'
-                }`}
-              >
+              <Link to="/dashboard"
+                className={`flex items-center gap-2 px-3.5 py-2 rounded-xl text-sm font-medium transition-all duration-300 ${showTransparent ? 'text-white/80 hover:text-white hover:bg-white/10' : 'text-muted-foreground hover:text-foreground hover:bg-accent/60'}`}>
                 <User className="w-4 h-4" />
-                {profile?.display_name || 'Кабинет'}
+                {profile?.display_name || t.nav.cabinet}
               </Link>
-              <button
-                onClick={async () => { await signOut(); navigate('/'); }}
-                className={`p-2.5 rounded-xl transition-all duration-300 ${
-                  showTransparent
-                    ? 'text-white/70 hover:text-white hover:bg-white/10'
-                    : 'text-muted-foreground hover:text-foreground hover:bg-accent'
-                }`}
-              >
+              <button onClick={async () => { await signOut(); navigate('/'); }}
+                className={`p-2.5 rounded-xl transition-all duration-300 ${showTransparent ? 'text-white/70 hover:text-white hover:bg-white/10' : 'text-muted-foreground hover:text-foreground hover:bg-accent'}`}>
                 <LogOut className="w-[18px] h-[18px]" />
               </button>
             </>
           ) : (
-            <Link
-              to="/auth"
-              className={`flex items-center gap-2 px-4 py-2 rounded-xl text-sm font-medium border transition-all duration-300 ${
-                showTransparent
-                  ? 'text-white border-white/30 hover:bg-white/10'
-                  : 'text-foreground border-border hover:bg-accent'
-              }`}
-            >
+            <Link to="/auth"
+              className={`flex items-center gap-2 px-4 py-2 rounded-xl text-sm font-medium border transition-all duration-300 ${showTransparent ? 'text-white border-white/30 hover:bg-white/10' : 'text-foreground border-border hover:bg-accent'}`}>
               <User className="w-4 h-4" />
-              Войти
+              {t.nav.login}
             </Link>
           )}
-          <Link
-            to="/sell"
-            className="btn-premium !px-6 !py-2.5 !rounded-xl !text-sm"
-          >
-            Продать товар
+          <Link to="/sell" className="btn-premium !px-6 !py-2.5 !rounded-xl !text-sm">
+            {t.nav.sell}
           </Link>
         </div>
 
         {/* Mobile Toggle */}
         <button
-          className={`lg:hidden p-2.5 rounded-xl transition-all duration-300 ${
-            showTransparent ? 'text-white hover:bg-white/10' : 'hover:bg-accent'
-          }`}
+          className={`lg:hidden p-2.5 rounded-xl transition-all duration-300 ${showTransparent ? 'text-white hover:bg-white/10' : 'hover:bg-accent'}`}
           onClick={() => setMobileOpen(!mobileOpen)}
         >
           {mobileOpen ? <X className="w-5 h-5" /> : <Menu className="w-5 h-5" />}
@@ -151,38 +160,36 @@ export default function Header() {
       {/* Mobile Menu */}
       <AnimatePresence>
         {mobileOpen && (
-          <motion.div
-            initial={{ opacity: 0, height: 0 }}
-            animate={{ opacity: 1, height: 'auto' }}
-            exit={{ opacity: 0, height: 0 }}
-            className="lg:hidden glass-header border-t border-border/50 overflow-hidden"
-          >
+          <motion.div initial={{ opacity: 0, height: 0 }} animate={{ opacity: 1, height: 'auto' }} exit={{ opacity: 0, height: 0 }} className="lg:hidden glass-header border-t border-border/50 overflow-hidden">
             <nav className="flex flex-col p-4 gap-0.5">
+              {/* Mobile Language Switcher */}
+              <div className="flex gap-1 mb-3 pb-3 border-b border-border/50">
+                {languages.map(l => (
+                  <button key={l.code} onClick={() => setLang(l.code as any)}
+                    className={`flex-1 flex items-center justify-center gap-1.5 py-2 rounded-lg text-xs font-medium transition-all ${lang === l.code ? 'bg-primary/10 text-primary' : 'text-muted-foreground hover:bg-accent/50'}`}>
+                    <span>{l.flag}</span> {l.label}
+                  </button>
+                ))}
+              </div>
+
               {navLinks.map(link => (
-                <Link
-                  key={link.path}
-                  to={link.path}
-                  className={`px-4 py-3 rounded-xl text-sm font-medium transition-all duration-300 ${
-                    location.pathname === link.path
-                      ? 'text-primary bg-accent'
-                      : 'text-muted-foreground hover:text-foreground hover:bg-accent/50'
-                  }`}
-                >
+                <Link key={link.path} to={link.path}
+                  className={`px-4 py-3 rounded-xl text-sm font-medium transition-all duration-300 ${location.pathname === link.path ? 'text-primary bg-accent' : 'text-muted-foreground hover:text-foreground hover:bg-accent/50'}`}>
                   {link.name}
                 </Link>
               ))}
               <div className="flex gap-2 mt-4 pt-4 border-t border-border/50">
                 {user ? (
                   <Link to="/dashboard" className="flex-1 flex items-center justify-center gap-2 px-4 py-3 rounded-xl border border-border text-sm font-medium hover:bg-accent transition-all duration-300">
-                    <User className="w-4 h-4" /> Кабинет
+                    <User className="w-4 h-4" /> {t.nav.cabinet}
                   </Link>
                 ) : (
                   <Link to="/auth" className="flex-1 flex items-center justify-center gap-2 px-4 py-3 rounded-xl border border-border text-sm font-medium hover:bg-accent transition-all duration-300">
-                    <User className="w-4 h-4" /> Войти
+                    <User className="w-4 h-4" /> {t.nav.login}
                   </Link>
                 )}
                 <Link to="/sell" className="flex-1 btn-premium !py-3 !rounded-xl !text-sm text-center">
-                  Продать
+                  {t.nav.sell}
                 </Link>
               </div>
             </nav>
