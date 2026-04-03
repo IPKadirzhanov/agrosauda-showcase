@@ -86,6 +86,7 @@ function AppLayout() {
           <Route path="shops" element={<AdminShopsPage />} />
           <Route path="analytics" element={<AdminAnalyticsPage />} />
           <Route path="broker" element={<AdminBrokerPage />} />
+          <Route path="shorts" element={<AdminShortsPage />} />
         </Route>
 
         <Route path="*" element={<NotFound />} />

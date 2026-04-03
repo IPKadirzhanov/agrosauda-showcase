@@ -13,6 +13,7 @@ const sidebarLinks = [
   { name: 'Безопасные сделки', path: '/admin/orders', icon: ShieldCheck },
   { name: 'Agro Shop', path: '/admin/shops', icon: Package },
   { name: 'AgroBroker', path: '/admin/broker', icon: Handshake },
+  { name: 'AgroShorts', path: '/admin/shorts', icon: Film },
   { name: 'Аналитика', path: '/admin/analytics', icon: BarChart3 },
 ];
 
