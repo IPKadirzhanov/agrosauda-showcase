@@ -181,7 +181,7 @@ export default function HomePage() {
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5">
             {services.map((item, i) => (
               <AnimatedSection key={i} delay={i * 0.08}>
-                <Link to={item.link} className="premium-card p-7 rounded-2xl block group relative overflow-hidden">
+                <Link to={item.link} className="premium-card p-7 rounded-2xl block group relative overflow-hidden h-full">
                   <div className={`absolute top-0 right-0 w-32 h-32 bg-gradient-to-bl ${item.gradient} rounded-full blur-2xl -translate-y-8 translate-x-8 opacity-60 group-hover:opacity-100 transition-opacity duration-500`} />
                   <div className="relative">
                     <div className="w-14 h-14 rounded-2xl bg-gradient-to-br from-primary/15 to-primary/5 border border-primary/10 flex items-center justify-center mb-5 group-hover:scale-110 group-hover:shadow-lg transition-all duration-500"><item.icon className="w-6 h-6 text-primary" /></div>
