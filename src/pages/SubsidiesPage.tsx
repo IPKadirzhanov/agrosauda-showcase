@@ -48,7 +48,7 @@ export default function SubsidiesPage() {
           <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
             {filtered.map((program, i) => (
               <AnimatedSection key={program.id} delay={i * 0.1}>
-                <div className="premium-card p-6 rounded-2xl">
+                <div className="premium-card p-6 rounded-2xl h-full flex flex-col">
                   <div className="flex items-start justify-between mb-3">
                     <span className="px-3 py-1 rounded-lg bg-primary/10 text-primary text-xs font-semibold">{program.category}</span>
                     <span className="text-xs text-muted-foreground">{program.region}</span>
