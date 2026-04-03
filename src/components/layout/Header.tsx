@@ -22,11 +22,9 @@ export default function Header() {
     { name: t.nav.classifieds, path: '/classifieds' },
     { name: t.nav.agroBroker, path: '/agrobroker' },
     { name: t.nav.agroShorts, path: '/agroshorts' },
-    { name: t.nav.safeDeal, path: '/safe-deal' },
     { name: t.nav.aiAssistants, path: '/ai-assistants' },
     { name: t.nav.education, path: '/education' },
     { name: t.nav.news, path: '/news' },
-    { name: t.nav.about, path: '/about' },
   ];
 
   const handleLogoClick = useCallback((e: React.MouseEvent) => {
