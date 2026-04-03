@@ -67,6 +67,7 @@ function AppLayout() {
         <Route path="/agro-shop" element={<AgroShopPage />} />
         <Route path="/classifieds" element={<ClassifiedsPage />} />
         <Route path="/agrobroker" element={<AgroBrokerPage />} />
+        <Route path="/agroshorts" element={<AgroShortsPage />} />
         <Route path="/auth" element={<AuthPage />} />
         <Route path="/auth/business" element={<BusinessAuthPage />} />
         <Route path="/dashboard" element={<DashboardPage />} />
