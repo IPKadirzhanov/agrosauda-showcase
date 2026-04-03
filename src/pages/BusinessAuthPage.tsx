@@ -63,17 +63,18 @@ export default function BusinessAuthPage() {
         });
         if (signUpError) { setError(signUpError.message); setLoading(false); return; }
         if (data.user) {
-          // Create profile with account_type
-          await supabase.from('profiles').insert({
-            user_id: data.user.id,
-            display_name: contactPerson,
-            phone: phone.trim() || null,
-            account_type: accountType,
-          });
-          // Assign role
+          // Update profile with account_type (trigger already created it)
+          await supabase.from('profiles')
+            .update({
+              display_name: contactPerson,
+              phone: phone.trim() || null,
+              account_type: accountType,
+            })
+            .eq('user_id', data.user.id);
+          // Assign broker/business role (trigger already added 'user')
           await supabase.from('user_roles').insert({
             user_id: data.user.id,
-            role: accountType,
+            role: accountType as any,
           });
         }
         setSuccess(t.auth.registrationSuccess);

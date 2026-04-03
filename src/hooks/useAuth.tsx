@@ -86,11 +86,20 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     const { data } = await supabase
       .from('user_roles')
       .select('role')
-      .eq('user_id', userId)
-      .maybeSingle();
+      .eq('user_id', userId);
 
     if (requestVersion !== authRequestVersionRef.current) return;
-    setUserRole(data?.role || 'user');
+    
+    if (data && data.length > 0) {
+      const roles = data.map(r => r.role);
+      // Prioritize: admin > broker > business > user
+      if (roles.includes('admin')) setUserRole('admin');
+      else if (roles.includes('broker')) setUserRole('broker');
+      else if (roles.includes('business')) setUserRole('business');
+      else setUserRole(roles[0] || 'user');
+    } else {
+      setUserRole('user');
+    }
   };
 
   const refreshProfile = async () => {
