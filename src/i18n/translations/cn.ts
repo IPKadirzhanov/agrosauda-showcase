@@ -8,6 +8,7 @@ export const cn: TranslationKeys = {
     safeDeal: '安全交易', aiAssistants: 'AI 助手', education: '教育',
     news: '新闻', about: '关于我们', favorites: '收藏', login: '登录',
     cabinet: '控制面板', sell: '出售商品', logout: '退出',
+    agroShorts: 'AgroShorts',
   },
   auth: {
     loginTitle: '登录账户', registerTitle: '创建账户', loginSubtitle: '访问您的个人面板',
