@@ -8,7 +8,7 @@ import { Button } from '@/components/ui/button';
 import { Mail, Lock, User, Eye, EyeOff, ArrowRight, Sparkles, Check, Phone, Building2 } from 'lucide-react';
 import { toast } from 'sonner';
 import { useLanguage } from '@/i18n';
-import { lovable } from '@/integrations/lovable/index';
+
 
 export default function AuthPage() {
   const [mode, setMode] = useState<'login' | 'register'>('login');
