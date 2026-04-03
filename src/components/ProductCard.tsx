@@ -11,7 +11,7 @@ export default function ProductCard({ product }: Props) {
   const [liked, setLiked] = useState(false);
 
   return (
-    <div className="premium-card rounded-2xl overflow-hidden group">
+    <div className="premium-card rounded-2xl overflow-hidden group h-full flex flex-col">
       {/* Image */}
       <div className="relative aspect-[4/3] overflow-hidden">
         <img
@@ -39,7 +39,7 @@ export default function ProductCard({ product }: Props) {
       </div>
 
       {/* Content */}
-      <div className="p-5">
+      <div className="p-5 flex-1 flex flex-col">
         <p className="text-[11px] text-muted-foreground font-medium uppercase tracking-wider mb-1.5">{product.category}</p>
         <h3 className="font-display font-bold text-[15px] leading-snug mb-2 line-clamp-2 group-hover:text-primary transition-colors duration-300">
           {product.title}
@@ -54,7 +54,7 @@ export default function ProductCard({ product }: Props) {
         <p className="text-[11px] text-muted-foreground mb-4">{product.seller}</p>
         <Link
           to={`/product/${product.id}`}
-          className="block w-full text-center py-3 rounded-xl bg-primary/8 text-primary text-sm font-bold hover:bg-primary hover:text-primary-foreground transition-all duration-400 border border-primary/10 hover:border-primary group/btn"
+          className="mt-auto block w-full text-center py-3 rounded-xl bg-primary/8 text-primary text-sm font-bold hover:bg-primary hover:text-primary-foreground transition-all duration-400 border border-primary/10 hover:border-primary group/btn"
         >
           <span className="inline-flex items-center gap-1.5">
             Подробнее <ArrowRight className="w-3.5 h-3.5 group-hover/btn:translate-x-0.5 transition-transform" />

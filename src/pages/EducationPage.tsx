@@ -50,7 +50,7 @@ export default function EducationPage() {
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
             {filtered.map((course, i) => (
               <AnimatedSection key={course.id} delay={i * 0.1}>
-                <div className="premium-card rounded-2xl overflow-hidden group">
+                <div className="premium-card rounded-2xl overflow-hidden group h-full flex flex-col">
                   <div className="relative aspect-video overflow-hidden">
                     <img src={course.image} alt={course.title} className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" loading="lazy" />
                     <div className="absolute inset-0 bg-foreground/20 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity">
@@ -60,7 +60,7 @@ export default function EducationPage() {
                     </div>
                     <span className="absolute top-3 left-3 px-2.5 py-1 rounded-lg bg-foreground/80 text-background text-xs font-semibold">{course.level}</span>
                   </div>
-                  <div className="p-5">
+                  <div className="p-5 flex-1 flex flex-col">
                     <span className="text-xs text-primary font-semibold">{course.category}</span>
                     <h3 className="font-display font-semibold text-lg mt-1 mb-2 group-hover:text-primary transition-colors">{course.title}</h3>
                     <p className="text-xs text-muted-foreground mb-3">{course.instructor}</p>
@@ -68,7 +68,7 @@ export default function EducationPage() {
                       <span className="flex items-center gap-1"><Clock className="w-3 h-3" /> {course.duration}</span>
                       <span className="flex items-center gap-1"><BookOpen className="w-3 h-3" /> {course.lessons} {t.education.lessons}</span>
                     </div>
-                    <button className="mt-4 w-full py-2.5 rounded-xl bg-primary/10 text-primary text-sm font-semibold hover:bg-primary hover:text-primary-foreground transition-colors">
+                    <button className="mt-auto pt-4 w-full py-2.5 rounded-xl bg-primary/10 text-primary text-sm font-semibold hover:bg-primary hover:text-primary-foreground transition-colors">
                       {t.education.startLearning}
                     </button>
                   </div>

@@ -131,7 +131,7 @@ export default function HomePage() {
           <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-7 gap-3">
             {categories.map((cat, i) => (
               <AnimatedSection key={cat.slug} delay={i * 0.04}>
-                <Link to={`/marketplace?cat=${cat.slug}`} className="premium-card p-5 rounded-xl text-center group block">
+                <Link to={`/marketplace?cat=${cat.slug}`} className="premium-card p-5 rounded-xl text-center group block h-full">
                   <span className="text-3xl mb-3 block group-hover:scale-110 transition-transform duration-500">{cat.icon}</span>
                   <p className="font-semibold text-sm mb-0.5 group-hover:text-primary transition-colors duration-300">{cat.name}</p>
                   <p className="text-xs text-muted-foreground">{cat.count} {t.home.productsCount}</p>
@@ -181,7 +181,7 @@ export default function HomePage() {
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5">
             {services.map((item, i) => (
               <AnimatedSection key={i} delay={i * 0.08}>
-                <Link to={item.link} className="premium-card p-7 rounded-2xl block group relative overflow-hidden">
+                <Link to={item.link} className="premium-card p-7 rounded-2xl block group relative overflow-hidden h-full">
                   <div className={`absolute top-0 right-0 w-32 h-32 bg-gradient-to-bl ${item.gradient} rounded-full blur-2xl -translate-y-8 translate-x-8 opacity-60 group-hover:opacity-100 transition-opacity duration-500`} />
                   <div className="relative">
                     <div className="w-14 h-14 rounded-2xl bg-gradient-to-br from-primary/15 to-primary/5 border border-primary/10 flex items-center justify-center mb-5 group-hover:scale-110 group-hover:shadow-lg transition-all duration-500"><item.icon className="w-6 h-6 text-primary" /></div>

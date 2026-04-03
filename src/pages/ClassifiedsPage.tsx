@@ -139,7 +139,7 @@ export default function ClassifiedsPage() {
           <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-4">
             {popularCategories.map((cat, i) => (
               <AnimatedSection key={i} delay={i * 0.06}>
-                <div className="premium-card rounded-xl p-5 text-center hover:border-primary/30 transition-all duration-300 cursor-pointer group">
+                <div className="premium-card rounded-xl p-5 text-center hover:border-primary/30 transition-all duration-300 cursor-pointer group h-full">
                   <span className="text-4xl block mb-3 group-hover:scale-110 transition-transform duration-300">{cat.icon}</span>
                   <p className="font-medium text-sm mb-1">{cat.name}</p>
                   <p className="text-xs text-muted-foreground">{cat.count} {t.classifieds.listingsLabel}</p>
@@ -188,13 +188,13 @@ export default function ClassifiedsPage() {
           <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-5">
             {sampleListings.map((item, i) => (
               <AnimatedSection key={i} delay={i * 0.06}>
-                <div className="premium-card rounded-2xl overflow-hidden group">
+                <div className="premium-card rounded-2xl overflow-hidden group h-full flex flex-col">
                   <div className="relative aspect-[4/3] overflow-hidden">
                     <img src={item.img} alt={item.title} className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700" loading="lazy" />
                     <div className="absolute inset-0 bg-gradient-to-t from-black/40 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
                     <span className={`absolute top-3 left-3 px-3 py-1 rounded-lg text-[11px] font-bold uppercase ${item.condition === 'Новый' ? 'bg-primary text-primary-foreground' : 'bg-foreground/80 text-background'}`}>{item.condition}</span>
                   </div>
-                  <div className="p-5">
+                  <div className="p-5 flex-1 flex flex-col">
                     <p className="text-[11px] text-muted-foreground uppercase tracking-wider mb-1">{item.category}</p>
                     <h3 className="font-display font-bold text-[15px] mb-2 line-clamp-2 group-hover:text-primary transition-colors">{item.title}</h3>
                     <p className="text-xs text-muted-foreground mb-3">📍 {item.location}</p>
