@@ -37,6 +37,7 @@ import AdminAIPage from "./pages/admin/AdminAIPage";
 import AdminOrdersPage from "./pages/admin/AdminOrdersPage";
 import AdminShopsPage from "./pages/admin/AdminShopsPage";
 import AdminAnalyticsPage from "./pages/admin/AdminAnalyticsPage";
+import AdminShortsPage from "./pages/admin/AdminShortsPage";
 import FloatingAIWidget from "./components/FloatingAIWidget";
 import AgroBrokerPage from "./pages/AgroBrokerPage";
 import AdminBrokerPage from "./pages/admin/AdminBrokerPage";
