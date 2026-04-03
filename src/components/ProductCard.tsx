@@ -11,7 +11,7 @@ export default function ProductCard({ product }: Props) {
   const [liked, setLiked] = useState(false);
 
   return (
-    <div className="premium-card rounded-2xl overflow-hidden group">
+    <div className="premium-card rounded-2xl overflow-hidden group h-full flex flex-col">
       {/* Image */}
       <div className="relative aspect-[4/3] overflow-hidden">
         <img
