@@ -1,116 +1,152 @@
 
 
-# Agrosauda Major Upgrade Plan
+# AgroShorts — Short-Form Video System
 
-## Phase 1: Auth + Roles + Dashboards + Favicon (this implementation)
+## Overview
+Add a TikTok-style vertical video feed to Agrosauda with upload, likes, comments, product linking, and admin moderation. Dark-themed, mobile-first, performance-optimized.
 
-### 1. Database Changes
+---
 
-**Extend `app_role` enum** to add `broker` and `business` roles:
-```sql
-ALTER TYPE public.app_role ADD VALUE 'broker';
-ALTER TYPE public.app_role ADD VALUE 'business';
-```
+## Phase 1: Database
 
-**Add `role` and `phone` columns to `profiles`** (if not already there — phone exists, add `account_type`):
-```sql
-ALTER TABLE public.profiles ADD COLUMN account_type text DEFAULT 'user';
-```
+### New tables via migration
 
-This tracks whether someone registered as user/broker/business, while `user_roles` handles actual role-based access.
+**`agro_shorts`** — core video table
+- `id` uuid PK, `user_id` uuid (ref profiles), `product_id` uuid nullable (ref products)
+- `video_url` text, `thumbnail_url` text nullable
+- `title` text, `description` text nullable, `category` text nullable
+- `likes_count` int default 0, `views_count` int default 0, `comments_count` int default 0
+- `status` text default 'active' (active/moderation/blocked)
+- `is_promoted` boolean default false, `created_at`, `updated_at`
+- RLS: SELECT for everyone, INSERT/UPDATE/DELETE for owner
 
-### 2. Google OAuth Login
+**`agro_shorts_likes`** — one like per user per video
+- `id` uuid PK, `user_id` uuid, `short_id` uuid (ref agro_shorts)
+- unique(user_id, short_id), RLS: authenticated insert/delete own
 
-- Use Lovable Cloud managed Google OAuth (already supported natively)
-- Call the Configure Social Auth tool to generate the `lovable` integration module
-- Add Google sign-in button on the main auth page using `lovable.auth.signInWithOAuth("google")`
+**`agro_shorts_comments`** — basic comments
+- `id` uuid PK, `user_id` uuid, `short_id` uuid (ref agro_shorts)
+- `content` text, `created_at`
+- RLS: SELECT all, INSERT authenticated, DELETE own
 
-### 3. Split Authentication System
+**Storage bucket**: `agro-shorts` (public, 50MB max, video/* only)
 
-**A. Main Auth Page (`/auth`)** — for regular users:
-- Keep existing email/password login & registration
-- Add Google OAuth button
-- Add phone number input field (collected but no SMS verification)
-- At bottom: grey text link "Авторизация для ИП/ТОО и брокеров" → navigates to `/auth/business`
+**Triggers**: increment/decrement `likes_count` and `comments_count` on agro_shorts via triggers.
 
-**B. Business Auth Page (`/auth/business`)** — new page:
-- Separate login/register page for brokers and businesses
-- Registration form includes: company name, BIN/IIN, contact person, phone, email, password
-- Role selector: "Брокер" or "ИП/ТОО"
-- On registration, assigns `broker` or `business` role in `user_roles` table
-- Same glass-morphism premium design
+---
 
-### 4. Role-Based Dashboard Routing
+## Phase 2: Frontend Pages & Components
 
-**Modify `DashboardPage.tsx`** to check user role and redirect:
-- `user` role → current dashboard (profile, favorites, messages, deals, activity)
-- `broker` role → new `BrokerDashboardPage` at `/dashboard/broker`
-- `business` role → new `BusinessDashboardPage` at `/dashboard/business`
+### New files to create
 
-**Create `BrokerDashboardPage.tsx`:**
-- Sidebar: Заявки на продажу, Заявки на покупку, Мэтчинг, Сделки, Профиль
-- Full access to broker_requests table (filtered views)
-- Deal matching interface
-- Deal status management
+1. **`src/pages/AgroShortsPage.tsx`** — Main feed page
+   - Full-screen dark background, snap-scroll container (`scroll-snap-type: y mandatory`)
+   - Each video card takes full viewport height with `scroll-snap-align: start`
+   - Uses `IntersectionObserver` for autoplay/pause and lazy loading
+   - Preloads next video via hidden `<video>` element
+   - Overlay UI: right-side action buttons (like/comment/share), bottom info bar (author, description, product link)
 
-**Create `BusinessDashboardPage.tsx`:**
-- Sidebar: Мои товары, Создать товар, Аналитика, Профиль магазина
-- Product listing management (CRUD via `products` table)
-- Store profile editing
+2. **`src/components/shorts/ShortVideoCard.tsx`** — Single video card
+   - `<video>` element: autoplay, loop, muted initially, playsInline
+   - Tap to pause/play, double-tap to like
+   - Right side floating buttons: Like (heart + count), Comment (icon + count), Share (copy link)
+   - Bottom overlay: author avatar + name, description, product tag with "View Product" CTA
+   - Progress bar at bottom
 
-### 5. Favicon
+3. **`src/components/shorts/ShortsUploadModal.tsx`** — Upload dialog
+   - File input with drag-and-drop, validation (mp4/webm, max 50MB, 5-60s)
+   - Title, description fields
+   - Product selector dropdown (fetches user's products)
+   - Category selector (optional)
+   - Upload progress bar using Supabase Storage
+   - Available from dashboard for sellers/brokers/business accounts
 
-- Add `<link rel="icon" href="/logo1.png" type="image/png">` to `index.html`
-- Remove any existing favicon references
+4. **`src/components/shorts/ShortsCommentSheet.tsx`** — Comments bottom sheet
+   - Slide-up panel showing comments list
+   - Input field to add comment
+   - Author name + timestamp per comment
 
-### 6. Full Multilingual System (i18n)
+5. **`src/components/shorts/ShortsProductOverlay.tsx`** — Product info overlay
+   - Shows linked product mini-card (image, title, price)
+   - "View Product" button → navigates to `/product/:id`
 
-**Create translation infrastructure:**
-- `src/i18n/translations/ru.ts` — Russian (default, all strings)
-- `src/i18n/translations/kz.ts` — Kazakh
-- `src/i18n/translations/en.ts` — English
-- `src/i18n/translations/cn.ts` — Chinese
-- `src/i18n/LanguageContext.tsx` — React context with `useLanguage()` hook
-- `src/i18n/index.ts` — language registry and helper `t()` function
+### Navigation integration
 
-**Language switcher** — add to Header (globe icon dropdown with 4 languages). Store selected language in localStorage and profile.preferred_language.
+- Add "AgroShorts" to `navLinks` in `Header.tsx` (path: `/agroshorts`)
+- Add route in `App.tsx`
+- Add translations for all 4 languages (`nav.agroShorts` already exists as `Agro Shop` — we add `nav.agroShorts` as new key `agroShorts`)
 
-**Translate all pages:** Header, Footer, Auth, Dashboard, AgroBroker, AgroShop, Classifieds, AI Assistants, Education, News, About, Home, Safe Deal, Sell, Favorites, 404.
+### Homepage preview (optional)
+- Add a horizontal scroll section on HomePage showing 4-6 thumbnail previews of popular shorts with view counts
 
-### 7. Updated Routes in App.tsx
+---
 
-```
-/auth              — Main user auth
-/auth/business     — Business/broker auth
-/dashboard         — Auto-redirect based on role
-/dashboard/broker  — Broker dashboard
-/dashboard/business — Business dashboard
-```
+## Phase 3: Admin Panel
 
-### Files to Create/Modify
+1. **`src/pages/admin/AdminShortsPage.tsx`**
+   - Table of all videos: thumbnail, title, author, views, likes, status
+   - Actions: view, block/unblock, delete
+   - Stats summary cards (total videos, total views, total likes)
 
-| File | Action |
+2. Add sidebar link in `AdminLayout.tsx` with Video icon
+
+---
+
+## Phase 4: i18n
+
+Add `agroShorts` section to all 4 translation files (ru, en, kz, cn):
+- nav item, page titles, button labels (like, comment, share, upload, viewProduct, buyNow)
+- Upload form labels, validation messages
+- Admin section labels
+
+---
+
+## Performance Strategy
+
+- **Snap scroll** with CSS `scroll-snap-type` — native smooth scrolling
+- **IntersectionObserver** — only play visible video, pause others
+- **Preload** — load next video's source when current is 50% watched
+- **Lazy mount** — only render 3 video cards at a time (current ± 1)
+- **Muted autoplay** — browsers allow muted autoplay, user taps to unmute
+- Videos served from Supabase Storage (public bucket with CDN)
+
+---
+
+## Design
+
+- Feed page: `bg-black` full-screen, no header/footer visible during scroll
+- Overlay text: white with text-shadow for readability
+- Action buttons: semi-transparent white circles with icons
+- Like animation: scale spring on tap
+- Smooth gradient overlay at bottom for text readability
+- Premium glassmorphism on comment sheet
+
+---
+
+## Technical Details
+
+### Files to create
+| File | Purpose |
+|------|---------|
+| `src/pages/AgroShortsPage.tsx` | Main feed with snap-scroll |
+| `src/components/shorts/ShortVideoCard.tsx` | Individual video card |
+| `src/components/shorts/ShortsUploadModal.tsx` | Upload form/modal |
+| `src/components/shorts/ShortsCommentSheet.tsx` | Comments panel |
+| `src/components/shorts/ShortsProductOverlay.tsx` | Product overlay |
+| `src/pages/admin/AdminShortsPage.tsx` | Admin moderation |
+
+### Files to modify
+| File | Change |
 |------|--------|
-| DB migration | Add `broker`/`business` to `app_role`, add `account_type` to profiles |
-| `src/i18n/*` | New — full translation system (5+ files) |
-| `src/pages/AuthPage.tsx` | Modify — add Google button, phone field, business link |
-| `src/pages/BusinessAuthPage.tsx` | New — business/broker auth page |
-| `src/pages/BrokerDashboardPage.tsx` | New — broker dashboard |
-| `src/pages/BusinessDashboardPage.tsx` | New — business dashboard |
-| `src/pages/DashboardPage.tsx` | Modify — role-based redirect |
-| `src/components/layout/Header.tsx` | Modify — add language switcher |
-| `src/components/layout/Footer.tsx` | Modify — use translations |
-| `src/hooks/useAuth.tsx` | Modify — add role fetching |
-| `src/App.tsx` | Modify — add new routes, wrap with LanguageProvider |
-| `index.html` | Modify — add favicon |
-| All page files | Modify — wrap text in `t()` calls |
+| `src/App.tsx` | Add `/agroshorts` route |
+| `src/components/layout/Header.tsx` | Add nav link |
+| `src/pages/admin/AdminLayout.tsx` | Add sidebar link |
+| `src/i18n/translations/ru.ts` | Add agroShorts translations |
+| `src/i18n/translations/en.ts` | Add agroShorts translations |
+| `src/i18n/translations/kz.ts` | Add agroShorts translations |
+| `src/i18n/translations/cn.ts` | Add agroShorts translations |
+| `src/pages/DashboardPage.tsx` | Add upload button for sellers |
 
-### Technical Notes
-
-- Google OAuth uses Lovable Cloud managed credentials (no setup needed)
-- Phone field is collected during registration but not verified via SMS
-- Role is stored in `user_roles` table (security best practice)
-- `useAuth` hook will be extended to expose current user role
-- Language preference persists in localStorage + profiles table
-- All translations use a typed dictionary pattern for compile-time safety
+### Database migration
+- 1 migration: creates 3 tables, storage bucket, RLS policies, triggers for counters
 
