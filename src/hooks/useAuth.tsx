@@ -1,4 +1,4 @@
-import { createContext, useContext, useState, useEffect, ReactNode } from 'react';
+import { createContext, useContext, useState, useEffect, ReactNode, useRef } from 'react';
 import { supabase } from '@/integrations/supabase/client';
 import type { Session, User } from '@supabase/supabase-js';
 
@@ -32,8 +32,28 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   const [loading, setLoading] = useState(true);
   const [profile, setProfile] = useState<UserProfile | null>(null);
   const [userRole, setUserRole] = useState<string | null>(null);
+  const authRequestVersionRef = useRef(0);
 
-  const fetchProfile = async (userId: string) => {
+  const resetAuthState = () => {
+    setSession(null);
+    setUser(null);
+    setProfile(null);
+    setUserRole(null);
+  };
+
+  const clearStoredAuth = () => {
+    if (typeof window === 'undefined') return;
+
+    [window.localStorage, window.sessionStorage].forEach((storage) => {
+      Object.keys(storage).forEach((key) => {
+        if (key.startsWith('sb-') && (key.includes('auth-token') || key.includes('code-verifier'))) {
+          storage.removeItem(key);
+        }
+      });
+    });
+  };
+
+  const fetchProfile = async (userId: string, requestVersion = authRequestVersionRef.current) => {
     let { data } = await supabase
       .from('profiles')
       .select('*')
@@ -58,48 +78,62 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         data = newProfile;
       }
     }
+    if (requestVersion !== authRequestVersionRef.current) return;
     setProfile(data as UserProfile | null);
   };
 
-  const fetchRole = async (userId: string) => {
+  const fetchRole = async (userId: string, requestVersion = authRequestVersionRef.current) => {
     const { data } = await supabase
       .from('user_roles')
       .select('role')
       .eq('user_id', userId)
       .maybeSingle();
+
+    if (requestVersion !== authRequestVersionRef.current) return;
     setUserRole(data?.role || 'user');
   };
 
   const refreshProfile = async () => {
     if (user) {
-      await fetchProfile(user.id);
-      await fetchRole(user.id);
+      const requestVersion = authRequestVersionRef.current;
+      await fetchProfile(user.id, requestVersion);
+      await fetchRole(user.id, requestVersion);
     }
   };
 
   useEffect(() => {
     const { data: { subscription } } = supabase.auth.onAuthStateChange(async (_event, session) => {
-      setSession(session);
-      setUser(session?.user ?? null);
+      const requestVersion = ++authRequestVersionRef.current;
+
       if (session?.user) {
+        setSession(session);
+        setUser(session.user);
         setTimeout(() => {
-          fetchProfile(session.user.id);
-          fetchRole(session.user.id);
+          if (requestVersion !== authRequestVersionRef.current) return;
+          void fetchProfile(session.user.id, requestVersion);
+          void fetchRole(session.user.id, requestVersion);
         }, 0);
       } else {
-        setProfile(null);
-        setUserRole(null);
+        resetAuthState();
       }
+
       setLoading(false);
     });
 
     supabase.auth.getSession().then(async ({ data: { session } }) => {
-      setSession(session);
-      setUser(session?.user ?? null);
+      const requestVersion = ++authRequestVersionRef.current;
+
+      if (requestVersion !== authRequestVersionRef.current) return;
+
       if (session?.user) {
-        await fetchProfile(session.user.id);
-        await fetchRole(session.user.id);
+        setSession(session);
+        setUser(session.user);
+        await fetchProfile(session.user.id, requestVersion);
+        await fetchRole(session.user.id, requestVersion);
+      } else {
+        resetAuthState();
       }
+
       setLoading(false);
     });
 
@@ -140,11 +174,21 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   };
 
   const signOut = async () => {
-    await supabase.auth.signOut({ scope: 'global' });
-    setSession(null);
-    setUser(null);
-    setProfile(null);
-    setUserRole(null);
+    authRequestVersionRef.current += 1;
+    setLoading(true);
+
+    try {
+      const { error } = await supabase.auth.signOut({ scope: 'local' });
+      if (error && error.name !== 'AuthSessionMissingError') {
+        console.error('Sign out error:', error);
+      }
+    } catch (error) {
+      console.error('Sign out error:', error);
+    } finally {
+      clearStoredAuth();
+      resetAuthState();
+      setLoading(false);
+    }
   };
 
   return (
