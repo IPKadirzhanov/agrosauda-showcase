@@ -33,7 +33,7 @@ export default function HomePage() {
       <section className="relative min-h-[100vh] flex items-center overflow-hidden">
         <div className="absolute inset-0 z-0">
           <video autoPlay loop muted playsInline className="w-full h-full object-cover" poster="https://images.unsplash.com/photo-1500382017468-9049fed747ef?w=1920&h=1080&fit=crop">
-            <source src="https://cdn.pixabay.com/video/2020/07/30/45349-446275734_large.mp4" type="video/mp4" />
+            <source src="https://cdn.pixabay.com/video/2024/08/07/224965_large.mp4" type="video/mp4" />
           </video>
           <div className="absolute inset-0 bg-gradient-to-b from-black/70 via-black/50 to-black/80" />
           <div className="absolute inset-0 bg-gradient-to-r from-black/60 via-transparent to-black/30" />
