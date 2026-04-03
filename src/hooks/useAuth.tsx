@@ -34,11 +34,30 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   const [userRole, setUserRole] = useState<string | null>(null);
 
   const fetchProfile = async (userId: string) => {
-    const { data } = await supabase
+    let { data } = await supabase
       .from('profiles')
       .select('*')
       .eq('user_id', userId)
       .maybeSingle();
+    
+    // Auto-create profile for OAuth users if trigger didn't fire
+    if (!data) {
+      const { data: { user: authUser } } = await supabase.auth.getUser();
+      if (authUser) {
+        const displayName = authUser.user_metadata?.display_name 
+          || authUser.user_metadata?.full_name 
+          || authUser.user_metadata?.name 
+          || authUser.email?.split('@')[0] || '';
+        const avatarUrl = authUser.user_metadata?.avatar_url || null;
+        
+        const { data: newProfile } = await supabase
+          .from('profiles')
+          .insert({ user_id: userId, display_name: displayName, avatar_url: avatarUrl })
+          .select()
+          .single();
+        data = newProfile;
+      }
+    }
     setProfile(data as UserProfile | null);
   };
 
