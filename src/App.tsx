@@ -6,6 +6,7 @@ import Header from "@/components/layout/Header";
 import Footer from "@/components/layout/Footer";
 import { AdminProvider } from "@/hooks/useAdmin";
 import { AuthProvider } from "@/hooks/useAuth";
+import { LanguageProvider } from "@/i18n";
 import HomePage from "./pages/HomePage";
 import MarketplacePage from "./pages/MarketplacePage";
 import ProductDetailPage from "./pages/ProductDetailPage";
@@ -21,9 +22,11 @@ import FavoritesPage from "./pages/FavoritesPage";
 import AgroShopPage from "./pages/AgroShopPage";
 import ClassifiedsPage from "./pages/ClassifiedsPage";
 import AuthPage from "./pages/AuthPage";
+import BusinessAuthPage from "./pages/BusinessAuthPage";
 import DashboardPage from "./pages/DashboardPage";
+import BrokerDashboardPage from "./pages/BrokerDashboardPage";
+import BusinessDashboardPage from "./pages/BusinessDashboardPage";
 import NotFound from "./pages/NotFound";
-import AdminLoginPage from "./pages/admin/AdminLoginPage";
 import AdminLayout from "./pages/admin/AdminLayout";
 import AdminDashboardPage from "./pages/admin/AdminDashboardPage";
 import AdminUsersPage from "./pages/admin/AdminUsersPage";
@@ -63,7 +66,10 @@ function AppLayout() {
         <Route path="/classifieds" element={<ClassifiedsPage />} />
         <Route path="/agrobroker" element={<AgroBrokerPage />} />
         <Route path="/auth" element={<AuthPage />} />
+        <Route path="/auth/business" element={<BusinessAuthPage />} />
         <Route path="/dashboard" element={<DashboardPage />} />
+        <Route path="/dashboard/broker" element={<BrokerDashboardPage />} />
+        <Route path="/dashboard/business" element={<BusinessDashboardPage />} />
 
         {/* Admin routes */}
         <Route path="/admin" element={<AdminLayout />}>
@@ -92,11 +98,13 @@ const App = () => (
     <TooltipProvider>
       <Sonner />
       <BrowserRouter>
-        <AuthProvider>
-          <AdminProvider>
-            <AppLayout />
-          </AdminProvider>
-        </AuthProvider>
+        <LanguageProvider>
+          <AuthProvider>
+            <AdminProvider>
+              <AppLayout />
+            </AdminProvider>
+          </AuthProvider>
+        </LanguageProvider>
       </BrowserRouter>
     </TooltipProvider>
   </QueryClientProvider>

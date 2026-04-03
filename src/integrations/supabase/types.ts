@@ -457,6 +457,7 @@ export type Database = {
       }
       profiles: {
         Row: {
+          account_type: string | null
           avatar_url: string | null
           created_at: string
           display_name: string | null
@@ -467,6 +468,7 @@ export type Database = {
           user_id: string | null
         }
         Insert: {
+          account_type?: string | null
           avatar_url?: string | null
           created_at?: string
           display_name?: string | null
@@ -477,6 +479,7 @@ export type Database = {
           user_id?: string | null
         }
         Update: {
+          account_type?: string | null
           avatar_url?: string | null
           created_at?: string
           display_name?: string | null
@@ -630,7 +633,7 @@ export type Database = {
       }
     }
     Enums: {
-      app_role: "admin" | "moderator" | "user"
+      app_role: "admin" | "moderator" | "user" | "broker" | "business"
       broker_deal_status:
         | "pending"
         | "in_negotiation"
@@ -772,7 +775,7 @@ export type CompositeTypes<
 export const Constants = {
   public: {
     Enums: {
-      app_role: ["admin", "moderator", "user"],
+      app_role: ["admin", "moderator", "user", "broker", "business"],
       broker_deal_status: [
         "pending",
         "in_negotiation",
