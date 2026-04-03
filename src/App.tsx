@@ -27,6 +27,7 @@ import DashboardPage from "./pages/DashboardPage";
 import BrokerDashboardPage from "./pages/BrokerDashboardPage";
 import BusinessDashboardPage from "./pages/BusinessDashboardPage";
 import NotFound from "./pages/NotFound";
+import AgroShortsPage from "./pages/AgroShortsPage";
 import AdminLayout from "./pages/admin/AdminLayout";
 import AdminDashboardPage from "./pages/admin/AdminDashboardPage";
 import AdminUsersPage from "./pages/admin/AdminUsersPage";
@@ -36,6 +37,7 @@ import AdminAIPage from "./pages/admin/AdminAIPage";
 import AdminOrdersPage from "./pages/admin/AdminOrdersPage";
 import AdminShopsPage from "./pages/admin/AdminShopsPage";
 import AdminAnalyticsPage from "./pages/admin/AdminAnalyticsPage";
+import AdminShortsPage from "./pages/admin/AdminShortsPage";
 import FloatingAIWidget from "./components/FloatingAIWidget";
 import AgroBrokerPage from "./pages/AgroBrokerPage";
 import AdminBrokerPage from "./pages/admin/AdminBrokerPage";
@@ -65,6 +67,7 @@ function AppLayout() {
         <Route path="/agro-shop" element={<AgroShopPage />} />
         <Route path="/classifieds" element={<ClassifiedsPage />} />
         <Route path="/agrobroker" element={<AgroBrokerPage />} />
+        <Route path="/agroshorts" element={<AgroShortsPage />} />
         <Route path="/auth" element={<AuthPage />} />
         <Route path="/auth/business" element={<BusinessAuthPage />} />
         <Route path="/dashboard" element={<DashboardPage />} />
@@ -83,6 +86,7 @@ function AppLayout() {
           <Route path="shops" element={<AdminShopsPage />} />
           <Route path="analytics" element={<AdminAnalyticsPage />} />
           <Route path="broker" element={<AdminBrokerPage />} />
+          <Route path="shorts" element={<AdminShortsPage />} />
         </Route>
 
         <Route path="*" element={<NotFound />} />

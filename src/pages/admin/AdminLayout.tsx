@@ -1,7 +1,7 @@
 import { Outlet, useNavigate, Link, useLocation } from 'react-router-dom';
 import {
   LayoutDashboard, Users, ShoppingBag, FolderTree, Bot,
-  ShieldCheck, LogOut, Package, BarChart3, Handshake
+  ShieldCheck, LogOut, Package, BarChart3, Handshake, Film
 } from 'lucide-react';
 
 const sidebarLinks = [
@@ -13,6 +13,7 @@ const sidebarLinks = [
   { name: 'Безопасные сделки', path: '/admin/orders', icon: ShieldCheck },
   { name: 'Agro Shop', path: '/admin/shops', icon: Package },
   { name: 'AgroBroker', path: '/admin/broker', icon: Handshake },
+  { name: 'AgroShorts', path: '/admin/shorts', icon: Film },
   { name: 'Аналитика', path: '/admin/analytics', icon: BarChart3 },
 ];
 

@@ -14,6 +14,129 @@ export type Database = {
   }
   public: {
     Tables: {
+      agro_shorts: {
+        Row: {
+          category: string | null
+          comments_count: number
+          created_at: string
+          description: string | null
+          id: string
+          is_promoted: boolean
+          likes_count: number
+          product_id: string | null
+          status: string
+          thumbnail_url: string | null
+          title: string
+          updated_at: string
+          user_id: string
+          video_url: string
+          views_count: number
+        }
+        Insert: {
+          category?: string | null
+          comments_count?: number
+          created_at?: string
+          description?: string | null
+          id?: string
+          is_promoted?: boolean
+          likes_count?: number
+          product_id?: string | null
+          status?: string
+          thumbnail_url?: string | null
+          title: string
+          updated_at?: string
+          user_id: string
+          video_url: string
+          views_count?: number
+        }
+        Update: {
+          category?: string | null
+          comments_count?: number
+          created_at?: string
+          description?: string | null
+          id?: string
+          is_promoted?: boolean
+          likes_count?: number
+          product_id?: string | null
+          status?: string
+          thumbnail_url?: string | null
+          title?: string
+          updated_at?: string
+          user_id?: string
+          video_url?: string
+          views_count?: number
+        }
+        Relationships: [
+          {
+            foreignKeyName: "agro_shorts_product_id_fkey"
+            columns: ["product_id"]
+            isOneToOne: false
+            referencedRelation: "products"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      agro_shorts_comments: {
+        Row: {
+          content: string
+          created_at: string
+          id: string
+          short_id: string
+          user_id: string
+        }
+        Insert: {
+          content: string
+          created_at?: string
+          id?: string
+          short_id: string
+          user_id: string
+        }
+        Update: {
+          content?: string
+          created_at?: string
+          id?: string
+          short_id?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "agro_shorts_comments_short_id_fkey"
+            columns: ["short_id"]
+            isOneToOne: false
+            referencedRelation: "agro_shorts"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      agro_shorts_likes: {
+        Row: {
+          created_at: string
+          id: string
+          short_id: string
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          short_id: string
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          short_id?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "agro_shorts_likes_short_id_fkey"
+            columns: ["short_id"]
+            isOneToOne: false
+            referencedRelation: "agro_shorts"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       ai_conversations: {
         Row: {
           agent_type: string
