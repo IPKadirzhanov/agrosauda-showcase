@@ -194,7 +194,7 @@ export default function ClassifiedsPage() {
                     <div className="absolute inset-0 bg-gradient-to-t from-black/40 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
                     <span className={`absolute top-3 left-3 px-3 py-1 rounded-lg text-[11px] font-bold uppercase ${item.condition === 'Новый' ? 'bg-primary text-primary-foreground' : 'bg-foreground/80 text-background'}`}>{item.condition}</span>
                   </div>
-                  <div className="p-5">
+                  <div className="p-5 flex-1 flex flex-col">
                     <p className="text-[11px] text-muted-foreground uppercase tracking-wider mb-1">{item.category}</p>
                     <h3 className="font-display font-bold text-[15px] mb-2 line-clamp-2 group-hover:text-primary transition-colors">{item.title}</h3>
                     <p className="text-xs text-muted-foreground mb-3">📍 {item.location}</p>

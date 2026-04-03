@@ -65,7 +65,7 @@ export default function SubsidiesPage() {
                       <p className="text-sm font-medium">{program.deadline}</p>
                     </div>
                   </div>
-                  <button className="mt-4 w-full py-2.5 rounded-xl bg-primary/10 text-primary text-sm font-semibold hover:bg-primary hover:text-primary-foreground transition-colors">{t.subsidies.applyBtn}</button>
+                  <button className="mt-auto pt-4 w-full py-2.5 rounded-xl bg-primary/10 text-primary text-sm font-semibold hover:bg-primary hover:text-primary-foreground transition-colors">{t.subsidies.applyBtn}</button>
                 </div>
               </AnimatedSection>
             ))}

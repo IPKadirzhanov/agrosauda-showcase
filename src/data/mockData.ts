@@ -115,7 +115,7 @@ export const products: Product[] = [
     id: '7', title: 'Трактор МТЗ Беларус 1221.3', category: 'Тракторы', categorySlug: 'tractors',
     price: 18500000, location: 'Павлодар', seller: 'МТЗ-Центр', condition: 'Новый',
     description: 'Универсальный колёсный трактор 130 л.с. Идеален для средних фермерских хозяйств Казахстана.',
-    image: 'https://images.unsplash.com/photo-1605338198618-558e7661cf1e?w=600&h=400&fit=crop', featured: true,
+    image: 'https://images.unsplash.com/photo-1544197150-b99a580bb7a8?w=600&h=400&fit=crop', featured: true,
     specs: { 'Мощность': '130 л.с.', 'Тяговый класс': '2.0', 'Привод': '4x4' }
   },
   {

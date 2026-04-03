@@ -68,7 +68,7 @@ export default function EducationPage() {
                       <span className="flex items-center gap-1"><Clock className="w-3 h-3" /> {course.duration}</span>
                       <span className="flex items-center gap-1"><BookOpen className="w-3 h-3" /> {course.lessons} {t.education.lessons}</span>
                     </div>
-                    <button className="mt-4 w-full py-2.5 rounded-xl bg-primary/10 text-primary text-sm font-semibold hover:bg-primary hover:text-primary-foreground transition-colors">
+                    <button className="mt-auto pt-4 w-full py-2.5 rounded-xl bg-primary/10 text-primary text-sm font-semibold hover:bg-primary hover:text-primary-foreground transition-colors">
                       {t.education.startLearning}
                     </button>
                   </div>
