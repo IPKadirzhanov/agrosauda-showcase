@@ -139,7 +139,7 @@ export default function ClassifiedsPage() {
           <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-4">
             {popularCategories.map((cat, i) => (
               <AnimatedSection key={i} delay={i * 0.06}>
-                <div className="premium-card rounded-xl p-5 text-center hover:border-primary/30 transition-all duration-300 cursor-pointer group">
+                <div className="premium-card rounded-xl p-5 text-center hover:border-primary/30 transition-all duration-300 cursor-pointer group h-full">
                   <span className="text-4xl block mb-3 group-hover:scale-110 transition-transform duration-300">{cat.icon}</span>
                   <p className="font-medium text-sm mb-1">{cat.name}</p>
                   <p className="text-xs text-muted-foreground">{cat.count} {t.classifieds.listingsLabel}</p>
