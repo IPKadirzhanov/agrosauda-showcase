@@ -1,7 +1,7 @@
 import { Outlet, useNavigate, Link, useLocation } from 'react-router-dom';
 import {
   LayoutDashboard, Users, ShoppingBag, FolderTree, Bot,
-  ShieldCheck, LogOut, Package, BarChart3, Handshake
+  ShieldCheck, LogOut, Package, BarChart3, Handshake, Film
 } from 'lucide-react';
 
 const sidebarLinks = [
