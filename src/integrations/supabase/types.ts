@@ -288,6 +288,9 @@ export type Database = {
       }
       broker_requests: {
         Row: {
+          claim_fee: number | null
+          claimed_at: string | null
+          claimed_by: string | null
           contact_email: string | null
           contact_name: string
           contact_phone: string | null
@@ -308,6 +311,9 @@ export type Database = {
           user_id: string | null
         }
         Insert: {
+          claim_fee?: number | null
+          claimed_at?: string | null
+          claimed_by?: string | null
           contact_email?: string | null
           contact_name: string
           contact_phone?: string | null
@@ -328,6 +334,9 @@ export type Database = {
           user_id?: string | null
         }
         Update: {
+          claim_fee?: number | null
+          claimed_at?: string | null
+          claimed_by?: string | null
           contact_email?: string | null
           contact_name?: string
           contact_phone?: string | null
@@ -747,6 +756,10 @@ export type Database = {
       [_ in never]: never
     }
     Functions: {
+      claim_broker_request: {
+        Args: { _broker_id: string; _request_id: string }
+        Returns: Json
+      }
       has_role: {
         Args: {
           _role: Database["public"]["Enums"]["app_role"]
@@ -768,6 +781,7 @@ export type Database = {
         | "in_negotiation"
         | "completed"
         | "cancelled"
+        | "in_progress"
       broker_request_type: "sell" | "buy"
       logistics_status: "not_needed" | "planned" | "in_progress" | "delivered"
       trust_level: "new" | "active" | "verified"
@@ -911,6 +925,7 @@ export const Constants = {
         "in_negotiation",
         "completed",
         "cancelled",
+        "in_progress",
       ],
       broker_request_type: ["sell", "buy"],
       logistics_status: ["not_needed", "planned", "in_progress", "delivered"],
