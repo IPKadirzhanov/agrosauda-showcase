@@ -603,6 +603,37 @@ export const ru = {
     subtitle: 'Все товары и техника',
   },
 
+  // ─── COMMON ───
+  common: {
+    details: 'Подробнее',
+    newCondition: 'Новый',
+    usedCondition: 'Б/У',
+    developedBy: 'Разработано',
+    newChat: 'Новый чат',
+  },
+
+  // ─── PRODUCT DETAIL ───
+  productDetail: {
+    notFound: 'Товар не найден',
+    backToCatalog: 'Вернуться в каталог',
+    marketplace: 'Маркетплейс',
+    placeOrder: 'Оформить заказ',
+    orderPlaced: 'Заказ оформлен! (демо)',
+    contactSeller: 'Связаться с продавцом',
+    requestSent: 'Запрос отправлен продавцу (демо)',
+    addToFavorites: 'В избранное',
+    inFavorites: 'В избранном',
+    removedFromFavorites: 'Удалено из избранного',
+    addedToFavorites: 'Добавлено в избранное',
+    share: 'Поделиться',
+    seller: 'Продавец',
+    safeDeal: 'Безопасная сделка',
+    safeDealDesc: 'Ваши деньги под защитой до получения товара',
+    description: 'Описание',
+    specs: 'Характеристики',
+    similarProducts: 'Похожие товары',
+  },
+
   // ─── FOOTER ───
   footer: {
     marketplace: 'Маркетплейс',
