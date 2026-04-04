@@ -98,7 +98,7 @@ serve(async (req) => {
     if (!convId) {
       const { data: conv } = await supabase
         .from("ai_conversations")
-        .insert({ agent_type: "subsidiya_gid" })
+        .insert({ agent_type: "subsidiya_gid", user_id: userId })
         .select("id")
         .single();
       convId = conv?.id;
