@@ -124,11 +124,15 @@ export default function AIChatPage() {
       const baseUrl = import.meta.env.VITE_SUPABASE_URL;
       const url = `${baseUrl}/functions/v1/${functionName}`;
 
+      // Use user's session token if available, otherwise anon key
+      const { data: { session } } = await supabase.auth.getSession();
+      const token = session?.access_token || import.meta.env.VITE_SUPABASE_PUBLISHABLE_KEY;
+
       const resp = await fetch(url, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
-          Authorization: `Bearer ${import.meta.env.VITE_SUPABASE_PUBLISHABLE_KEY}`,
+          Authorization: `Bearer ${token}`,
         },
         body: JSON.stringify({
           messages: allMessages.map(m => ({ role: m.role, content: m.content })),
