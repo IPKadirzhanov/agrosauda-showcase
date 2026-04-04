@@ -51,34 +51,47 @@ export default function AIChatPage() {
   // Load conversation history
   const loadConversations = useCallback(async () => {
     setLoadingHistory(true);
-    const { data: convs } = await supabase
-      .from('ai_conversations')
-      .select('*')
-      .eq('agent_type', agentType)
-      .order('updated_at', { ascending: false })
-      .limit(50);
+    try {
+      const { data: convs, error } = await supabase
+        .from('ai_conversations')
+        .select('*')
+        .eq('agent_type', agentType)
+        .order('updated_at', { ascending: false })
+        .limit(50);
 
-    if (convs && convs.length > 0) {
-      const convIds = convs.map(c => c.id);
-      const { data: firstMsgs } = await supabase
-        .from('ai_messages')
-        .select('conversation_id, content')
-        .in('conversation_id', convIds)
-        .eq('role', 'user')
-        .order('created_at', { ascending: true });
+      if (error) {
+        console.error('Failed to load conversations:', error);
+        setConversations([]);
+        setLoadingHistory(false);
+        return;
+      }
 
-      const previewMap: Record<string, string> = {};
-      firstMsgs?.forEach(m => {
-        if (!previewMap[m.conversation_id]) {
-          previewMap[m.conversation_id] = m.content.slice(0, 60);
-        }
-      });
+      if (convs && convs.length > 0) {
+        // Try to get first user message for each conversation (non-blocking)
+        const convIds = convs.map(c => c.id);
+        const { data: firstMsgs } = await supabase
+          .from('ai_messages')
+          .select('conversation_id, content')
+          .in('conversation_id', convIds)
+          .eq('role', 'user')
+          .order('created_at', { ascending: true });
 
-      setConversations(convs.map(c => ({
-        ...c,
-        preview: previewMap[c.id] || 'Новый диалог',
-      })));
-    } else {
+        const previewMap: Record<string, string> = {};
+        firstMsgs?.forEach(m => {
+          if (!previewMap[m.conversation_id]) {
+            previewMap[m.conversation_id] = m.content.slice(0, 60);
+          }
+        });
+
+        setConversations(convs.map(c => ({
+          ...c,
+          preview: previewMap[c.id] || new Date(c.created_at).toLocaleDateString('ru'),
+        })));
+      } else {
+        setConversations([]);
+      }
+    } catch (e) {
+      console.error('Load conversations error:', e);
       setConversations([]);
     }
     setLoadingHistory(false);
