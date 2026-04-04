@@ -122,7 +122,7 @@ export default function ProductDetailPage() {
                   {Object.entries(product.specs).map(([key, val]) => (
                     <div key={key} className="flex justify-between p-3 rounded-lg bg-muted/50">
                       <span className="text-sm text-muted-foreground">{key}</span>
-                      <span className="text-sm font-medium">{val}</span>
+                      <span className="text-sm font-medium">{val as string}</span>
                     </div>
                   ))}
                 </div>
