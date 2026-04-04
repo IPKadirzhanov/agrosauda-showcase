@@ -1,12 +1,13 @@
 import { Search, Sparkles, HelpCircle } from 'lucide-react';
 import AnimatedSection from '@/components/AnimatedSection';
 import AIChatWidget from '@/components/AIChatWidget';
-import { subsidyPrograms } from '@/data/mockData';
 import { useState } from 'react';
 import { useLanguage } from '@/i18n/LanguageContext';
+import { useTranslatedData } from '@/hooks/useTranslatedData';
 
 export default function SubsidiesPage() {
   const { t } = useLanguage();
+  const { subsidyPrograms } = useTranslatedData();
   const [searchQuery, setSearchQuery] = useState('');
   const filtered = subsidyPrograms.filter(s =>
     s.title.toLowerCase().includes(searchQuery.toLowerCase()) || s.category.toLowerCase().includes(searchQuery.toLowerCase())

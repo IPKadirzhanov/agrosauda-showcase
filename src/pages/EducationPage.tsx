@@ -6,19 +6,11 @@ import { useTranslatedData } from '@/hooks/useTranslatedData';
 
 export default function EducationPage() {
   const { t } = useLanguage();
+  const { courses } = useTranslatedData();
   const courseCategories = [t.education.all, t.education.agroBusiness, t.education.machinery, t.education.cropFarming, t.education.animalHusbandry, t.education.subsidiesCategory, t.education.technologies];
-  // Map translated categories back to data categories for filtering
-  const categoryMap: Record<string, string> = {
-    [t.education.agroBusiness]: 'Агробизнес',
-    [t.education.machinery]: 'Техника',
-    [t.education.cropFarming]: 'Растениеводство',
-    [t.education.animalHusbandry]: 'Животноводство',
-    [t.education.subsidiesCategory]: 'Субсидии',
-    [t.education.technologies]: 'Технологии',
-  };
 
   const [activeCategory, setActiveCategory] = useState(t.education.all);
-  const filtered = activeCategory === t.education.all ? courses : courses.filter(c => c.category === (categoryMap[activeCategory] || activeCategory));
+  const filtered = activeCategory === t.education.all ? courses : courses.filter(c => c.category === activeCategory);
 
   return (
     <div className="min-h-screen pt-24 pb-20">
