@@ -1,6 +1,6 @@
 import { Upload, Camera, CheckCircle } from 'lucide-react';
 import AnimatedSection from '@/components/AnimatedSection';
-import { categories, regions } from '@/data/mockData';
+import { useTranslatedData } from '@/hooks/useTranslatedData';
 import { useState } from 'react';
 import { toast } from 'sonner';
 import { useLanguage } from '@/i18n/LanguageContext';
