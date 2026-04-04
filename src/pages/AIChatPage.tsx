@@ -52,46 +52,26 @@ export default function AIChatPage() {
   const loadConversations = useCallback(async () => {
     setLoadingHistory(true);
     try {
-      const { data: convs, error } = await supabase
+      const timeout = new Promise<null>((resolve) => setTimeout(() => resolve(null), 5000));
+      const query = supabase
         .from('ai_conversations')
         .select('*')
         .eq('agent_type', agentType)
         .order('updated_at', { ascending: false })
-        .limit(50);
+        .limit(30);
 
-      if (error) {
-        console.error('Failed to load conversations:', error);
-        setConversations([]);
-        setLoadingHistory(false);
-        return;
-      }
+      const result = await Promise.race([query, timeout]);
+      const convs = result && 'data' in result ? result.data : null;
 
       if (convs && convs.length > 0) {
-        // Try to get first user message for each conversation (non-blocking)
-        const convIds = convs.map(c => c.id);
-        const { data: firstMsgs } = await supabase
-          .from('ai_messages')
-          .select('conversation_id, content')
-          .in('conversation_id', convIds)
-          .eq('role', 'user')
-          .order('created_at', { ascending: true });
-
-        const previewMap: Record<string, string> = {};
-        firstMsgs?.forEach(m => {
-          if (!previewMap[m.conversation_id]) {
-            previewMap[m.conversation_id] = m.content.slice(0, 60);
-          }
-        });
-
         setConversations(convs.map(c => ({
           ...c,
-          preview: previewMap[c.id] || new Date(c.created_at).toLocaleDateString('ru'),
+          preview: new Date(c.created_at).toLocaleDateString('ru'),
         })));
       } else {
         setConversations([]);
       }
-    } catch (e) {
-      console.error('Load conversations error:', e);
+    } catch {
       setConversations([]);
     }
     setLoadingHistory(false);
