@@ -1,10 +1,11 @@
 import { Clock } from 'lucide-react';
 import AnimatedSection from '@/components/AnimatedSection';
-import { newsArticles } from '@/data/mockData';
 import { useLanguage } from '@/i18n/LanguageContext';
+import { useTranslatedData } from '@/hooks/useTranslatedData';
 
 export default function NewsPage() {
   const { t } = useLanguage();
+  const { newsArticles } = useTranslatedData();
   const featured = newsArticles[0];
   const rest = newsArticles.slice(1);
 
