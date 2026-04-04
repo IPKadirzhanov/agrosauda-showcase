@@ -5,88 +5,24 @@ import { motion } from 'framer-motion';
 import AnimatedSection from '@/components/AnimatedSection';
 import AnimatedCounter from '@/components/AnimatedCounter';
 import { useLanguage } from '@/i18n/LanguageContext';
-
-const categoryGroups = [
-  { title: 'Сельхозтехника', items: [
-    { icon: '🚜', name: 'Тракторы', count: 324 }, { icon: '🚜', name: 'Мини-тракторы', count: 156 },
-    { icon: '🌾', name: 'Комбайны', count: 89 }, { icon: '⚙️', name: 'Жатки', count: 67 },
-    { icon: '🌱', name: 'Сеялки', count: 112 }, { icon: '🔧', name: 'Плуги', count: 98 },
-    { icon: '⛏️', name: 'Культиваторы', count: 134 }, { icon: '🚛', name: 'Прицепы', count: 201 },
-    { icon: '💨', name: 'Опрыскиватели', count: 78 },
-  ]},
-  { title: 'Полив и ирригация', items: [
-    { icon: '💧', name: 'Системы полива', count: 145 }, { icon: '🔌', name: 'Водяные насосы', count: 210 },
-    { icon: '🏗️', name: 'Тепличное оборуд.', count: 87 }, { icon: '🏠', name: 'Теплицы', count: 64 },
-  ]},
-  { title: 'Семена и корма', items: [
-    { icon: '🌾', name: 'Семена', count: 430 }, { icon: '🌽', name: 'Зерно', count: 312 },
-    { icon: '🥬', name: 'Корма', count: 189 }, { icon: '🧪', name: 'Удобрения', count: 267 },
-    { icon: '🛡️', name: 'Пестициды', count: 98 }, { icon: '⚗️', name: 'Агрохимия', count: 134 },
-    { icon: '🪨', name: 'Почвогрунты', count: 56 },
-  ]},
-  { title: 'Животноводство', items: [
-    { icon: '🐄', name: 'Оборуд. животновод.', count: 178 }, { icon: '🥛', name: 'Молочное оборуд.', count: 92 },
-    { icon: '🐔', name: 'Птицеводство', count: 67 }, { icon: '🍽️', name: 'Кормовые системы', count: 45 },
-    { icon: '💊', name: 'Ветеринарные товары', count: 134 },
-  ]},
-  { title: 'Запчасти и расходники', items: [
-    { icon: '⚙️', name: 'Запчасти', count: 567 }, { icon: '🔧', name: 'Детали двигателей', count: 234 },
-    { icon: '🛞', name: 'Шины для с/х техники', count: 189 }, { icon: '🔋', name: 'Аккумуляторы', count: 112 },
-    { icon: '🛢️', name: 'Масла и смазки', count: 156 },
-  ]},
-  { title: 'Хранение и переработка', items: [
-    { icon: '🏭', name: 'Складское оборуд.', count: 78 }, { icon: '🌾', name: 'Зернохранилища', count: 45 },
-    { icon: '🔥', name: 'Сушильное оборуд.', count: 34 }, { icon: '📦', name: 'Упаковочное оборуд.', count: 56 },
-    { icon: '🍎', name: 'Переработка фруктов', count: 29 }, { icon: '🥕', name: 'Переработка овощей', count: 23 },
-  ]},
-  { title: 'Инструменты и энергия', items: [
-    { icon: '🔨', name: 'Ручной инструмент', count: 312 }, { icon: '⚡', name: 'Электроинструмент', count: 234 },
-    { icon: '🔌', name: 'Генераторы', count: 89 }, { icon: '☀️', name: 'Солнечные панели', count: 67 },
-    { icon: '🧱', name: 'Стройматериалы', count: 145 }, { icon: '🏗️', name: 'Ограждения', count: 98 },
-  ]},
-  { title: 'Специализированное', items: [
-    { icon: '🐝', name: 'Пчеловодство', count: 78 }, { icon: '🐟', name: 'Рыбоводство', count: 34 },
-    { icon: '🌳', name: 'Садовое оборуд.', count: 112 }, { icon: '🍇', name: 'Оборуд. для садов', count: 45 },
-    { icon: '🐮', name: 'Оборуд. коровников', count: 56 }, { icon: '🗼', name: 'Силосное оборуд.', count: 38 },
-  ]},
-  { title: 'Услуги и прочее', items: [
-    { icon: '🚚', name: 'Транспортные услуги', count: 167 }, { icon: '🔧', name: 'Ремонт техники', count: 145 },
-    { icon: '📋', name: 'Аренда техники', count: 89 }, { icon: '🏞️', name: 'Земельные участки', count: 234 },
-    { icon: '👨‍🌾', name: 'Фермерские услуги', count: 78 }, { icon: '📦', name: 'Прочие агротовары', count: 312 },
-  ]},
-];
-
-const allCategories = categoryGroups.flatMap(g => g.items);
-
-const popularCategories = [
-  { icon: '🚜', name: 'Тракторы', count: 324 },
-  { icon: '⚙️', name: 'Запчасти', count: 567 },
-  { icon: '🌾', name: 'Семена', count: 430 },
-  { icon: '🌽', name: 'Зерно', count: 312 },
-  { icon: '💧', name: 'Системы полива', count: 145 },
-  { icon: '🧪', name: 'Удобрения', count: 267 },
-];
-
-const sampleListings = [
-  { title: 'Трактор МТЗ-82.1 2023 года', price: '12 500 000 ₸', location: 'Костанай', condition: 'Б/У', img: 'https://images.unsplash.com/photo-1625246333195-78d9c38ad449?w=400&h=300&fit=crop', category: 'Тракторы' },
-  { title: 'Семена пшеницы "Астана-2"', price: '450 000 ₸', location: 'Акмолинская обл.', condition: 'Новый', img: 'https://images.unsplash.com/photo-1574943320219-553eb213f72d?w=400&h=300&fit=crop', category: 'Семена' },
-  { title: 'Система капельного полива 10 га', price: '3 200 000 ₸', location: 'Алматинская обл.', condition: 'Новый', img: 'https://images.unsplash.com/photo-1464226184884-fa280b87c399?w=400&h=300&fit=crop', category: 'Полив' },
-  { title: 'Комбайн Claas Tucano 2021', price: '45 000 000 ₸', location: 'Северо-Казахст.', condition: 'Б/У', img: 'https://images.unsplash.com/photo-1592982537447-6f2a6a0c7c10?w=400&h=300&fit=crop', category: 'Комбайны' },
-  { title: 'Удобрение КАС-32, 20 тонн', price: '2 800 000 ₸', location: 'Караганда', condition: 'Новый', img: 'https://images.unsplash.com/photo-1500595046743-cd271d694d30?w=400&h=300&fit=crop', category: 'Удобрения' },
-  { title: 'Генератор дизельный 50 кВт', price: '1 950 000 ₸', location: 'Шымкент', condition: 'Новый', img: 'https://images.unsplash.com/photo-1416879595882-3373a0480b5b?w=400&h=300&fit=crop', category: 'Генераторы' },
-];
+import { useTranslatedData } from '@/hooks/useTranslatedData';
 
 export default function ClassifiedsPage() {
   const { t } = useLanguage();
+  const { classifiedsData } = useTranslatedData();
   const [search, setSearch] = useState('');
-  const [activeGroup, setActiveGroup] = useState('');
+
+  const categoryGroups = classifiedsData.categoryGroups;
+  const popularCategories = classifiedsData.popularCategories;
+  const sampleListings = classifiedsData.sampleListings;
+  const allCategories = categoryGroups.flatMap(g => g.items);
 
   const filteredGroups = useMemo(() => {
     if (!search) return categoryGroups;
     return categoryGroups.map(g => ({
       ...g, items: g.items.filter(item => item.name.toLowerCase().includes(search.toLowerCase())),
     })).filter(g => g.items.length > 0);
-  }, [search]);
+  }, [search, categoryGroups]);
 
   return (
     <div className="min-h-screen">
