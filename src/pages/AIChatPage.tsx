@@ -1,5 +1,5 @@
 import { useState, useRef, useEffect, useCallback } from 'react';
-import { Send, Loader2, Bot, RotateCcw, Sparkles, Plus, MessageSquare, ChevronLeft, Menu, Trash2 } from 'lucide-react';
+import { Send, Loader2, Bot, RotateCcw, Sparkles, Plus, MessageSquare, ChevronLeft, Menu } from 'lucide-react';
 import ReactMarkdown from 'react-markdown';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useLanguage } from '@/i18n/LanguageContext';
