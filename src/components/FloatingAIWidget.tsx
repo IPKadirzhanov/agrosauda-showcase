@@ -1,15 +1,27 @@
 import { useState } from 'react';
 import { X, Sparkles } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
+import { useNavigate } from 'react-router-dom';
+import { useIsMobile } from '@/hooks/use-mobile';
 import AIChatWidget from './AIChatWidget';
 
 export default function FloatingAIWidget() {
   const [open, setOpen] = useState(false);
+  const isMobile = useIsMobile();
+  const navigate = useNavigate();
+
+  const handleClick = () => {
+    if (isMobile) {
+      navigate('/ai-chat?agent=subsidiya_gid');
+    } else {
+      setOpen(prev => !prev);
+    }
+  };
 
   return (
     <div className="fixed bottom-6 right-6 z-50 flex flex-col items-end gap-3">
       <AnimatePresence>
-        {open && (
+        {open && !isMobile && (
           <motion.div
             initial={{ opacity: 0, scale: 0.8, y: 20 }}
             animate={{ opacity: 1, scale: 1, y: 0 }}
@@ -29,7 +41,7 @@ export default function FloatingAIWidget() {
       </AnimatePresence>
 
       <motion.button
-        onClick={() => setOpen(prev => !prev)}
+        onClick={handleClick}
         whileHover={{ scale: 1.08 }}
         whileTap={{ scale: 0.95 }}
         className="relative group w-14 h-14 rounded-full flex items-center justify-center cursor-pointer shadow-lg shadow-primary/30 overflow-hidden"

@@ -353,4 +353,14 @@ export const cn: TranslationKeys = {
     totalViews: '总观看量',
     totalLikes: '总点赞量',
   },
+
+  aiChat: {
+    newChat: '新对话',
+    noHistory: '无历史记录',
+    typing: '输入中...',
+    online: '在线',
+    placeholder: '输入消息...',
+    subsidyDesc: '帮助查找补贴、拨款和支持计划',
+    agroDesc: '帮助浏览Agrosauda市场',
+  },
 };

@@ -1,8 +1,9 @@
-import { Bot, Search, TrendingUp, Sparkles, Zap, Shield, Globe, MessageSquare } from 'lucide-react';
+import { Bot, Search, TrendingUp, Sparkles, Zap, Shield, Globe, MessageSquare, History } from 'lucide-react';
 import AnimatedSection from '@/components/AnimatedSection';
 import AIChatWidget from '@/components/AIChatWidget';
 import { motion } from 'framer-motion';
 import { useLanguage } from '@/i18n/LanguageContext';
+import { Link } from 'react-router-dom';
 
 export default function AIAssistantsPage() {
   const { t } = useLanguage();
@@ -105,6 +106,13 @@ export default function AIAssistantsPage() {
                       </div>
                       <div className={`${i % 2 === 1 ? 'lg:order-1' : ''}`}>
                         <AIChatWidget agentType={agent.agentType} agentName={agent.name} placeholder={agent.placeholder} suggestions={agent.suggestions} />
+                        <Link
+                          to={`/ai-chat?agent=${agent.agentType}`}
+                          className="mt-3 flex items-center justify-center gap-2 text-sm text-primary hover:underline"
+                        >
+                          <History className="w-4 h-4" />
+                          {t.aiChat?.newChat ? 'Открыть полный чат с историей' : 'Open full chat with history'}
+                        </Link>
                       </div>
                     </div>
                   </div>

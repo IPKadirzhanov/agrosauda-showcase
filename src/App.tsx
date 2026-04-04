@@ -28,6 +28,7 @@ import BrokerDashboardPage from "./pages/BrokerDashboardPage";
 import BusinessDashboardPage from "./pages/BusinessDashboardPage";
 import NotFound from "./pages/NotFound";
 import AgroShortsPage from "./pages/AgroShortsPage";
+import AIChatPage from "./pages/AIChatPage";
 import AdminLayout from "./pages/admin/AdminLayout";
 import AdminDashboardPage from "./pages/admin/AdminDashboardPage";
 import AdminUsersPage from "./pages/admin/AdminUsersPage";
@@ -68,6 +69,7 @@ function AppLayout() {
         <Route path="/classifieds" element={<ClassifiedsPage />} />
         <Route path="/agrobroker" element={<AgroBrokerPage />} />
         <Route path="/agroshorts" element={<AgroShortsPage />} />
+        <Route path="/ai-chat" element={<AIChatPage />} />
         <Route path="/auth" element={<AuthPage />} />
         <Route path="/auth/business" element={<BusinessAuthPage />} />
         <Route path="/dashboard" element={<DashboardPage />} />

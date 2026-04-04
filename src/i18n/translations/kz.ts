@@ -366,4 +366,14 @@ export const kz: TranslationKeys = {
     totalViews: 'Барлық көрілімдер',
     totalLikes: 'Барлық лайктар',
   },
+
+  aiChat: {
+    newChat: 'Жаңа чат',
+    noHistory: 'Тарихы жоқ',
+    typing: 'Жазуда...',
+    online: 'Онлайн',
+    placeholder: 'Хабарлама жазыңыз...',
+    subsidyDesc: 'Субсидиялар мен гранттарды табуға көмектесемін',
+    agroDesc: 'Agrosauda маркетплейсінде бағыт көрсетемін',
+  },
 };
