@@ -2,6 +2,7 @@ import { useState, useRef, useEffect } from 'react';
 import { Send, Loader2, X, Bot, RotateCcw, Sparkles } from 'lucide-react';
 import ReactMarkdown from 'react-markdown';
 import { motion, AnimatePresence } from 'framer-motion';
+import { useLanguage } from '@/i18n/LanguageContext';
 
 type Msg = { role: 'user' | 'assistant'; content: string };
 
