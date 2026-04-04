@@ -2,6 +2,7 @@ import { Link } from 'react-router-dom';
 import { Product, formatPrice } from '@/data/mockData';
 import { Heart, MapPin, ArrowRight } from 'lucide-react';
 import { useState } from 'react';
+import { useLanguage } from '@/i18n/LanguageContext';
 
 interface Props {
   product: Product;
@@ -9,6 +10,7 @@ interface Props {
 
 export default function ProductCard({ product }: Props) {
   const [liked, setLiked] = useState(false);
+  const { t } = useLanguage();
 
   return (
     <div className="premium-card rounded-2xl overflow-hidden group h-full flex flex-col">
@@ -20,7 +22,6 @@ export default function ProductCard({ product }: Props) {
           className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700 ease-out"
           loading="lazy"
         />
-        {/* Image overlay on hover */}
         <div className="absolute inset-0 bg-gradient-to-t from-black/40 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
         
         <button
@@ -34,7 +35,7 @@ export default function ProductCard({ product }: Props) {
             ? 'bg-primary text-primary-foreground shadow-md' 
             : 'bg-foreground/80 text-background'
         }`}>
-          {product.condition}
+          {product.condition === 'Новый' ? t.common.newCondition : t.common.usedCondition}
         </span>
       </div>
 
@@ -57,7 +58,7 @@ export default function ProductCard({ product }: Props) {
           className="mt-auto block w-full text-center py-3 rounded-xl bg-primary/8 text-primary text-sm font-bold hover:bg-primary hover:text-primary-foreground transition-all duration-400 border border-primary/10 hover:border-primary group/btn"
         >
           <span className="inline-flex items-center gap-1.5">
-            Подробнее <ArrowRight className="w-3.5 h-3.5 group-hover/btn:translate-x-0.5 transition-transform" />
+            {t.common.details} <ArrowRight className="w-3.5 h-3.5 group-hover/btn:translate-x-0.5 transition-transform" />
           </span>
         </Link>
       </div>

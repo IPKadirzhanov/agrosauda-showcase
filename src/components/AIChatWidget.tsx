@@ -2,6 +2,7 @@ import { useState, useRef, useEffect } from 'react';
 import { Send, Loader2, X, Bot, RotateCcw, Sparkles } from 'lucide-react';
 import ReactMarkdown from 'react-markdown';
 import { motion, AnimatePresence } from 'framer-motion';
+import { useLanguage } from '@/i18n/LanguageContext';
 
 type Msg = { role: 'user' | 'assistant'; content: string };
 
@@ -26,6 +27,7 @@ export default function AIChatWidget({
   className = '',
   suggestions = [],
 }: AIChatWidgetProps) {
+  const { t } = useLanguage();
   const [messages, setMessages] = useState<Msg[]>([]);
   const [input, setInput] = useState('');
   const [isLoading, setIsLoading] = useState(false);
@@ -178,7 +180,7 @@ export default function AIChatWidget({
           <button
             onClick={resetChat}
             className="p-2 rounded-lg text-muted-foreground hover:text-foreground hover:bg-muted/50 transition-all"
-            title="Новый чат"
+            title={t?.common?.newChat || 'Новый чат'}
           >
             <RotateCcw className="w-4 h-4" />
           </button>
