@@ -27,6 +27,7 @@ export default function AIChatWidget({
   className = '',
   suggestions = [],
 }: AIChatWidgetProps) {
+  const { t } = useLanguage();
   const [messages, setMessages] = useState<Msg[]>([]);
   const [input, setInput] = useState('');
   const [isLoading, setIsLoading] = useState(false);
