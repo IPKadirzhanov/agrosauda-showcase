@@ -53,6 +53,20 @@ serve(async (req) => {
     const supabaseKey = Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")!;
     const supabase = createClient(supabaseUrl, supabaseKey);
 
+    // Extract user_id from JWT if available
+    let userId: string | null = null;
+    const authHeader = req.headers.get("Authorization");
+    if (authHeader) {
+      const anonKey = Deno.env.get("SUPABASE_ANON_KEY");
+      if (authHeader !== `Bearer ${anonKey}`) {
+        const userClient = createClient(supabaseUrl, Deno.env.get("SUPABASE_ANON_KEY")!, {
+          global: { headers: { Authorization: authHeader } },
+        });
+        const { data: { user } } = await userClient.auth.getUser();
+        userId = user?.id || null;
+      }
+    }
+
     // Fetch relevant knowledge
     const userMessage = messages[messages.length - 1]?.content || "";
     const { data: knowledge } = await supabase
