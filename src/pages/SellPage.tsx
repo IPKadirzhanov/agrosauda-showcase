@@ -7,6 +7,7 @@ import { useLanguage } from '@/i18n/LanguageContext';
 
 export default function SellPage() {
   const { t } = useLanguage();
+  const { categories, regions } = useTranslatedData();
   const [submitted, setSubmitted] = useState(false);
   const [form, setForm] = useState({ title: '', category: '', region: '', price: '', condition: t.sell.conditionNew, description: '', seller: '', phone: '' });
 

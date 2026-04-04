@@ -1,7 +1,7 @@
 import { Heart } from 'lucide-react';
 import AnimatedSection from '@/components/AnimatedSection';
 import ProductCard from '@/components/ProductCard';
-import { products } from '@/data/mockData';
+import { useTranslatedData } from '@/hooks/useTranslatedData';
 import { useState } from 'react';
 import { Link } from 'react-router-dom';
 import { useLanguage } from '@/i18n/LanguageContext';
