@@ -289,12 +289,6 @@ export default function AIChatPage() {
                 >
                   <MessageSquare className="w-4 h-4 shrink-0" />
                   <span className="truncate flex-1">{c.preview}</span>
-                  <button
-                    onClick={(e) => deleteConversation(c.id, e)}
-                    className="opacity-0 group-hover:opacity-100 p-1 rounded hover:bg-destructive/10 hover:text-destructive transition-all"
-                  >
-                    <Trash2 className="w-3 h-3" />
-                  </button>
                 </button>
               ))
             )}
