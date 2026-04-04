@@ -8,6 +8,7 @@ import { useLanguage } from '@/i18n/LanguageContext';
 
 export default function FavoritesPage() {
   const { t } = useLanguage();
+  const { products } = useTranslatedData();
   const [favorites] = useState(products.slice(0, 3));
   const [isEmpty] = useState(false);
 
