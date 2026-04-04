@@ -107,6 +107,13 @@ export default function AIAssistantsPage() {
                       </div>
                       <div className={`${i % 2 === 1 ? 'lg:order-1' : ''}`}>
                         <AIChatWidget agentType={agent.agentType} agentName={agent.name} placeholder={agent.placeholder} suggestions={agent.suggestions} />
+                        <Link
+                          to={`/ai-chat?agent=${agent.agentType}`}
+                          className="mt-3 flex items-center justify-center gap-2 text-sm text-primary hover:underline"
+                        >
+                          <History className="w-4 h-4" />
+                          {t.aiChat?.newChat ? 'Открыть полный чат с историей' : 'Open full chat with history'}
+                        </Link>
                       </div>
                     </div>
                   </div>
