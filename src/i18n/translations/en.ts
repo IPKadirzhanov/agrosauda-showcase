@@ -374,4 +374,14 @@ export const en: TranslationKeys = {
     totalViews: 'Total Views',
     totalLikes: 'Total Likes',
   },
+
+  aiChat: {
+    newChat: 'New Chat',
+    noHistory: 'No history',
+    typing: 'Typing...',
+    online: 'Online',
+    placeholder: 'Type a message...',
+    subsidyDesc: 'I help find subsidies, grants and support programs',
+    agroDesc: 'I help navigate the Agrosauda marketplace',
+  },
 };
