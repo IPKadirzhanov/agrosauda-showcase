@@ -707,6 +707,16 @@ export const ru = {
     totalViews: 'Всего просмотров',
     totalLikes: 'Всего лайков',
   },
+
+  aiChat: {
+    newChat: 'Новый чат',
+    noHistory: 'Нет истории',
+    typing: 'Печатает...',
+    online: 'Онлайн',
+    placeholder: 'Введите сообщение...',
+    subsidyDesc: 'Помогу найти субсидии, гранты и программы поддержки',
+    agroDesc: 'Помогу с навигацией по маркетплейсу Agrosauda',
+  },
 };
 
 export type TranslationKeys = typeof ru;
