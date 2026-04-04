@@ -1,7 +1,9 @@
-import { Bot, Search, TrendingUp, Sparkles, Zap, Shield, Globe, MessageSquare } from 'lucide-react';
+import { Bot, Search, TrendingUp, Sparkles, Zap, Shield, Globe, MessageSquare, History } from 'lucide-react';
 import AnimatedSection from '@/components/AnimatedSection';
 import AIChatWidget from '@/components/AIChatWidget';
 import { motion } from 'framer-motion';
+import { useLanguage } from '@/i18n/LanguageContext';
+import { Link } from 'react-router-dom';
 import { useLanguage } from '@/i18n/LanguageContext';
 
 export default function AIAssistantsPage() {
