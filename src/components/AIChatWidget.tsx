@@ -178,7 +178,7 @@ export default function AIChatWidget({
           <button
             onClick={resetChat}
             className="p-2 rounded-lg text-muted-foreground hover:text-foreground hover:bg-muted/50 transition-all"
-            title="Новый чат"
+            title={t?.common?.newChat || 'Новый чат'}
           >
             <RotateCcw className="w-4 h-4" />
           </button>
