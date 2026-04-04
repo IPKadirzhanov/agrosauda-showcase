@@ -1,8 +1,8 @@
 import { BookOpen, Clock, GraduationCap, Play } from 'lucide-react';
 import AnimatedSection from '@/components/AnimatedSection';
-import { courses } from '@/data/mockData';
 import { useState } from 'react';
 import { useLanguage } from '@/i18n/LanguageContext';
+import { useTranslatedData } from '@/hooks/useTranslatedData';
 
 export default function EducationPage() {
   const { t } = useLanguage();
