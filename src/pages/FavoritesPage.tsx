@@ -1,13 +1,14 @@
 import { Heart } from 'lucide-react';
 import AnimatedSection from '@/components/AnimatedSection';
 import ProductCard from '@/components/ProductCard';
-import { products } from '@/data/mockData';
+import { useTranslatedData } from '@/hooks/useTranslatedData';
 import { useState } from 'react';
 import { Link } from 'react-router-dom';
 import { useLanguage } from '@/i18n/LanguageContext';
 
 export default function FavoritesPage() {
   const { t } = useLanguage();
+  const { products } = useTranslatedData();
   const [favorites] = useState(products.slice(0, 3));
   const [isEmpty] = useState(false);
 

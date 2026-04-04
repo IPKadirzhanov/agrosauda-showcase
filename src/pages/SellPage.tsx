@@ -1,12 +1,13 @@
 import { Upload, Camera, CheckCircle } from 'lucide-react';
 import AnimatedSection from '@/components/AnimatedSection';
-import { categories, regions } from '@/data/mockData';
+import { useTranslatedData } from '@/hooks/useTranslatedData';
 import { useState } from 'react';
 import { toast } from 'sonner';
 import { useLanguage } from '@/i18n/LanguageContext';
 
 export default function SellPage() {
   const { t } = useLanguage();
+  const { categories, regions } = useTranslatedData();
   const [submitted, setSubmitted] = useState(false);
   const [form, setForm] = useState({ title: '', category: '', region: '', price: '', condition: t.sell.conditionNew, description: '', seller: '', phone: '' });
 

@@ -2,7 +2,8 @@ import { useParams, Link } from 'react-router-dom';
 import { ArrowLeft, Heart, Shield, MapPin, User, Share2, Phone, MessageCircle } from 'lucide-react';
 import AnimatedSection from '@/components/AnimatedSection';
 import ProductCard from '@/components/ProductCard';
-import { products, formatPrice } from '@/data/mockData';
+import { formatPrice } from '@/data/mockData';
+import { useTranslatedData } from '@/hooks/useTranslatedData';
 import { useState } from 'react';
 import { toast } from 'sonner';
 import { useLanguage } from '@/i18n/LanguageContext';
@@ -10,6 +11,7 @@ import { useLanguage } from '@/i18n/LanguageContext';
 export default function ProductDetailPage() {
   const { id } = useParams();
   const { t } = useLanguage();
+  const { products } = useTranslatedData();
   const product = products.find(p => p.id === id);
   const [liked, setLiked] = useState(false);
   const similar = products.filter(p => p.id !== id && p.categorySlug === product?.categorySlug).slice(0, 4);
@@ -120,7 +122,7 @@ export default function ProductDetailPage() {
                   {Object.entries(product.specs).map(([key, val]) => (
                     <div key={key} className="flex justify-between p-3 rounded-lg bg-muted/50">
                       <span className="text-sm text-muted-foreground">{key}</span>
-                      <span className="text-sm font-medium">{val}</span>
+                      <span className="text-sm font-medium">{val as string}</span>
                     </div>
                   ))}
                 </div>

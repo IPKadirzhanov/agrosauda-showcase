@@ -4,11 +4,12 @@ import { ArrowRight, Shield, Sparkles, BookOpen, TrendingUp, Bot, Newspaper, Pla
 import AnimatedSection from '@/components/AnimatedSection';
 import AnimatedCounter from '@/components/AnimatedCounter';
 import ProductCard from '@/components/ProductCard';
-import { products, categories, stats, testimonials } from '@/data/mockData';
 import { useLanguage } from '@/i18n/LanguageContext';
+import { useTranslatedData } from '@/hooks/useTranslatedData';
 
 export default function HomePage() {
   const { t } = useLanguage();
+  const { products, categories, stats, testimonials } = useTranslatedData();
   const featuredProducts = products.filter(p => p.featured);
 
   const services = [
