@@ -125,13 +125,6 @@ export default function AIChatPage() {
     if (isMobile) setSidebarOpen(false);
   };
 
-  const deleteConversation = async (id: string, e: React.MouseEvent) => {
-    e.stopPropagation();
-    await supabase.from('ai_messages').delete().eq('conversation_id', id);
-    await supabase.from('ai_conversations').delete().eq('id', id);
-    if (conversationId === id) startNewChat();
-    loadConversations();
-  };
 
   const sendMessage = async (overrideText?: string) => {
     const text = overrideText || input.trim();
