@@ -51,7 +51,7 @@ export default function Footer() {
             <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-lg bg-background/5 border border-background/10">
               <div className="w-1.5 h-1.5 rounded-full bg-primary animate-pulse-soft" />
               <p className="text-[11px] text-background/40 font-medium">
-                Разработано <span className="text-primary">IPKadirzhanov</span>
+                {t.common.developedBy} <span className="text-primary">IPKadirzhanov</span>
               </p>
             </div>
           </div>
