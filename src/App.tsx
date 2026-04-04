@@ -48,6 +48,7 @@ const queryClient = new QueryClient();
 function AppLayout() {
   const location = useLocation();
   const isAdmin = location.pathname.startsWith('/admin');
+  const isAIChat = location.pathname === '/ai-chat';
 
   return (
     <>
@@ -93,8 +94,8 @@ function AppLayout() {
 
         <Route path="*" element={<NotFound />} />
       </Routes>
-      {!isAdmin && <Footer />}
-      {!isAdmin && <FloatingAIWidget />}
+      {!isAdmin && !isAIChat && <Footer />}
+      {!isAdmin && !isAIChat && <FloatingAIWidget />}
     </>
   );
 }
