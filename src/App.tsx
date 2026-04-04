@@ -94,8 +94,8 @@ function AppLayout() {
 
         <Route path="*" element={<NotFound />} />
       </Routes>
-      {!isAdmin && <Footer />}
-      {!isAdmin && <FloatingAIWidget />}
+      {!isAdmin && !isAIChat && <Footer />}
+      {!isAdmin && !isAIChat && <FloatingAIWidget />}
     </>
   );
 }
