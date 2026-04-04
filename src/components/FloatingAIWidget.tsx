@@ -41,7 +41,7 @@ export default function FloatingAIWidget() {
       </AnimatePresence>
 
       <motion.button
-        onClick={() => setOpen(prev => !prev)}
+        onClick={handleClick}
         whileHover={{ scale: 1.08 }}
         whileTap={{ scale: 0.95 }}
         className="relative group w-14 h-14 rounded-full flex items-center justify-center cursor-pointer shadow-lg shadow-primary/30 overflow-hidden"
