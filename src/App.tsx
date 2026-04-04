@@ -48,6 +48,7 @@ const queryClient = new QueryClient();
 function AppLayout() {
   const location = useLocation();
   const isAdmin = location.pathname.startsWith('/admin');
+  const isAIChat = location.pathname === '/ai-chat';
 
   return (
     <>
