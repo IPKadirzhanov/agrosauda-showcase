@@ -21,7 +21,7 @@ export default function CategoryPage() {
       <div className="min-h-screen flex items-center justify-center">
         <div className="text-center">
           <h1 className="text-2xl font-bold mb-4">{t.notFound.title}</h1>
-          <Link to="/marketplace" className="text-primary hover:underline">{t.notFound.backHome}</Link>
+          <Link to="/marketplace" className="text-primary hover:underline">{t.notFound.goHome}</Link>
         </div>
       </div>
     );
