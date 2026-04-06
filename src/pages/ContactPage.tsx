@@ -3,9 +3,11 @@ import AnimatedSection from '@/components/AnimatedSection';
 import { useState } from 'react';
 import { toast } from 'sonner';
 import { useLanguage } from '@/i18n/LanguageContext';
+import SEOHead from '@/components/SEOHead';
+import Breadcrumbs from '@/components/Breadcrumbs';
 
 export default function ContactPage() {
-  const { t } = useLanguage();
+  const { t, lang } = useLanguage();
   const [form, setForm] = useState({ name: '', email: '', subject: '', message: '' });
 
   const handleSubmit = (e: React.FormEvent) => {
