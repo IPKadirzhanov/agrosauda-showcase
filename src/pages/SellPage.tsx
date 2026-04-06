@@ -30,6 +30,8 @@ export default function SellPage() {
 
   return (
     <div className="min-h-screen pt-24 pb-20">
+      <SEOHead title="Продать товар — Agrosauda" description="Разместите объявление о продаже сельхозпродукции на Agrosauda. Быстрая продажа техники, семян, удобрений в Казахстане." keywords="продать, объявление, сельхоз, Казахстан" canonical="https://agrosauda.kz/sell" />
+      <Breadcrumbs />
       <div className="container-main px-4 sm:px-6 lg:px-8">
         <AnimatedSection className="text-center mb-10">
           <h1 className="font-display font-bold text-4xl sm:text-5xl mb-3">{t.sell.pageTitle}</h1>
