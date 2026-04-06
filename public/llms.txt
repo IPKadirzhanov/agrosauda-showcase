@@ -1,0 +1,37 @@
+# Agrosauda — Agricultural Marketplace of Kazakhstan
+
+## About
+Agrosauda is Kazakhstan's largest agricultural marketplace connecting farmers, equipment dealers, seed suppliers, and agricultural businesses. The platform facilitates buying and selling of agricultural machinery, equipment, seeds, fertilizers, livestock, and services across all 14 regions of Kazakhstan.
+
+## Core Features
+- **Marketplace**: Buy and sell agricultural products, machinery, and equipment
+- **Safe Deal**: Escrow-based transaction system for secure payments
+- **AgroBroker**: Professional brokerage service connecting buyers and sellers
+- **AI Assistants**: Subsidy guidance and agricultural consulting powered by AI
+- **AgroShorts**: Short-form video content about farming and agriculture
+- **Education**: Agricultural courses and training materials
+- **News**: Latest agricultural news and market analytics for Kazakhstan
+
+## Categories
+- Tractors (John Deere, CLAAS, Case IH, МТЗ Беларус)
+- Combines and Harvesters
+- Seeders and Planting Equipment
+- Irrigation Systems
+- Fertilizers and Agrochemistry
+- Seeds (wheat, barley, sunflower, rapeseed)
+- Livestock Equipment
+- Greenhouses
+- Spare Parts
+- Grain Processing Equipment
+- Feed Equipment
+- Storage Solutions
+- Farm Tools
+
+## Coverage
+All 14 regions of Kazakhstan: Astana, Almaty, Shymkent, Kostanay, Karaganda, Pavlodar, Aktobe, Turkestan, Kyzylorda, Atyrau, Oral, Semey, Taldykorgan, Petropavl
+
+## Languages
+Russian, Kazakh, English, Chinese
+
+## Contact
+Website: https://agrosauda.kz
