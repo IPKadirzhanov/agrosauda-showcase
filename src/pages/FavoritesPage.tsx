@@ -5,6 +5,7 @@ import { useTranslatedData } from '@/hooks/useTranslatedData';
 import { useState } from 'react';
 import { Link } from 'react-router-dom';
 import { useLanguage } from '@/i18n/LanguageContext';
+import SEOHead from '@/components/SEOHead';
 
 export default function FavoritesPage() {
   const { t } = useLanguage();
