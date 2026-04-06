@@ -1,5 +1,7 @@
 import { BookOpen, Clock, GraduationCap, Play } from 'lucide-react';
 import AnimatedSection from '@/components/AnimatedSection';
+import SEOHead from '@/components/SEOHead';
+import Breadcrumbs from '@/components/Breadcrumbs';
 import { useState } from 'react';
 import { useLanguage } from '@/i18n/LanguageContext';
 import { useTranslatedData } from '@/hooks/useTranslatedData';
@@ -14,6 +16,20 @@ export default function EducationPage() {
 
   return (
     <div className="min-h-screen pt-24 pb-20">
+      <SEOHead
+        title="Обучение для фермеров — курсы агробизнеса | Agrosauda"
+        description="Бесплатные курсы для фермеров Казахстана: агробизнес, управление техникой, орошение, животноводство, субсидии. Учитесь у лучших экспертов."
+        keywords="обучение фермеров, курсы агробизнес, сельское хозяйство Казахстан, agrosauda образование"
+        canonical="https://agrosauda.kz/education"
+        jsonLd={{
+          '@context': 'https://schema.org',
+          '@type': 'ItemList',
+          name: 'Курсы для фермеров',
+          numberOfItems: courses.length,
+          url: 'https://agrosauda.kz/education',
+        }}
+      />
+      <Breadcrumbs items={[{ label: t.education.pageTitle }]} className="container-main px-4 sm:px-6 lg:px-8 mb-4" />
       <section className="section-padding hero-gradient-bg">
         <div className="container-main text-center">
           <AnimatedSection>

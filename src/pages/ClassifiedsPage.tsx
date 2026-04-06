@@ -4,6 +4,8 @@ import { Search, SlidersHorizontal, Plus, ChevronRight, Flame, ArrowRight } from
 import { motion } from 'framer-motion';
 import AnimatedSection from '@/components/AnimatedSection';
 import AnimatedCounter from '@/components/AnimatedCounter';
+import SEOHead from '@/components/SEOHead';
+import Breadcrumbs from '@/components/Breadcrumbs';
 import { useLanguage } from '@/i18n/LanguageContext';
 import { useTranslatedData } from '@/hooks/useTranslatedData';
 
@@ -26,6 +28,19 @@ export default function ClassifiedsPage() {
 
   return (
     <div className="min-h-screen">
+      <SEOHead
+        title="Объявления — сельхозтехника и оборудование | Agrosauda"
+        description="Доска объявлений сельскохозяйственной техники и оборудования в Казахстане. Тракторы, комбайны, семена, удобрения — от частных лиц и компаний."
+        keywords="объявления сельхозтехника, доска объявлений, Казахстан, тракторы б/у, комбайны, agrosauda"
+        canonical="https://agrosauda.kz/classifieds"
+        jsonLd={{
+          '@context': 'https://schema.org',
+          '@type': 'CollectionPage',
+          name: 'Объявления сельхозтехники Казахстана',
+          url: 'https://agrosauda.kz/classifieds',
+        }}
+      />
+      <Breadcrumbs items={[{ label: t.classifieds.title }]} className="container-main px-4 sm:px-6 lg:px-8 pt-24 mb-2" />
       {/* Hero */}
       <section className="relative pt-24 pb-16 overflow-hidden">
         <div className="absolute inset-0 hero-gradient-bg" />

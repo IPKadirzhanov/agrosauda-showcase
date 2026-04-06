@@ -1,5 +1,7 @@
 import { Clock } from 'lucide-react';
 import AnimatedSection from '@/components/AnimatedSection';
+import SEOHead from '@/components/SEOHead';
+import Breadcrumbs from '@/components/Breadcrumbs';
 import { useLanguage } from '@/i18n/LanguageContext';
 import { useTranslatedData } from '@/hooks/useTranslatedData';
 
@@ -11,6 +13,19 @@ export default function NewsPage() {
 
   return (
     <div className="min-h-screen pt-24 pb-20">
+      <SEOHead
+        title="Новости сельского хозяйства Казахстана — Agrosauda"
+        description="Последние новости агросектора Казахстана: рынок зерна, субсидии, технологии, урожай. Аналитика и обзоры от экспертов."
+        keywords="новости сельское хозяйство, Казахстан агроновости, рынок зерна, урожай, agrosauda"
+        canonical="https://agrosauda.kz/news"
+        jsonLd={{
+          '@context': 'https://schema.org',
+          '@type': 'CollectionPage',
+          name: 'Новости сельского хозяйства Казахстана',
+          url: 'https://agrosauda.kz/news',
+        }}
+      />
+      <Breadcrumbs items={[{ label: t.news.pageTitle }]} className="container-main px-4 sm:px-6 lg:px-8 mb-4" />
       <div className="container-main px-4 sm:px-6 lg:px-8">
         <AnimatedSection className="mb-10">
           <h1 className="font-display font-bold text-4xl sm:text-5xl mb-2">{t.news.pageTitle}</h1>

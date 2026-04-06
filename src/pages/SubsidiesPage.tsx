@@ -1,6 +1,8 @@
 import { Search, Sparkles, HelpCircle } from 'lucide-react';
 import AnimatedSection from '@/components/AnimatedSection';
 import AIChatWidget from '@/components/AIChatWidget';
+import SEOHead from '@/components/SEOHead';
+import Breadcrumbs from '@/components/Breadcrumbs';
 import { useState } from 'react';
 import { useLanguage } from '@/i18n/LanguageContext';
 import { useTranslatedData } from '@/hooks/useTranslatedData';
@@ -15,6 +17,20 @@ export default function SubsidiesPage() {
 
   return (
     <div className="min-h-screen pt-24 pb-20">
+      <SEOHead
+        title="Субсидии для фермеров Казахстана 2026 — Agrosauda"
+        description="Актуальные субсидии и гранты для сельского хозяйства Казахстана. Кредитование, орошение, семена, животноводство. ИИ-помощник по оформлению документов."
+        keywords="субсидии фермерам, гранты сельское хозяйство, Казахстан, господдержка, кредит фермеру, agrosauda"
+        canonical="https://agrosauda.kz/subsidies"
+        jsonLd={{
+          '@context': 'https://schema.org',
+          '@type': 'WebPage',
+          name: 'Субсидии для фермеров Казахстана',
+          description: 'Актуальные программы субсидирования сельского хозяйства Казахстана',
+          url: 'https://agrosauda.kz/subsidies',
+        }}
+      />
+      <Breadcrumbs items={[{ label: t.subsidies.pageTitle }]} className="container-main px-4 sm:px-6 lg:px-8 mb-4" />
       <section className="section-padding hero-gradient-bg">
         <div className="container-main text-center">
           <AnimatedSection>
