@@ -1,51 +1,72 @@
 
 
-# Аудит и исправление размеров и багов на всём сайте
+# Полная SEO-оптимизация Agrosauda
 
-## Найденные проблемы
+## Что уже сделано
+- Компонент `SEOHead` (мета-теги, OG, Twitter Cards, hreflang, JSON-LD)
+- Компонент `Breadcrumbs` со Schema.org
+- `CategoryPage` с динамической маршрутизацией `/category/:slug/:city`
+- SEO на: Главная, Товар, Субсидии, Образование, Новости, Объявления
+- `sitemap.xml`, `robots.txt`, `llms.txt`
 
-### 1. Несогласованные размеры карточек (главная проблема из скриншотов)
+## Что нужно сделать
 
-**Карточки товаров (ProductCard)** — на главной в grid `lg:grid-cols-4` карточки с разной длиной заголовков и описаний получают разную высоту. Нужно:
-- Добавить `h-full flex flex-col` к корневому div карточки
-- Добавить `flex-1` к блоку контента `p-5`
-- Зафиксировать кнопку "Подробнее" внизу через `mt-auto`
+### Шаг 1 — SEO на оставшиеся страницы
+Добавить `SEOHead` + `Breadcrumbs` на страницы, где их ещё нет:
+- О нас, Контакты, Безопасная сделка, АгроШоп, АгроБрокер, АгроШортс, Продать, Избранное, ИИ-ассистенты
 
-**Карточки сервисов (HomePage services grid)** — 6 карточек в `lg:grid-cols-3`, текст описания разной длины → разная высота. Нужно добавить `h-full` к Link-обёртке.
+Каждая страница получит уникальный title, description, keywords, canonical URL и JSON-LD (WebPage).
 
-**Карточки категорий (HomePage categories)** — grid `lg:grid-cols-7` на 14 категорий, вторая строка может выглядеть неровно. Нужно `h-full` на каждую карточку.
+### Шаг 2 — Русскоязычные SEO-маршруты
+Создать ЧПУ-маршруты на русском для поисковиков:
+- `/zerno`, `/pshenica`, `/kukuruza`, `/skot`, `/texnika`, `/udobreniya`, `/semena`
+- Городские комбинации: `/pshenica-almaty`, `/pshenica-astana`, `/skot-almaty`, `/texnika-almaty` и т.д.
 
-**Classifieds: sampleListings** — grid `lg:grid-cols-3` без единой высоты. Добавить `h-full flex flex-col` + `flex-1` для контента.
+Каждый маршрут рендерит `CategoryPage` с нужными параметрами. Добавляем маппинг слагов в `seoData.ts`.
 
-**Classifieds: popularCategories** — 6 карточек, одинаковый паттерн, нужно `h-full`.
+### Шаг 3 — Блог-система
+Новые файлы:
+- `src/data/blogData.ts` — 4 статьи по 800-1500 слов
+- `src/pages/BlogPage.tsx` — список статей
+- `src/pages/BlogArticlePage.tsx` — страница статьи с Article JSON-LD
 
-**Education: course cards** — нужно `h-full flex flex-col` + `flex-1` для контента, чтобы кнопка "Начать обучение" была на одном уровне.
+Статьи:
+1. «Цены на пшеницу в Казахстане 2026»
+2. «Как продать зерно в Казахстане»
+3. «Где купить сельхоз технику»
+4. «Обзор агро рынка Казахстана»
 
-**News: article cards** — нужно `h-full flex flex-col` для premium-card.
+Каждая с H1/H2 структурой, внутренними ссылками на категории.
 
-**Subsidies: program cards** — `md:grid-cols-2`, разная высота из-за описаний. Нужно `h-full flex flex-col`.
+### Шаг 4 — Аналитика
+В `index.html` добавить закомментированные заглушки:
+- Google Analytics (gtag.js)
+- Яндекс.Метрика
+- Google Search Console (мета-тег верификации)
 
-### 2. Баги и мелкие ошибки
+### Шаг 5 — Ленивая загрузка изображений
+Добавить `loading="lazy"` на `<img>` в `ProductCard`.
 
-- **ProductCard: hardcoded text** — кнопка "Подробнее" не использует i18n (hardcoded на русском)
-- **AgroShopPage + `/marketplace` дублирование** — оба маршрута ведут на `AgroShopPage`, это нормально, но навигация может запутать
-- **Broken image on product #3** (`photo-1605338198618-558e7661cf1e`) — на скриншоте видно сломанное изображение трактора МТЗ. Unsplash URL может быть невалидным → нужно заменить на рабочий
-- **Footer: ссылки на `#`** — Privacy и Terms ведут на `#`, что выглядит как баг
-- **FavoritesPage: fake state** — `isEmpty` всегда `false`, `favorites` всегда 3 товара из mock — нет реальной интеграции с БД (уже есть в Dashboard)
+### Шаг 6 — Обновить sitemap.xml
+Добавить все новые URL: блог, русские слаги, оставшиеся страницы.
 
-### 3. Детали плана исправлений
+### Шаг 7 — Переводы
+Добавить пространство `blog` во все 4 языковых файла (ru, en, kz, cn).
 
-**Файлы для изменения:**
+## Затрагиваемые файлы
 
-| Файл | Что меняем |
+| Файл | Действие |
 |---|---|
-| `src/components/ProductCard.tsx` | `h-full flex flex-col` на корень, `flex-1` + `mt-auto` на кнопку, i18n для "Подробнее" |
-| `src/pages/HomePage.tsx` | `h-full` на карточки сервисов, категорий |
-| `src/pages/ClassifiedsPage.tsx` | `h-full flex flex-col` на sampleListings и popularCategories |
-| `src/pages/EducationPage.tsx` | `h-full flex flex-col` на course cards, `mt-auto` на кнопку |
-| `src/pages/NewsPage.tsx` | `h-full flex flex-col` на article cards |
-| `src/pages/SubsidiesPage.tsx` | `h-full flex flex-col` на program cards, `mt-auto` на кнопку |
-| `src/data/mockData.ts` | Заменить сломанный image URL для product #7 (МТЗ Беларус) |
+| `AboutPage`, `ContactPage`, `SafeDealPage`, `AgroShopPage`, `AgroBrokerPage`, `SellPage`, `FavoritesPage`, `AIAssistantsPage` | Добавить SEOHead + Breadcrumbs |
+| `src/data/seoData.ts` | Русские слаги категорий |
+| `src/data/blogData.ts` | **Новый** — 4 SEO-статьи |
+| `src/pages/BlogPage.tsx` | **Новый** — список блога |
+| `src/pages/BlogArticlePage.tsx` | **Новый** — страница статьи |
+| `src/App.tsx` | Маршруты блога + русские слаги |
+| `src/components/ProductCard.tsx` | `loading="lazy"` |
+| `index.html` | Заглушки аналитики |
+| `public/sitemap.xml` | Новые URL |
+| Все 4 файла переводов | Пространство `blog` |
 
-**Подход:** Везде применяем один паттерн — `h-full flex flex-col` на корневой элемент карточки + `flex-1` на контентный блок + `mt-auto` на нижний элемент (кнопку/цену). Это гарантирует, что все карточки в одном ряду одинаковой высоты, а кнопки/цены выровнены по нижнему краю.
+Дизайн, верстка и анимации не затрагиваются. Все изменения — невидимая SEO-инфраструктура и новые контентные страницы в существующем стиле.
 
