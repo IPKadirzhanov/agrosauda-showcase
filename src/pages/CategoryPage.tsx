@@ -46,7 +46,7 @@ export default function CategoryPage() {
   const pageDesc = `${catTitle}${locationSuffix}. ${lang === 'ru' ? `${filtered.length} предложений от проверенных продавцов. Безопасная сделка, субсидии до 50%.` : `${filtered.length} offers from verified sellers.`}`;
 
   const breadcrumbs = [
-    { label: t.nav.marketplace || 'Маркетплейс', path: '/marketplace' },
+    { label: t.nav.agroShop || 'Маркетплейс', path: '/marketplace' },
     ...(city ? [{ label: catTitle, path: `/category/${categorySlug}` }] : []),
     { label: city ? `${catTitle} — ${cityName}` : catTitle },
   ];
