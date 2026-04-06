@@ -384,4 +384,12 @@ export const en: TranslationKeys = {
     subsidyDesc: 'I help find subsidies, grants and support programs',
     agroDesc: 'I help navigate the Agrosauda marketplace',
   },
+
+  blog: {
+    title: 'Blog',
+    subtitle: 'Articles and analytics about Kazakhstan agriculture',
+    readMore: 'Read',
+    backToBlog: 'Back to blog',
+    relatedArticles: 'Related articles',
+  },
 };
