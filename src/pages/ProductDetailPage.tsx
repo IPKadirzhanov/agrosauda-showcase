@@ -62,7 +62,6 @@ export default function ProductDetailPage() {
             { label: product.category, path: `/category/${product.categorySlug}` },
             { label: product.title },
           ]} />
-          </div>
         </AnimatedSection>
 
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
