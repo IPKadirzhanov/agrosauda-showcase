@@ -4,6 +4,7 @@ import { Link } from 'react-router-dom';
 import { supabase } from '@/integrations/supabase/client';
 import { useAuth } from '@/hooks/useAuth';
 import { useLanguage } from '@/i18n';
+import SEOHead from '@/components/SEOHead';
 import ShortVideoCard from '@/components/shorts/ShortVideoCard';
 import ShortsCommentSheet from '@/components/shorts/ShortsCommentSheet';
 import ShortsUploadModal from '@/components/shorts/ShortsUploadModal';
