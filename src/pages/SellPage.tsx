@@ -4,6 +4,8 @@ import { useTranslatedData } from '@/hooks/useTranslatedData';
 import { useState } from 'react';
 import { toast } from 'sonner';
 import { useLanguage } from '@/i18n/LanguageContext';
+import SEOHead from '@/components/SEOHead';
+import Breadcrumbs from '@/components/Breadcrumbs';
 
 export default function SellPage() {
   const { t } = useLanguage();
