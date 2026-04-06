@@ -4,6 +4,7 @@ import { Link } from 'react-router-dom';
 import { supabase } from '@/integrations/supabase/client';
 import { useAuth } from '@/hooks/useAuth';
 import { useLanguage } from '@/i18n';
+import SEOHead from '@/components/SEOHead';
 import ShortVideoCard from '@/components/shorts/ShortVideoCard';
 import ShortsCommentSheet from '@/components/shorts/ShortsCommentSheet';
 import ShortsUploadModal from '@/components/shorts/ShortsUploadModal';
@@ -121,6 +122,7 @@ export default function AgroShortsPage() {
 
   return (
     <div className="fixed inset-0 bg-black z-50">
+      <SEOHead title="АгроШортс — короткие видео о сельском хозяйстве | Agrosauda" description="Смотрите короткие видео о сельском хозяйстве Казахстана на Agrosauda. Обзоры техники, советы фермерам." noindex />
       {/* Header overlay */}
       <div className="absolute top-0 left-0 right-0 z-20 flex items-center justify-between p-4 bg-gradient-to-b from-black/50 to-transparent">
         <Link to="/" className="text-white/80 hover:text-white">

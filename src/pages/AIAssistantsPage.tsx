@@ -4,6 +4,8 @@ import AIChatWidget from '@/components/AIChatWidget';
 import { motion } from 'framer-motion';
 import { useLanguage } from '@/i18n/LanguageContext';
 import { Link } from 'react-router-dom';
+import SEOHead from '@/components/SEOHead';
+import Breadcrumbs from '@/components/Breadcrumbs';
 
 export default function AIAssistantsPage() {
   const { t } = useLanguage();
@@ -43,6 +45,8 @@ export default function AIAssistantsPage() {
 
   return (
     <div className="min-h-screen pt-24 pb-20">
+      <SEOHead title="ИИ-ассистенты для сельского хозяйства | Agrosauda" description="Используйте ИИ-ассистентов Agrosauda: Агро Помощник и Субсидия Гид. Навигация по маркетплейсу и помощь с субсидиями." keywords="ИИ, искусственный интеллект, субсидии, помощник, агро, Казахстан" canonical="https://agrosauda.kz/ai-assistants" />
+      <Breadcrumbs />
       {/* Hero */}
       <section className="section-padding relative overflow-hidden">
         <div className="absolute inset-0 hero-gradient-bg" />

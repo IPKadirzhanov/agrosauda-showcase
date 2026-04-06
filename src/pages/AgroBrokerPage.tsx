@@ -17,6 +17,8 @@ import { useAuth } from '@/hooks/useAuth';
 import { supabase } from '@/integrations/supabase/client';
 import { toast } from 'sonner';
 import { useLanguage } from '@/i18n/LanguageContext';
+import SEOHead from '@/components/SEOHead';
+import Breadcrumbs from '@/components/Breadcrumbs';
 
 const CLAIM_FEE = 5000; // тенге
 
@@ -203,6 +205,8 @@ export default function AgroBrokerPage() {
 
   return (
     <div className="min-h-screen bg-background">
+      <SEOHead title="АгроБрокер — биржа заявок для брокеров | Agrosauda" description="АгроБрокер на Agrosauda: биржа заявок на покупку и продажу сельхозпродукции в Казахстане. Для аккредитованных брокеров." keywords="агроброкер, биржа, заявки, сельхоз, брокер, Казахстан" canonical="https://agrosauda.kz/agrobroker" />
+      <Breadcrumbs />
       {/* Hero */}
       <section className="relative pt-32 pb-20 overflow-hidden">
         <div className="absolute inset-0 hero-gradient-bg opacity-90" />

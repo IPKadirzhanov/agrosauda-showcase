@@ -363,4 +363,12 @@ export const cn: TranslationKeys = {
     subsidyDesc: '帮助查找补贴、拨款和支持计划',
     agroDesc: '帮助浏览Agrosauda市场',
   },
+
+  blog: {
+    title: '博客',
+    subtitle: '关于哈萨克斯坦农业的文章和分析',
+    readMore: '阅读',
+    backToBlog: '返回博客',
+    relatedArticles: '其他文章',
+  },
 };

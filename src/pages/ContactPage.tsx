@@ -3,9 +3,11 @@ import AnimatedSection from '@/components/AnimatedSection';
 import { useState } from 'react';
 import { toast } from 'sonner';
 import { useLanguage } from '@/i18n/LanguageContext';
+import SEOHead from '@/components/SEOHead';
+import Breadcrumbs from '@/components/Breadcrumbs';
 
 export default function ContactPage() {
-  const { t } = useLanguage();
+  const { t, lang } = useLanguage();
   const [form, setForm] = useState({ name: '', email: '', subject: '', message: '' });
 
   const handleSubmit = (e: React.FormEvent) => {
@@ -16,6 +18,8 @@ export default function ContactPage() {
 
   return (
     <div className="min-h-screen pt-24 pb-20">
+      <SEOHead title={lang === 'ru' ? 'Контакты Agrosauda — связаться с нами' : lang === 'en' ? 'Contact Agrosauda — Get in Touch' : lang === 'kz' ? 'Agrosauda байланыс — бізбен хабарласыңыз' : '联系Agrosauda'} description={lang === 'ru' ? 'Свяжитесь с командой Agrosauda. Телефон, email, адрес офиса в Казахстане. Ответим на ваши вопросы.' : 'Contact the Agrosauda team. Phone, email, office address in Kazakhstan.'} keywords="контакты Agrosauda, связаться, телефон, email, Казахстан" canonical="https://agrosauda.kz/contact" jsonLd={{ '@context': 'https://schema.org', '@type': 'ContactPage', name: 'Контакты Agrosauda', url: 'https://agrosauda.kz/contact' }} />
+      <Breadcrumbs />
       <section className="section-padding">
         <div className="container-main">
           <AnimatedSection className="text-center mb-12">

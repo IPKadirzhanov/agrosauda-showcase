@@ -717,6 +717,14 @@ export const ru = {
     subsidyDesc: 'Помогу найти субсидии, гранты и программы поддержки',
     agroDesc: 'Помогу с навигацией по маркетплейсу Agrosauda',
   },
+
+  blog: {
+    title: 'Блог',
+    subtitle: 'Статьи и аналитика о сельском хозяйстве Казахстана',
+    readMore: 'Читать',
+    backToBlog: 'Вернуться в блог',
+    relatedArticles: 'Другие статьи',
+  },
 };
 
 export type TranslationKeys = typeof ru;

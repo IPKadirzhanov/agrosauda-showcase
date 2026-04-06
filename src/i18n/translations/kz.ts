@@ -376,4 +376,12 @@ export const kz: TranslationKeys = {
     subsidyDesc: 'Субсидиялар мен гранттарды табуға көмектесемін',
     agroDesc: 'Agrosauda маркетплейсінде бағыт көрсетемін',
   },
+
+  blog: {
+    title: 'Блог',
+    subtitle: 'Қазақстан ауыл шаруашылығы туралы мақалалар мен талдаулар',
+    readMore: 'Оқу',
+    backToBlog: 'Блогқа оралу',
+    relatedArticles: 'Басқа мақалалар',
+  },
 };

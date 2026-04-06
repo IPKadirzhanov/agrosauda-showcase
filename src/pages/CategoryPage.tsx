@@ -1,4 +1,4 @@
-import { useParams, Link } from 'react-router-dom';
+import { useParams, Link, useLocation } from 'react-router-dom';
 import { useLanguage } from '@/i18n/LanguageContext';
 import { useTranslatedData } from '@/hooks/useTranslatedData';
 import SEOHead from '@/components/SEOHead';
@@ -8,10 +8,30 @@ import AnimatedSection from '@/components/AnimatedSection';
 import { seoCategories, seoCities, getCategoryTitle, getCityName, getCategorySEOText } from '@/data/seoData';
 import { ArrowRight } from 'lucide-react';
 
+const ruSlugMap: Record<string, { category: string; city?: string }> = {
+  '/zerno': { category: 'grain-processing' },
+  '/pshenica': { category: 'seeds' },
+  '/kukuruza': { category: 'seeds' },
+  '/skot': { category: 'livestock' },
+  '/texnika': { category: 'tractors' },
+  '/udobreniya': { category: 'fertilizers' },
+  '/semena': { category: 'seeds' },
+  '/pshenica-almaty': { category: 'seeds', city: 'almaty' },
+  '/pshenica-astana': { category: 'seeds', city: 'astana' },
+  '/pshenica-shymkent': { category: 'seeds', city: 'shymkent' },
+  '/skot-almaty': { category: 'livestock', city: 'almaty' },
+  '/texnika-almaty': { category: 'tractors', city: 'almaty' },
+};
+
 export default function CategoryPage() {
-  const { categorySlug, citySlug } = useParams<{ categorySlug: string; citySlug?: string }>();
+  const { categorySlug: paramCatSlug, citySlug: paramCitySlug } = useParams<{ categorySlug: string; citySlug?: string }>();
+  const location = useLocation();
   const { lang, t } = useLanguage();
   const { products, categories } = useTranslatedData();
+
+  const ruMapping = ruSlugMap[location.pathname];
+  const categorySlug = ruMapping?.category || paramCatSlug;
+  const citySlug = ruMapping?.city || paramCitySlug;
 
   const category = seoCategories.find(c => c.slug === categorySlug);
   const city = citySlug ? seoCities.find(c => c.slug === citySlug) : null;
