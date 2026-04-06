@@ -45,6 +45,8 @@ export default function AIAssistantsPage() {
 
   return (
     <div className="min-h-screen pt-24 pb-20">
+      <SEOHead title="ИИ-ассистенты для сельского хозяйства | Agrosauda" description="Используйте ИИ-ассистентов Agrosauda: Агро Помощник и Субсидия Гид. Навигация по маркетплейсу и помощь с субсидиями." keywords="ИИ, искусственный интеллект, субсидии, помощник, агро, Казахстан" canonical="https://agrosauda.kz/ai-assistants" />
+      <Breadcrumbs />
       {/* Hero */}
       <section className="section-padding relative overflow-hidden">
         <div className="absolute inset-0 hero-gradient-bg" />
