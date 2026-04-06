@@ -4,6 +4,8 @@ import { Search, SlidersHorizontal, Plus, ChevronRight, Flame, ArrowRight } from
 import { motion } from 'framer-motion';
 import AnimatedSection from '@/components/AnimatedSection';
 import AnimatedCounter from '@/components/AnimatedCounter';
+import SEOHead from '@/components/SEOHead';
+import Breadcrumbs from '@/components/Breadcrumbs';
 import { useLanguage } from '@/i18n/LanguageContext';
 import { useTranslatedData } from '@/hooks/useTranslatedData';
 
