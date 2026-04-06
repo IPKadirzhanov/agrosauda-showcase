@@ -1362,4 +1362,31 @@
     <changefreq>weekly</changefreq>
     <priority>0.7</priority>
   </url>
+  <!-- New pages -->
+  <url><loc>https://agrosauda.kz/about</loc><lastmod>2026-04-06</lastmod><changefreq>monthly</changefreq><priority>0.6</priority></url>
+  <url><loc>https://agrosauda.kz/contact</loc><lastmod>2026-04-06</lastmod><changefreq>monthly</changefreq><priority>0.6</priority></url>
+  <url><loc>https://agrosauda.kz/safe-deal</loc><lastmod>2026-04-06</lastmod><changefreq>monthly</changefreq><priority>0.7</priority></url>
+  <url><loc>https://agrosauda.kz/sell</loc><lastmod>2026-04-06</lastmod><changefreq>monthly</changefreq><priority>0.7</priority></url>
+  <url><loc>https://agrosauda.kz/agrobroker</loc><lastmod>2026-04-06</lastmod><changefreq>weekly</changefreq><priority>0.7</priority></url>
+  <url><loc>https://agrosauda.kz/ai-assistants</loc><lastmod>2026-04-06</lastmod><changefreq>monthly</changefreq><priority>0.6</priority></url>
+  <url><loc>https://agrosauda.kz/agroshorts</loc><lastmod>2026-04-06</lastmod><changefreq>daily</changefreq><priority>0.5</priority></url>
+  <!-- Blog -->
+  <url><loc>https://agrosauda.kz/blog</loc><lastmod>2026-04-06</lastmod><changefreq>weekly</changefreq><priority>0.8</priority></url>
+  <url><loc>https://agrosauda.kz/blog/ceny-na-pshenicu-kazahstan-2026</loc><lastmod>2026-03-15</lastmod><changefreq>monthly</changefreq><priority>0.7</priority></url>
+  <url><loc>https://agrosauda.kz/blog/kak-prodat-zerno-v-kazahstane</loc><lastmod>2026-02-20</lastmod><changefreq>monthly</changefreq><priority>0.7</priority></url>
+  <url><loc>https://agrosauda.kz/blog/gde-kupit-selhoz-tehniku</loc><lastmod>2026-01-10</lastmod><changefreq>monthly</changefreq><priority>0.7</priority></url>
+  <url><loc>https://agrosauda.kz/blog/obzor-agro-rynka-kazahstana</loc><lastmod>2026-03-28</lastmod><changefreq>monthly</changefreq><priority>0.7</priority></url>
+  <!-- Russian SEO slugs -->
+  <url><loc>https://agrosauda.kz/zerno</loc><lastmod>2026-04-06</lastmod><changefreq>weekly</changefreq><priority>0.8</priority></url>
+  <url><loc>https://agrosauda.kz/pshenica</loc><lastmod>2026-04-06</lastmod><changefreq>weekly</changefreq><priority>0.8</priority></url>
+  <url><loc>https://agrosauda.kz/kukuruza</loc><lastmod>2026-04-06</lastmod><changefreq>weekly</changefreq><priority>0.8</priority></url>
+  <url><loc>https://agrosauda.kz/skot</loc><lastmod>2026-04-06</lastmod><changefreq>weekly</changefreq><priority>0.8</priority></url>
+  <url><loc>https://agrosauda.kz/texnika</loc><lastmod>2026-04-06</lastmod><changefreq>weekly</changefreq><priority>0.8</priority></url>
+  <url><loc>https://agrosauda.kz/udobreniya</loc><lastmod>2026-04-06</lastmod><changefreq>weekly</changefreq><priority>0.8</priority></url>
+  <url><loc>https://agrosauda.kz/semena</loc><lastmod>2026-04-06</lastmod><changefreq>weekly</changefreq><priority>0.8</priority></url>
+  <url><loc>https://agrosauda.kz/pshenica-almaty</loc><lastmod>2026-04-06</lastmod><changefreq>weekly</changefreq><priority>0.7</priority></url>
+  <url><loc>https://agrosauda.kz/pshenica-astana</loc><lastmod>2026-04-06</lastmod><changefreq>weekly</changefreq><priority>0.7</priority></url>
+  <url><loc>https://agrosauda.kz/pshenica-shymkent</loc><lastmod>2026-04-06</lastmod><changefreq>weekly</changefreq><priority>0.7</priority></url>
+  <url><loc>https://agrosauda.kz/skot-almaty</loc><lastmod>2026-04-06</lastmod><changefreq>weekly</changefreq><priority>0.7</priority></url>
+  <url><loc>https://agrosauda.kz/texnika-almaty</loc><lastmod>2026-04-06</lastmod><changefreq>weekly</changefreq><priority>0.7</priority></url>
 </urlset>
