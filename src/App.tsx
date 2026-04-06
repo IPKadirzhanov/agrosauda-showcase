@@ -76,6 +76,21 @@ function AppLayout() {
         <Route path="/ai-chat" element={<AIChatPage />} />
         <Route path="/category/:categorySlug" element={<CategoryPage />} />
         <Route path="/category/:categorySlug/:citySlug" element={<CategoryPage />} />
+        <Route path="/blog" element={<BlogPage />} />
+        <Route path="/blog/:slug" element={<BlogArticlePage />} />
+        {/* Russian SEO slug routes */}
+        <Route path="/zerno" element={<CategoryPage />} />
+        <Route path="/pshenica" element={<CategoryPage />} />
+        <Route path="/kukuruza" element={<CategoryPage />} />
+        <Route path="/skot" element={<CategoryPage />} />
+        <Route path="/texnika" element={<CategoryPage />} />
+        <Route path="/udobreniya" element={<CategoryPage />} />
+        <Route path="/semena" element={<CategoryPage />} />
+        <Route path="/pshenica-almaty" element={<CategoryPage />} />
+        <Route path="/pshenica-astana" element={<CategoryPage />} />
+        <Route path="/pshenica-shymkent" element={<CategoryPage />} />
+        <Route path="/skot-almaty" element={<CategoryPage />} />
+        <Route path="/texnika-almaty" element={<CategoryPage />} />
         <Route path="/auth" element={<AuthPage />} />
         <Route path="/auth/business" element={<BusinessAuthPage />} />
         <Route path="/dashboard" element={<DashboardPage />} />
