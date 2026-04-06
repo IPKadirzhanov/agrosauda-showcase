@@ -148,7 +148,7 @@ export default function CategoryPage() {
                 {lang === 'ru' ? 'Пока нет предложений в этой категории' : 'No offers yet'}
               </p>
               <Link to="/sell" className="btn-premium inline-flex items-center gap-2">
-                {t.common?.sell || 'Разместить объявление'} <ArrowRight className="w-4 h-4" />
+                {t.nav.sell || 'Разместить объявление'} <ArrowRight className="w-4 h-4" />
               </Link>
             </div>
           )}
