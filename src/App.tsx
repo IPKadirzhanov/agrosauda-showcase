@@ -29,6 +29,7 @@ import BusinessDashboardPage from "./pages/BusinessDashboardPage";
 import NotFound from "./pages/NotFound";
 import AgroShortsPage from "./pages/AgroShortsPage";
 import AIChatPage from "./pages/AIChatPage";
+import CategoryPage from "./pages/CategoryPage";
 import AdminLayout from "./pages/admin/AdminLayout";
 import AdminDashboardPage from "./pages/admin/AdminDashboardPage";
 import AdminUsersPage from "./pages/admin/AdminUsersPage";
