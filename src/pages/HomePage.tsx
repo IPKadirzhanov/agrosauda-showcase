@@ -4,8 +4,10 @@ import { ArrowRight, Shield, Sparkles, BookOpen, TrendingUp, Bot, Newspaper, Pla
 import AnimatedSection from '@/components/AnimatedSection';
 import AnimatedCounter from '@/components/AnimatedCounter';
 import ProductCard from '@/components/ProductCard';
+import SEOHead from '@/components/SEOHead';
 import { useLanguage } from '@/i18n/LanguageContext';
 import { useTranslatedData } from '@/hooks/useTranslatedData';
+import { seoCategories, getCategoryTitle } from '@/data/seoData';
 
 export default function HomePage() {
   const { t } = useLanguage();
@@ -28,8 +30,45 @@ export default function HomePage() {
     { step: '04', title: t.home.step4Title, desc: t.home.step4Desc, icon: CheckCircle2 },
   ];
 
+  const orgJsonLd = {
+    '@context': 'https://schema.org',
+    '@type': 'Organization',
+    name: 'Agrosauda',
+    url: 'https://agrosauda.kz',
+    logo: 'https://agrosauda.kz/logo1.png',
+    description: 'Крупнейший сельскохозяйственный маркетплейс Казахстана',
+    areaServed: { '@type': 'Country', name: 'Kazakhstan' },
+    sameAs: [],
+  };
+
+  const webSiteJsonLd = {
+    '@context': 'https://schema.org',
+    '@type': 'WebSite',
+    name: 'Agrosauda',
+    url: 'https://agrosauda.kz',
+    potentialAction: {
+      '@type': 'SearchAction',
+      target: 'https://agrosauda.kz/marketplace?search={search_term_string}',
+      'query-input': 'required name=search_term_string',
+    },
+  };
+
   return (
     <div className="min-h-screen">
+      <SEOHead
+        title="Agrosauda — Сельскохозяйственный маркетплейс Казахстана"
+        description="Agrosauda — крупнейший сельскохозяйственный маркетплейс Казахстана. Покупка и продажа техники, оборудования, семян, удобрений. 12 500+ товаров, безопасная сделка, субсидии."
+        keywords="сельхозтехника, тракторы, комбайны, семена, удобрения, Казахстан, маркетплейс, agrosauda, купить трактор, фермер"
+        canonical="https://agrosauda.kz/"
+        jsonLd={[orgJsonLd, webSiteJsonLd]}
+        hreflang={[
+          { lang: 'ru', url: 'https://agrosauda.kz/' },
+          { lang: 'kk', url: 'https://agrosauda.kz/?lang=kz' },
+          { lang: 'en', url: 'https://agrosauda.kz/?lang=en' },
+          { lang: 'zh', url: 'https://agrosauda.kz/?lang=cn' },
+          { lang: 'x-default', url: 'https://agrosauda.kz/' },
+        ]}
+      />
       {/* ═══════════════════════════ HERO ═══════════════════════════ */}
       <section className="relative min-h-[100vh] flex items-center overflow-hidden">
         <div className="absolute inset-0 z-0">
@@ -132,7 +171,7 @@ export default function HomePage() {
           <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-7 gap-3">
             {categories.map((cat, i) => (
               <AnimatedSection key={cat.slug} delay={i * 0.04}>
-                <Link to={`/marketplace?cat=${cat.slug}`} className="premium-card p-5 rounded-xl text-center group block h-full">
+                <Link to={`/category/${cat.slug}`} className="premium-card p-5 rounded-xl text-center group block h-full">
                   <span className="text-3xl mb-3 block group-hover:scale-110 transition-transform duration-500">{cat.icon}</span>
                   <p className="font-semibold text-sm mb-0.5 group-hover:text-primary transition-colors duration-300">{cat.name}</p>
                   <p className="text-xs text-muted-foreground">{cat.count} {t.home.productsCount}</p>
