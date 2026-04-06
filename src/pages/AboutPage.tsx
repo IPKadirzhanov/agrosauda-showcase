@@ -2,9 +2,13 @@ import { Target, Eye, Award, Users, Globe, TrendingUp } from 'lucide-react';
 import AnimatedSection from '@/components/AnimatedSection';
 import AnimatedCounter from '@/components/AnimatedCounter';
 import { useLanguage } from '@/i18n/LanguageContext';
+import SEOHead from '@/components/SEOHead';
+import Breadcrumbs from '@/components/Breadcrumbs';
 
 export default function AboutPage() {
-  const { t } = useLanguage();
+  const { t, lang } = useLanguage();
+  const titles: Record<string, string> = { ru: 'О компании Agrosauda — агро маркетплейс Казахстана', en: 'About Agrosauda — Agricultural Marketplace of Kazakhstan', kz: 'Agrosauda туралы — Қазақстанның агро маркетплейсі', cn: '关于Agrosauda — 哈萨克斯坦农业市场' };
+  const descs: Record<string, string> = { ru: 'Agrosauda — крупнейшая агроплатформа Казахстана. Миссия, ценности и преимущества маркетплейса для фермеров и поставщиков.', en: 'Agrosauda is Kazakhstan\'s largest agricultural platform. Mission, values and marketplace advantages for farmers and suppliers.', kz: 'Agrosauda — Қазақстанның ең ірі агроплатформасы. Фермерлер мен жеткізушілерге арналған миссия, құндылықтар.', cn: 'Agrosauda是哈萨克斯坦最大的农业平台。面向农民和供应商的使命、价值观和优势。' };
   return (
     <div className="min-h-screen pt-24 pb-20">
       <section className="section-padding hero-gradient-bg">
