@@ -4,6 +4,8 @@ import AIChatWidget from '@/components/AIChatWidget';
 import { motion } from 'framer-motion';
 import { useLanguage } from '@/i18n/LanguageContext';
 import { Link } from 'react-router-dom';
+import SEOHead from '@/components/SEOHead';
+import Breadcrumbs from '@/components/Breadcrumbs';
 
 export default function AIAssistantsPage() {
   const { t } = useLanguage();
