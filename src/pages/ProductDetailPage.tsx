@@ -28,18 +28,40 @@ export default function ProductDetailPage() {
     );
   }
 
+  const productJsonLd = {
+    '@context': 'https://schema.org',
+    '@type': 'Product',
+    name: product.title,
+    description: product.description,
+    image: product.image,
+    offers: {
+      '@type': 'Offer',
+      price: product.price,
+      priceCurrency: 'KZT',
+      availability: 'https://schema.org/InStock',
+      seller: { '@type': 'Organization', name: product.seller },
+    },
+    category: product.category,
+  };
+
   return (
     <div className="min-h-screen pt-24 pb-20">
+      <SEOHead
+        title={`${product.title} — ${lang === 'ru' ? 'купить на Agrosauda' : 'Agrosauda'} | ${formatPrice(product.price)}`}
+        description={`${product.title} — ${product.description?.slice(0, 140)}. ${product.location}. ${formatPrice(product.price)}`}
+        keywords={`${product.title}, ${product.category}, ${product.location}, купить, Agrosauda`}
+        canonical={`https://agrosauda.kz/product/${product.id}`}
+        ogImage={product.image}
+        ogType="product"
+        jsonLd={productJsonLd}
+      />
       <div className="container-main px-4 sm:px-6 lg:px-8">
         <AnimatedSection className="mb-6">
-          <div className="flex items-center gap-2 text-sm text-muted-foreground">
-            <Link to="/marketplace" className="hover:text-primary transition-colors flex items-center gap-1">
-              <ArrowLeft className="w-4 h-4" /> {t.productDetail.marketplace}
-            </Link>
-            <span>/</span>
-            <span>{product.category}</span>
-            <span>/</span>
-            <span className="text-foreground">{product.title}</span>
+          <Breadcrumbs items={[
+            { label: t.productDetail.marketplace, path: '/marketplace' },
+            { label: product.category, path: `/category/${product.categorySlug}` },
+            { label: product.title },
+          ]} />
           </div>
         </AnimatedSection>
 
