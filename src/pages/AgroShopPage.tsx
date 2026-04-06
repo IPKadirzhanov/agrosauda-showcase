@@ -8,6 +8,8 @@ import {
 import AnimatedSection from '@/components/AnimatedSection';
 import AnimatedCounter from '@/components/AnimatedCounter';
 import { useLanguage } from '@/i18n/LanguageContext';
+import SEOHead from '@/components/SEOHead';
+import Breadcrumbs from '@/components/Breadcrumbs';
 
 const shops = [
   { name: 'АгроТехСнаб', desc: 'Официальный дилер тракторов и комбайнов', rating: 4.9, products: 156, verified: true, category: 'Техника', img: 'https://images.unsplash.com/photo-1625246333195-78d9c38ad449?w=400&h=300&fit=crop' },
