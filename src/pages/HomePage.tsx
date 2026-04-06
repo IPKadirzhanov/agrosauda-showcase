@@ -171,7 +171,7 @@ export default function HomePage() {
           <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-7 gap-3">
             {categories.map((cat, i) => (
               <AnimatedSection key={cat.slug} delay={i * 0.04}>
-                <Link to={`/marketplace?cat=${cat.slug}`} className="premium-card p-5 rounded-xl text-center group block h-full">
+                <Link to={`/category/${cat.slug}`} className="premium-card p-5 rounded-xl text-center group block h-full">
                   <span className="text-3xl mb-3 block group-hover:scale-110 transition-transform duration-500">{cat.icon}</span>
                   <p className="font-semibold text-sm mb-0.5 group-hover:text-primary transition-colors duration-300">{cat.name}</p>
                   <p className="text-xs text-muted-foreground">{cat.count} {t.home.productsCount}</p>
