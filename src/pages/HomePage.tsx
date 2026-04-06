@@ -30,8 +30,45 @@ export default function HomePage() {
     { step: '04', title: t.home.step4Title, desc: t.home.step4Desc, icon: CheckCircle2 },
   ];
 
+  const orgJsonLd = {
+    '@context': 'https://schema.org',
+    '@type': 'Organization',
+    name: 'Agrosauda',
+    url: 'https://agrosauda.kz',
+    logo: 'https://agrosauda.kz/logo1.png',
+    description: 'Крупнейший сельскохозяйственный маркетплейс Казахстана',
+    areaServed: { '@type': 'Country', name: 'Kazakhstan' },
+    sameAs: [],
+  };
+
+  const webSiteJsonLd = {
+    '@context': 'https://schema.org',
+    '@type': 'WebSite',
+    name: 'Agrosauda',
+    url: 'https://agrosauda.kz',
+    potentialAction: {
+      '@type': 'SearchAction',
+      target: 'https://agrosauda.kz/marketplace?search={search_term_string}',
+      'query-input': 'required name=search_term_string',
+    },
+  };
+
   return (
     <div className="min-h-screen">
+      <SEOHead
+        title="Agrosauda — Сельскохозяйственный маркетплейс Казахстана"
+        description="Agrosauda — крупнейший сельскохозяйственный маркетплейс Казахстана. Покупка и продажа техники, оборудования, семян, удобрений. 12 500+ товаров, безопасная сделка, субсидии."
+        keywords="сельхозтехника, тракторы, комбайны, семена, удобрения, Казахстан, маркетплейс, agrosauda, купить трактор, фермер"
+        canonical="https://agrosauda.kz/"
+        jsonLd={[orgJsonLd, webSiteJsonLd]}
+        hreflang={[
+          { lang: 'ru', url: 'https://agrosauda.kz/' },
+          { lang: 'kk', url: 'https://agrosauda.kz/?lang=kz' },
+          { lang: 'en', url: 'https://agrosauda.kz/?lang=en' },
+          { lang: 'zh', url: 'https://agrosauda.kz/?lang=cn' },
+          { lang: 'x-default', url: 'https://agrosauda.kz/' },
+        ]}
+      />
       {/* ═══════════════════════════ HERO ═══════════════════════════ */}
       <section className="relative min-h-[100vh] flex items-center overflow-hidden">
         <div className="absolute inset-0 z-0">
