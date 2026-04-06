@@ -32,6 +32,7 @@ export default function FavoritesPage() {
 
   return (
     <div className="min-h-screen pt-24 pb-20">
+      <SEOHead title={t.favorites.title + ' — Agrosauda'} description="Избранные товары на Agrosauda" noindex />
       <div className="container-main px-4 sm:px-6 lg:px-8">
         <AnimatedSection className="mb-8">
           <h1 className="font-display font-bold text-3xl sm:text-4xl mb-2">{t.favorites.title}</h1>

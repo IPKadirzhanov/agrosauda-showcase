@@ -18,6 +18,8 @@ export default function ContactPage() {
 
   return (
     <div className="min-h-screen pt-24 pb-20">
+      <SEOHead title={lang === 'ru' ? 'Контакты Agrosauda — связаться с нами' : lang === 'en' ? 'Contact Agrosauda — Get in Touch' : lang === 'kz' ? 'Agrosauda байланыс — бізбен хабарласыңыз' : '联系Agrosauda'} description={lang === 'ru' ? 'Свяжитесь с командой Agrosauda. Телефон, email, адрес офиса в Казахстане. Ответим на ваши вопросы.' : 'Contact the Agrosauda team. Phone, email, office address in Kazakhstan.'} keywords="контакты Agrosauda, связаться, телефон, email, Казахстан" canonical="https://agrosauda.kz/contact" jsonLd={{ '@context': 'https://schema.org', '@type': 'ContactPage', name: 'Контакты Agrosauda', url: 'https://agrosauda.kz/contact' }} />
+      <Breadcrumbs />
       <section className="section-padding">
         <div className="container-main">
           <AnimatedSection className="text-center mb-12">

@@ -24,6 +24,8 @@ export default function SafeDealPage() {
 
   return (
     <div className="min-h-screen pt-24 pb-20">
+      <SEOHead title={lang === 'ru' ? 'Безопасная сделка — Agrosauda' : lang === 'en' ? 'Safe Deal — Agrosauda' : lang === 'kz' ? 'Қауіпсіз мәміле — Agrosauda' : '安全交易 — Agrosauda'} description={lang === 'ru' ? 'Безопасная сделка на Agrosauda: защита покупателя, гарантия возврата средств, проверенные продавцы.' : 'Safe deal on Agrosauda: buyer protection, money-back guarantee, verified sellers.'} keywords="безопасная сделка, гарантия, защита покупателя, Agrosauda" canonical="https://agrosauda.kz/safe-deal" jsonLd={{ '@context': 'https://schema.org', '@type': 'WebPage', name: 'Безопасная сделка Agrosauda', url: 'https://agrosauda.kz/safe-deal' }} />
+      <Breadcrumbs />
       <section className="section-padding hero-gradient-bg">
         <div className="container-main text-center">
           <AnimatedSection>

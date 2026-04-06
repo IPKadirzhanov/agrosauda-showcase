@@ -11,6 +11,8 @@ export default function AboutPage() {
   const descs: Record<string, string> = { ru: 'Agrosauda — крупнейшая агроплатформа Казахстана. Миссия, ценности и преимущества маркетплейса для фермеров и поставщиков.', en: 'Agrosauda is Kazakhstan\'s largest agricultural platform. Mission, values and marketplace advantages for farmers and suppliers.', kz: 'Agrosauda — Қазақстанның ең ірі агроплатформасы. Фермерлер мен жеткізушілерге арналған миссия, құндылықтар.', cn: 'Agrosauda是哈萨克斯坦最大的农业平台。面向农民和供应商的使命、价值观和优势。' };
   return (
     <div className="min-h-screen pt-24 pb-20">
+      <SEOHead title={titles[lang] || titles.ru} description={descs[lang] || descs.ru} keywords="Agrosauda, о компании, агро маркетплейс, Казахстан, сельское хозяйство" canonical="https://agrosauda.kz/about" jsonLd={{ '@context': 'https://schema.org', '@type': 'AboutPage', name: titles[lang] || titles.ru, description: descs[lang] || descs.ru, url: 'https://agrosauda.kz/about' }} />
+      <Breadcrumbs />
       <section className="section-padding hero-gradient-bg">
         <div className="container-main text-center">
           <AnimatedSection>
