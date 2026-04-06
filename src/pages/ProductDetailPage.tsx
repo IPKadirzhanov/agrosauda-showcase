@@ -2,6 +2,8 @@ import { useParams, Link } from 'react-router-dom';
 import { ArrowLeft, Heart, Shield, MapPin, User, Share2, Phone, MessageCircle } from 'lucide-react';
 import AnimatedSection from '@/components/AnimatedSection';
 import ProductCard from '@/components/ProductCard';
+import Breadcrumbs from '@/components/Breadcrumbs';
+import SEOHead from '@/components/SEOHead';
 import { formatPrice } from '@/data/mockData';
 import { useTranslatedData } from '@/hooks/useTranslatedData';
 import { useState } from 'react';
