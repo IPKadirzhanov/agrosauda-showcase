@@ -12,7 +12,7 @@ import { useLanguage } from '@/i18n/LanguageContext';
 
 export default function ProductDetailPage() {
   const { id } = useParams();
-  const { t } = useLanguage();
+  const { t, lang } = useLanguage();
   const { products } = useTranslatedData();
   const product = products.find(p => p.id === id);
   const [liked, setLiked] = useState(false);
