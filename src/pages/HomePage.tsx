@@ -4,8 +4,10 @@ import { ArrowRight, Shield, Sparkles, BookOpen, TrendingUp, Bot, Newspaper, Pla
 import AnimatedSection from '@/components/AnimatedSection';
 import AnimatedCounter from '@/components/AnimatedCounter';
 import ProductCard from '@/components/ProductCard';
+import SEOHead from '@/components/SEOHead';
 import { useLanguage } from '@/i18n/LanguageContext';
 import { useTranslatedData } from '@/hooks/useTranslatedData';
+import { seoCategories, getCategoryTitle } from '@/data/seoData';
 
 export default function HomePage() {
   const { t } = useLanguage();
