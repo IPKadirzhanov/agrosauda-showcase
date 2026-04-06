@@ -40,7 +40,7 @@ export default function ClassifiedsPage() {
           url: 'https://agrosauda.kz/classifieds',
         }}
       />
-      <Breadcrumbs items={[{ label: t.classifies.pageTitle }]} className="container-main px-4 sm:px-6 lg:px-8 pt-24 mb-2" />
+      <Breadcrumbs items={[{ label: t.classifieds.pageTitle }]} className="container-main px-4 sm:px-6 lg:px-8 pt-24 mb-2" />
       {/* Hero */}
       <section className="relative pt-24 pb-16 overflow-hidden">
         <div className="absolute inset-0 hero-gradient-bg" />
