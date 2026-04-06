@@ -61,6 +61,8 @@ export default function AgroShopPage() {
 
   return (
     <div className="min-h-screen">
+      <SEOHead title="АгроШоп — маркетплейс сельхозтехники Казахстана | Agrosauda" description="АгроШоп на Agrosauda: покупка и продажа сельхозтехники, семян, удобрений в Казахстане. Проверенные магазины и поставщики." keywords="агрошоп, маркетплейс, сельхозтехника, семена, удобрения, Казахстан" canonical="https://agrosauda.kz/marketplace" />
+      <Breadcrumbs />
       {/* Hero */}
       <section className="relative pt-24 pb-20 overflow-hidden">
         <div className="absolute inset-0 hero-gradient-bg" />
