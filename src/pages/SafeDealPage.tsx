@@ -2,9 +2,11 @@ import { Shield, CheckCircle, Lock, ArrowRight, Users, CreditCard } from 'lucide
 import AnimatedSection from '@/components/AnimatedSection';
 import { Link } from 'react-router-dom';
 import { useLanguage } from '@/i18n/LanguageContext';
+import SEOHead from '@/components/SEOHead';
+import Breadcrumbs from '@/components/Breadcrumbs';
 
 export default function SafeDealPage() {
-  const { t } = useLanguage();
+  const { t, lang } = useLanguage();
 
   const steps = [
     { icon: Users, title: t.safeDeal.step1Title, desc: t.safeDeal.step1Desc },
