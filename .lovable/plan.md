@@ -1,72 +1,69 @@
 
 
-# Полная SEO-оптимизация Agrosauda
+# Интеграция TipTopPay KZ для оплаты комиссии брокеров
 
-## Что уже сделано
-- Компонент `SEOHead` (мета-теги, OG, Twitter Cards, hreflang, JSON-LD)
-- Компонент `Breadcrumbs` со Schema.org
-- `CategoryPage` с динамической маршрутизацией `/category/:slug/:city`
-- SEO на: Главная, Товар, Субсидии, Образование, Новости, Объявления
-- `sitemap.xml`, `robots.txt`, `llms.txt`
+## Как работает TipTopPay
 
-## Что нужно сделать
+TipTopPay KZ — казахстанский платёжный шлюз. Для веб-интеграции используется **виджет** (скрипт `widget.js`), который открывает платёжную форму прямо на сайте. Поток:
 
-### Шаг 1 — SEO на оставшиеся страницы
-Добавить `SEOHead` + `Breadcrumbs` на страницы, где их ещё нет:
-- О нас, Контакты, Безопасная сделка, АгроШоп, АгроБрокер, АгроШортс, Продать, Избранное, ИИ-ассистенты
+1. Фронтенд открывает виджет TipTopPay с суммой и данными заказа
+2. Пользователь вводит данные карты в защищённом iframe TipTopPay
+3. TipTopPay обрабатывает платёж и отправляет результат
+4. Наш бэкенд (Edge Function) получает webhook-уведомление и подтверждает оплату
+5. После подтверждения — заявка присваивается брокеру
 
-Каждая страница получит уникальный title, description, keywords, canonical URL и JSON-LD (WebPage).
+## Что нужно от вас
 
-### Шаг 2 — Русскоязычные SEO-маршруты
-Создать ЧПУ-маршруты на русском для поисковиков:
-- `/zerno`, `/pshenica`, `/kukuruza`, `/skot`, `/texnika`, `/udobreniya`, `/semena`
-- Городские комбинации: `/pshenica-almaty`, `/pshenica-astana`, `/skot-almaty`, `/texnika-almaty` и т.д.
+- **Public ID** терминала из личного кабинета TipTopPay (merchant.tiptoppay.kz)
+- **API Password** (секретный ключ) для проверки webhook-подписей
 
-Каждый маршрут рендерит `CategoryPage` с нужными параметрами. Добавляем маппинг слагов в `seoData.ts`.
+## План реализации
 
-### Шаг 3 — Блог-система
-Новые файлы:
-- `src/data/blogData.ts` — 4 статьи по 800-1500 слов
-- `src/pages/BlogPage.tsx` — список статей
-- `src/pages/BlogArticlePage.tsx` — страница статьи с Article JSON-LD
+### Шаг 1 — Сохранить секреты
+Запросить у пользователя два секрета:
+- `TIPTOPPAY_PUBLIC_ID` — публичный ID терминала
+- `TIPTOPPAY_API_SECRET` — API Password для webhook-верификации
 
-Статьи:
-1. «Цены на пшеницу в Казахстане 2026»
-2. «Как продать зерно в Казахстане»
-3. «Где купить сельхоз технику»
-4. «Обзор агро рынка Казахстана»
+### Шаг 2 — Таблица платежей (миграция)
+Создать таблицу `broker_payments`:
+- `id`, `broker_id` (uuid), `request_id` (uuid), `amount` (bigint), `currency` (text, default 'KZT')
+- `status` (pending/completed/failed), `tiptoppay_transaction_id` (text)
+- `created_at`, `updated_at`
+- RLS: брокер видит только свои платежи, админ — все
 
-Каждая с H1/H2 структурой, внутренними ссылками на категории.
+### Шаг 3 — Edge Function `tiptoppay-webhook`
+Принимает POST от TipTopPay:
+- Проверяет подпись (HMAC с API Secret)
+- При успешном платеже: обновляет `broker_payments.status = 'completed'`
+- Вызывает `claim_broker_request` для присвоения заявки брокеру
+- Возвращает `{"code": 0}` для подтверждения
 
-### Шаг 4 — Аналитика
-В `index.html` добавить закомментированные заглушки:
-- Google Analytics (gtag.js)
-- Яндекс.Метрика
-- Google Search Console (мета-тег верификации)
+### Шаг 4 — Edge Function `create-payment`
+Фронтенд вызывает перед открытием виджета:
+- Создаёт запись в `broker_payments` со статусом `pending`
+- Возвращает `payment_id` для привязки к виджету через `InvoiceId`
 
-### Шаг 5 — Ленивая загрузка изображений
-Добавить `loading="lazy"` на `<img>` в `ProductCard`.
+### Шаг 5 — Фронтенд: интеграция виджета
+В `AgroBrokerPage.tsx`:
+- Подключить скрипт `https://widget.tiptoppay.kz/bundles/widget.js` в `index.html`
+- При нажатии "Оплатить и взять":
+  1. Вызвать `create-payment` (получить payment_id)
+  2. Открыть виджет TipTopPay с параметрами: `publicId`, `amount`, `currency: 'KZT'`, `invoiceId: payment_id`
+  3. При `onSuccess` — показать toast "Оплата прошла, заявка взята"
+  4. При `onFail` — показать ошибку
 
-### Шаг 6 — Обновить sitemap.xml
-Добавить все новые URL: блог, русские слаги, оставшиеся страницы.
-
-### Шаг 7 — Переводы
-Добавить пространство `blog` во все 4 языковых файла (ru, en, kz, cn).
+### Шаг 6 — Изменить логику claim
+Убрать прямой вызов `claim_broker_request` из кнопки. Теперь claim происходит только через webhook после подтверждения оплаты.
 
 ## Затрагиваемые файлы
 
 | Файл | Действие |
 |---|---|
-| `AboutPage`, `ContactPage`, `SafeDealPage`, `AgroShopPage`, `AgroBrokerPage`, `SellPage`, `FavoritesPage`, `AIAssistantsPage` | Добавить SEOHead + Breadcrumbs |
-| `src/data/seoData.ts` | Русские слаги категорий |
-| `src/data/blogData.ts` | **Новый** — 4 SEO-статьи |
-| `src/pages/BlogPage.tsx` | **Новый** — список блога |
-| `src/pages/BlogArticlePage.tsx` | **Новый** — страница статьи |
-| `src/App.tsx` | Маршруты блога + русские слаги |
-| `src/components/ProductCard.tsx` | `loading="lazy"` |
-| `index.html` | Заглушки аналитики |
-| `public/sitemap.xml` | Новые URL |
-| Все 4 файла переводов | Пространство `blog` |
+| `index.html` | Добавить скрипт виджета TipTopPay |
+| `src/pages/AgroBrokerPage.tsx` | Интеграция виджета вместо прямого claim |
+| `supabase/functions/create-payment/index.ts` | **Новый** — создание платежа |
+| `supabase/functions/tiptoppay-webhook/index.ts` | **Новый** — обработка webhook |
+| Миграция БД | Таблица `broker_payments` |
 
-Дизайн, верстка и анимации не затрагиваются. Все изменения — невидимая SEO-инфраструктура и новые контентные страницы в существующем стиле.
+Дизайн и UI не меняются — виджет TipTopPay открывается как модальное окно поверх страницы.
 
