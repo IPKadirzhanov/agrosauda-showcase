@@ -156,22 +156,40 @@ export default function AgroBrokerPage() {
     if (!user) { toast.error('Войдите в систему'); return; }
     setClaimingId(requestId);
     try {
-      const { data, error } = await supabase.rpc('claim_broker_request', {
-        _request_id: requestId,
-        _broker_id: user.id,
+      // Step 1: Create payment record
+      const { data: paymentData, error: paymentError } = await supabase.functions.invoke('create-payment', {
+        body: { request_id: requestId, amount: CLAIM_FEE },
       });
-      if (error) { toast.error('Ошибка: ' + error.message); return; }
-      const result = data as any;
-      if (result?.success) {
-        toast.success('Заявка успешно взята! Комиссия: ' + (result.fee || CLAIM_FEE).toLocaleString() + ' ₸');
-        setConfirmClaimId(null);
-        fetchRequests();
-      } else {
-        toast.error(result?.error || 'Не удалось взять заявку');
+      if (paymentError || !paymentData?.payment_id) {
+        toast.error('Ошибка создания платежа: ' + (paymentError?.message || paymentData?.error || 'Неизвестная ошибка'));
+        setClaimingId(null);
+        return;
       }
-    } catch {
+
+      // Step 2: Open TipTopPay widget
+      const widget = new (window as any).cp.CloudPayments();
+      widget.pay('charge', {
+        publicId: import.meta.env.VITE_TIPTOPPAY_PUBLIC_ID || '',
+        description: `Комиссия брокера за заявку`,
+        amount: CLAIM_FEE,
+        currency: 'KZT',
+        invoiceId: paymentData.payment_id,
+        skin: 'mini',
+      }, {
+        onSuccess: () => {
+          toast.success('Оплата прошла! Заявка взята.');
+          setConfirmClaimId(null);
+          fetchRequests();
+        },
+        onFail: (reason: string) => {
+          toast.error('Оплата не прошла: ' + (reason || 'Попробуйте снова'));
+        },
+        onComplete: () => {
+          setClaimingId(null);
+        },
+      });
+    } catch (err) {
       toast.error('Ошибка сервера');
-    } finally {
       setClaimingId(null);
     }
   }
