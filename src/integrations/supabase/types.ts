@@ -286,6 +286,50 @@ export type Database = {
           },
         ]
       }
+      broker_payments: {
+        Row: {
+          amount: number
+          broker_id: string
+          created_at: string
+          currency: string
+          id: string
+          request_id: string
+          status: string
+          tiptoppay_transaction_id: string | null
+          updated_at: string
+        }
+        Insert: {
+          amount: number
+          broker_id: string
+          created_at?: string
+          currency?: string
+          id?: string
+          request_id: string
+          status?: string
+          tiptoppay_transaction_id?: string | null
+          updated_at?: string
+        }
+        Update: {
+          amount?: number
+          broker_id?: string
+          created_at?: string
+          currency?: string
+          id?: string
+          request_id?: string
+          status?: string
+          tiptoppay_transaction_id?: string | null
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "broker_payments_request_id_fkey"
+            columns: ["request_id"]
+            isOneToOne: false
+            referencedRelation: "broker_requests"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       broker_requests: {
         Row: {
           claim_fee: number | null
