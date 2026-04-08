@@ -447,7 +447,7 @@ export default function AgroBrokerPage() {
                           <div className="flex items-center gap-2 text-sm text-muted-foreground"><Package className="w-4 h-4 shrink-0" /> {req.quantity}</div>
                           {req.price_expectation && <div className="flex items-center gap-2 text-sm text-muted-foreground"><TrendingUp className="w-4 h-4 shrink-0" /> {req.price_expectation}</div>}
                           <div className="flex items-center gap-2 text-sm text-muted-foreground"><MapPin className="w-4 h-4 shrink-0" /> {req.location}</div>
-                          <div className="flex items-center gap-2 text-sm text-muted-foreground"><User className="w-4 h-4 shrink-0" /> {req.contact_name}</div>
+                          {/* Contact info hidden — visible only after payment in broker dashboard */}
                           {req.needs_delivery && <div className="flex items-center gap-2 text-sm text-primary"><Truck className="w-4 h-4 shrink-0" /> {t.agrobroker.needsDeliveryLabel}</div>}
                           {req.description && <p className="text-sm text-muted-foreground line-clamp-2 pt-1 border-t border-border/50">{req.description}</p>}
                           <div className="flex items-center justify-between pt-2 border-t border-border/50">

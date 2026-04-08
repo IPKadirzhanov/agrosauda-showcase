@@ -13,7 +13,7 @@ export default function Header() {
   const navigate = useNavigate();
   const clickCountRef = useRef(0);
   const clickTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
-  const { user, profile, signOut } = useAuth();
+  const { user, profile, signOut, userRole } = useAuth();
   const { t, lang, setLang } = useLanguage();
   const langRef = useRef<HTMLDivElement>(null);
 
@@ -169,7 +169,7 @@ export default function Header() {
           {user ? (
             <>
               <Link
-                to="/dashboard"
+                to={userRole === 'broker' ? '/dashboard/broker' : userRole === 'business' ? '/dashboard/business' : '/dashboard'}
                 className={`flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-[13px] font-medium transition-all duration-200 ${
                   showTransparent
                     ? 'text-white/80 hover:text-white hover:bg-white/10'
@@ -267,7 +267,7 @@ export default function Header() {
               <div className="flex gap-2 mt-4 pt-4 border-t border-border/50">
                 {user ? (
                   <Link
-                    to="/dashboard"
+                    to={userRole === 'broker' ? '/dashboard/broker' : userRole === 'business' ? '/dashboard/business' : '/dashboard'}
                     className="flex-1 flex items-center justify-center gap-2 px-4 py-3 rounded-xl border border-border text-sm font-medium hover:bg-accent transition-all duration-200"
                   >
                     <User className="w-4 h-4" /> {t.nav.cabinet}
