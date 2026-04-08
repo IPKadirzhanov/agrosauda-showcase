@@ -267,7 +267,7 @@ export default function Header() {
               <div className="flex gap-2 mt-4 pt-4 border-t border-border/50">
                 {user ? (
                   <Link
-                    to="/dashboard"
+                    to={userRole === 'broker' ? '/dashboard/broker' : userRole === 'business' ? '/dashboard/business' : '/dashboard'}
                     className="flex-1 flex items-center justify-center gap-2 px-4 py-3 rounded-xl border border-border text-sm font-medium hover:bg-accent transition-all duration-200"
                   >
                     <User className="w-4 h-4" /> {t.nav.cabinet}
