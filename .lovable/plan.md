@@ -1,69 +1,39 @@
 
 
-# Интеграция TipTopPay KZ для оплаты комиссии брокеров
+# Исправление 4 багов: роль брокера, выход, карточки, навигация
 
-## Как работает TipTopPay
+## Проблема 1: Роль брокера пропадает при перезагрузке
 
-TipTopPay KZ — казахстанский платёжный шлюз. Для веб-интеграции используется **виджет** (скрипт `widget.js`), который открывает платёжную форму прямо на сайте. Поток:
+**Причина:** В `useAuth.tsx` строки 132-135 — race condition. `getSession()` возвращает промис, и сразу после `++authRequestVersionRef.current` проверяется `if (requestVersion !== authRequestVersionRef.current)` — но к этому моменту `onAuthStateChange` уже мог увеличить счётчик, и `getSession` ветка отбрасывается. В результате `fetchRole` не вызывается и `userRole` остаётся `null`.
 
-1. Фронтенд открывает виджет TipTopPay с суммой и данными заказа
-2. Пользователь вводит данные карты в защищённом iframe TipTopPay
-3. TipTopPay обрабатывает платёж и отправляет результат
-4. Наш бэкенд (Edge Function) получает webhook-уведомление и подтверждает оплату
-5. После подтверждения — заявка присваивается брокеру
+**Решение:** Переписать инициализацию в `useEffect` — сначала подписаться на `onAuthStateChange`, затем вызвать `getSession` только для начального состояния. Убрать дублирующий вызов `getSession` и доверить восстановление сессии событию `INITIAL_SESSION` от `onAuthStateChange`. Убрать проверку `requestVersion` сразу после инкремента.
 
-## Что нужно от вас
+## Проблема 2: Зависание при выходе из аккаунта
 
-- **Public ID** терминала из личного кабинета TipTopPay (merchant.tiptoppay.kz)
-- **API Password** (секретный ключ) для проверки webhook-подписей
+**Причина:** В `signOut` устанавливается `setLoading(true)`, но `DashboardPage` в `useEffect` при `!user` делает `navigate('/auth')`. При этом `loading` всё ещё true, и компонент рендерит спиннер, а навигация не происходит корректно.
 
-## План реализации
+**Решение:** В `signOut` — не ставить `setLoading(true)`. Сразу сбросить состояние и вызвать `signOut`. Навигацию после выхода делать в компоненте, который вызывает `signOut`, а не через `useEffect`.
 
-### Шаг 1 — Сохранить секреты
-Запросить у пользователя два секрета:
-- `TIPTOPPAY_PUBLIC_ID` — публичный ID терминала
-- `TIPTOPPAY_API_SECRET` — API Password для webhook-верификации
+## Проблема 3: В карточках АгроБрокера видны контактные данные
 
-### Шаг 2 — Таблица платежей (миграция)
-Создать таблицу `broker_payments`:
-- `id`, `broker_id` (uuid), `request_id` (uuid), `amount` (bigint), `currency` (text, default 'KZT')
-- `status` (pending/completed/failed), `tiptoppay_transaction_id` (text)
-- `created_at`, `updated_at`
-- RLS: брокер видит только свои платежи, админ — все
+**Причина:** Строки 450 в `AgroBrokerPage.tsx` — `contact_name`, `contact_phone`, `contact_email` отображаются всем брокерам до покупки.
 
-### Шаг 3 — Edge Function `tiptoppay-webhook`
-Принимает POST от TipTopPay:
-- Проверяет подпись (HMAC с API Secret)
-- При успешном платеже: обновляет `broker_payments.status = 'completed'`
-- Вызывает `claim_broker_request` для присвоения заявки брокеру
-- Возвращает `{"code": 0}` для подтверждения
+**Решение:** Скрыть из карточек `contact_name`, `contact_phone`, `contact_email`. Показывать только: товар, количество, цену, регион, доставку. Контактные данные показывать только в личном кабинете брокера после оплаты (уже реализовано на `BrokerDashboardPage`).
 
-### Шаг 4 — Edge Function `create-payment`
-Фронтенд вызывает перед открытием виджета:
-- Создаёт запись в `broker_payments` со статусом `pending`
-- Возвращает `payment_id` для привязки к виджету через `InvoiceId`
+## Проблема 4: Кнопка «Кабинет» ведёт на общий дашборд
 
-### Шаг 5 — Фронтенд: интеграция виджета
-В `AgroBrokerPage.tsx`:
-- Подключить скрипт `https://widget.tiptoppay.kz/bundles/widget.js` в `index.html`
-- При нажатии "Оплатить и взять":
-  1. Вызвать `create-payment` (получить payment_id)
-  2. Открыть виджет TipTopPay с параметрами: `publicId`, `amount`, `currency: 'KZT'`, `invoiceId: payment_id`
-  3. При `onSuccess` — показать toast "Оплата прошла, заявка взята"
-  4. При `onFail` — показать ошибку
+**Причина:** В `Header.tsx` строка 172 — ссылка всегда `/dashboard`. Для брокера `DashboardPage` делает редирект на `/dashboard/broker`, но это лишний переход и мерцание.
 
-### Шаг 6 — Изменить логику claim
-Убрать прямой вызов `claim_broker_request` из кнопки. Теперь claim происходит только через webhook после подтверждения оплаты.
+**Решение:** В `Header.tsx` использовать `userRole` из `useAuth()` для определения URL:
+- `broker` → `/dashboard/broker`
+- `business` → `/dashboard/business`
+- остальные → `/dashboard`
 
 ## Затрагиваемые файлы
 
-| Файл | Действие |
+| Файл | Изменение |
 |---|---|
-| `index.html` | Добавить скрипт виджета TipTopPay |
-| `src/pages/AgroBrokerPage.tsx` | Интеграция виджета вместо прямого claim |
-| `supabase/functions/create-payment/index.ts` | **Новый** — создание платежа |
-| `supabase/functions/tiptoppay-webhook/index.ts` | **Новый** — обработка webhook |
-| Миграция БД | Таблица `broker_payments` |
-
-Дизайн и UI не меняются — виджет TipTopPay открывается как модальное окно поверх страницы.
+| `src/hooks/useAuth.tsx` | Исправить race condition в инициализации, убрать `setLoading(true)` из `signOut` |
+| `src/pages/AgroBrokerPage.tsx` | Скрыть contact_name/phone/email из карточек |
+| `src/components/layout/Header.tsx` | Динамический URL для кнопки «Кабинет» на основе `userRole` |
 
