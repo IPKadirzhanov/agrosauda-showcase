@@ -74,8 +74,11 @@ Deno.serve(async (req) => {
       });
     }
 
-    return new Response(JSON.stringify({ payment_id: payment.id }), {
+    const publicId = Deno.env.get("TIPTOPPAY_PUBLIC_ID") || "";
+
+    return new Response(JSON.stringify({ payment_id: payment.id, public_id: publicId }), {
       headers: { ...corsHeaders, "Content-Type": "application/json" },
+    });
     });
   } catch (err) {
     return new Response(JSON.stringify({ error: String(err) }), {

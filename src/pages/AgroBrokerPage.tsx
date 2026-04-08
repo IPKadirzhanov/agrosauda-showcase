@@ -169,7 +169,7 @@ export default function AgroBrokerPage() {
       // Step 2: Open TipTopPay widget
       const widget = new (window as any).cp.CloudPayments();
       widget.pay('charge', {
-        publicId: import.meta.env.VITE_TIPTOPPAY_PUBLIC_ID || '',
+        publicId: paymentData.public_id,
         description: `Комиссия брокера за заявку`,
         amount: CLAIM_FEE,
         currency: 'KZT',
