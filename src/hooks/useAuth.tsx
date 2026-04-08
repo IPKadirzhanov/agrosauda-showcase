@@ -111,42 +111,55 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   };
 
   useEffect(() => {
-    const { data: { subscription } } = supabase.auth.onAuthStateChange(async (_event, session) => {
+    let initialSessionHandled = false;
+
+    const { data: { subscription } } = supabase.auth.onAuthStateChange(async (event, session) => {
       const requestVersion = ++authRequestVersionRef.current;
 
       if (session?.user) {
         setSession(session);
         setUser(session.user);
-        setTimeout(() => {
+        // Use setTimeout to avoid Supabase deadlock on auth calls inside callback
+        setTimeout(async () => {
           if (requestVersion !== authRequestVersionRef.current) return;
-          void fetchProfile(session.user.id, requestVersion);
-          void fetchRole(session.user.id, requestVersion);
+          await Promise.all([
+            fetchProfile(session.user.id, requestVersion),
+            fetchRole(session.user.id, requestVersion),
+          ]);
+          if (requestVersion === authRequestVersionRef.current) {
+            setLoading(false);
+          }
         }, 0);
       } else {
         resetAuthState();
+        setLoading(false);
       }
 
-      setLoading(false);
+      initialSessionHandled = true;
     });
 
-    supabase.auth.getSession().then(async ({ data: { session } }) => {
+    // Fallback: if onAuthStateChange doesn't fire quickly, load session manually
+    const fallbackTimer = setTimeout(async () => {
+      if (initialSessionHandled) return;
+      const { data: { session } } = await supabase.auth.getSession();
       const requestVersion = ++authRequestVersionRef.current;
-
-      if (requestVersion !== authRequestVersionRef.current) return;
-
       if (session?.user) {
         setSession(session);
         setUser(session.user);
-        await fetchProfile(session.user.id, requestVersion);
-        await fetchRole(session.user.id, requestVersion);
+        await Promise.all([
+          fetchProfile(session.user.id, requestVersion),
+          fetchRole(session.user.id, requestVersion),
+        ]);
       } else {
         resetAuthState();
       }
-
       setLoading(false);
-    });
+    }, 1000);
 
-    return () => subscription.unsubscribe();
+    return () => {
+      clearTimeout(fallbackTimer);
+      subscription.unsubscribe();
+    };
   }, []);
 
   const signUp = async (email: string, password: string, name: string) => {
