@@ -197,7 +197,8 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 
   const signOut = async () => {
     authRequestVersionRef.current += 1;
-    setLoading(true);
+    resetAuthState();
+    clearStoredAuth();
 
     try {
       const { error } = await supabase.auth.signOut({ scope: 'local' });
@@ -206,10 +207,6 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       }
     } catch (error) {
       console.error('Sign out error:', error);
-    } finally {
-      clearStoredAuth();
-      resetAuthState();
-      setLoading(false);
     }
   };
 

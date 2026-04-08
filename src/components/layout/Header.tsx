@@ -13,7 +13,7 @@ export default function Header() {
   const navigate = useNavigate();
   const clickCountRef = useRef(0);
   const clickTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
-  const { user, profile, signOut } = useAuth();
+  const { user, profile, signOut, userRole } = useAuth();
   const { t, lang, setLang } = useLanguage();
   const langRef = useRef<HTMLDivElement>(null);
 
