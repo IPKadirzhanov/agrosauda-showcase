@@ -6,7 +6,8 @@ import { supabase } from '@/integrations/supabase/client';
 import { lovable } from '@/integrations/lovable';
 import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
-import { Mail, Lock, User, Eye, EyeOff, ArrowRight, Sparkles, Check, Phone, Building2 } from 'lucide-react';
+import { Mail, Lock, User, Eye, EyeOff, ArrowRight, Sparkles, Check, Building2 } from 'lucide-react';
+import PhoneInput from '@/components/PhoneInput';
 import { toast } from 'sonner';
 import { useLanguage } from '@/i18n';
 
@@ -213,10 +214,7 @@ export default function AuthPage() {
                         <Lock className="absolute left-3.5 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground group-focus-within:text-primary transition-colors" />
                         <Input type={showPassword ? 'text' : 'password'} value={confirmPassword} onChange={e => setConfirmPassword(e.target.value)} placeholder={t.auth.confirmPassword} className="pl-10 h-12 rounded-xl bg-background/50 border-border/50 focus:border-primary/50 transition-all duration-300" />
                       </div>
-                      <div className="relative group">
-                        <Phone className="absolute left-3.5 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground group-focus-within:text-primary transition-colors" />
-                        <Input type="tel" value={phone} onChange={e => setPhone(e.target.value)} placeholder={t.auth.phonePlaceholder} className="pl-10 h-12 rounded-xl bg-background/50 border-border/50 focus:border-primary/50 transition-all duration-300" />
-                      </div>
+                      <PhoneInput value={phone} onChange={setPhone} placeholder={t.auth.phonePlaceholder} />
                     </div>
                   </motion.div>
                 )}

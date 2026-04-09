@@ -1,4 +1,5 @@
-import { Upload, Camera, CheckCircle } from 'lucide-react';
+import { Camera, CheckCircle } from 'lucide-react';
+import PhoneInput from '@/components/PhoneInput';
 import AnimatedSection from '@/components/AnimatedSection';
 import { useTranslatedData } from '@/hooks/useTranslatedData';
 import { useState } from 'react';
@@ -84,7 +85,7 @@ export default function SellPage() {
             </div>
             <div className="mb-4">
               <label className="text-xs font-medium text-muted-foreground mb-1.5 block">{t.sell.phone}</label>
-              <input type="tel" value={form.phone} onChange={e => setForm({...form, phone: e.target.value})} className="w-full px-4 py-3 rounded-xl border border-border bg-background text-sm focus:outline-none focus:ring-2 focus:ring-primary/30" placeholder={t.auth.phonePlaceholder} />
+              <PhoneInput value={form.phone} onChange={(v) => setForm({...form, phone: v})} placeholder={t.auth.phonePlaceholder} />
             </div>
             <div className="mb-6">
               <label className="text-xs font-medium text-muted-foreground mb-1.5 block">{t.sell.descriptionLabel}</label>
