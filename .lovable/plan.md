@@ -1,39 +1,48 @@
 
 
-# Исправление 4 багов: роль брокера, выход, карточки, навигация
+# Маска ввода для телефона (+7) и БИН/ИИН (12 цифр)
 
-## Проблема 1: Роль брокера пропадает при перезагрузке
+## Что нужно сделать
 
-**Причина:** В `useAuth.tsx` строки 132-135 — race condition. `getSession()` возвращает промис, и сразу после `++authRequestVersionRef.current` проверяется `if (requestVersion !== authRequestVersionRef.current)` — но к этому моменту `onAuthStateChange` уже мог увеличить счётчик, и `getSession` ветка отбрасывается. В результате `fetchRole` не вызывается и `userRole` остаётся `null`.
+### 1. Компонент PhoneInput
+Создать `src/components/PhoneInput.tsx` — переиспользуемый компонент ввода телефона:
+- Префикс `+7` всегда отображается и не удаляется
+- При вводе цифр автоматически форматируется в `+7-XXX-XXX-XX-XX`
+- Максимум 12 цифр (включая 7)
+- Принимает только цифры
+- Визуально совместим с текущим `Input` компонентом
 
-**Решение:** Переписать инициализацию в `useEffect` — сначала подписаться на `onAuthStateChange`, затем вызвать `getSession` только для начального состояния. Убрать дублирующий вызов `getSession` и доверить восстановление сессии событию `INITIAL_SESSION` от `onAuthStateChange`. Убрать проверку `requestVersion` сразу после инкремента.
+### 2. Компонент BinIinInput
+Создать `src/components/BinIinInput.tsx` — поле для БИН/ИИН:
+- Принимает только цифры
+- Ровно 12 цифр
+- Показывает счётчик или ошибку если не 12
 
-## Проблема 2: Зависание при выходе из аккаунта
+### 3. Замена полей на всех страницах
 
-**Причина:** В `signOut` устанавливается `setLoading(true)`, но `DashboardPage` в `useEffect` при `!user` делает `navigate('/auth')`. При этом `loading` всё ещё true, и компонент рендерит спиннер, а навигация не происходит корректно.
-
-**Решение:** В `signOut` — не ставить `setLoading(true)`. Сразу сбросить состояние и вызвать `signOut`. Навигацию после выхода делать в компоненте, который вызывает `signOut`, а не через `useEffect`.
-
-## Проблема 3: В карточках АгроБрокера видны контактные данные
-
-**Причина:** Строки 450 в `AgroBrokerPage.tsx` — `contact_name`, `contact_phone`, `contact_email` отображаются всем брокерам до покупки.
-
-**Решение:** Скрыть из карточек `contact_name`, `contact_phone`, `contact_email`. Показывать только: товар, количество, цену, регион, доставку. Контактные данные показывать только в личном кабинете брокера после оплаты (уже реализовано на `BrokerDashboardPage`).
-
-## Проблема 4: Кнопка «Кабинет» ведёт на общий дашборд
-
-**Причина:** В `Header.tsx` строка 172 — ссылка всегда `/dashboard`. Для брокера `DashboardPage` делает редирект на `/dashboard/broker`, но это лишний переход и мерцание.
-
-**Решение:** В `Header.tsx` использовать `userRole` из `useAuth()` для определения URL:
-- `broker` → `/dashboard/broker`
-- `business` → `/dashboard/business`
-- остальные → `/dashboard`
-
-## Затрагиваемые файлы
-
-| Файл | Изменение |
+| Файл | Что меняется |
 |---|---|
-| `src/hooks/useAuth.tsx` | Исправить race condition в инициализации, убрать `setLoading(true)` из `signOut` |
-| `src/pages/AgroBrokerPage.tsx` | Скрыть contact_name/phone/email из карточек |
-| `src/components/layout/Header.tsx` | Динамический URL для кнопки «Кабинет» на основе `userRole` |
+| `src/pages/AuthPage.tsx` | Заменить `<Input type="tel">` на `<PhoneInput>` |
+| `src/pages/BusinessAuthPage.tsx` | Заменить phone `<Input>` на `<PhoneInput>`, binIin `<Input>` на `<BinIinInput>` |
+| `src/pages/SellPage.tsx` | Заменить `<input type="tel">` на `<PhoneInput>` |
+
+### 4. Логика форматирования
+
+```text
+Телефон:
+  Ввод: 7479481318
+  Отображение: +7-747-948-13-18
+  Хранение в state: +77479481318 (чистые цифры с +)
+
+БИН/ИИН:
+  Ввод: только цифры, maxLength=12
+  Валидация: ровно 12 цифр при submit
+```
+
+### Затрагиваемые файлы
+- `src/components/PhoneInput.tsx` — **новый**
+- `src/components/BinIinInput.tsx` — **новый**
+- `src/pages/AuthPage.tsx` — замена поля телефона
+- `src/pages/BusinessAuthPage.tsx` — замена полей телефона и БИН/ИИН
+- `src/pages/SellPage.tsx` — замена поля телефона
 
