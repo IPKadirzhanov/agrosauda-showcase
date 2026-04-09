@@ -21,10 +21,7 @@ function formatPhone(digits: string): string {
 }
 
 function extractDigits(raw: string): string {
-  // Remove everything except digits
   const allDigits = raw.replace(/\D/g, '');
-  // If starts with 7, skip it (prefix)
-  if (allDigits.startsWith('7')) return allDigits.slice(1, 11);
   return allDigits.slice(0, 10);
 }
 
