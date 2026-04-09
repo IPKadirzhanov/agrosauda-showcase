@@ -21,10 +21,7 @@ function formatPhone(digits: string): string {
 }
 
 function extractDigits(raw: string): string {
-  // Remove everything except digits
   const allDigits = raw.replace(/\D/g, '');
-  // If starts with 7, skip it (prefix)
-  if (allDigits.startsWith('7')) return allDigits.slice(1, 11);
   return allDigits.slice(0, 10);
 }
 
@@ -34,14 +31,11 @@ export default function PhoneInput({ value, onChange, className, placeholder, sh
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const input = e.target.value;
-    // If user cleared everything, allow empty
     if (!input || input === '+' || input === '+7') {
       onChange('');
       return;
     }
-    const newDigits = input.replace(/\D/g, '');
-    // Skip leading 7
-    const clean = newDigits.startsWith('7') ? newDigits.slice(1, 11) : newDigits.slice(0, 10);
+    const clean = input.replace(/\D/g, '').slice(0, 10);
     onChange(clean.length > 0 ? '+7' + clean : '');
   };
 
