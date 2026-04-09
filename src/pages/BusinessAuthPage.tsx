@@ -5,7 +5,9 @@ import { useAuth } from '@/hooks/useAuth';
 import { supabase } from '@/integrations/supabase/client';
 import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
-import { Mail, Lock, User, Eye, EyeOff, ArrowRight, Building2, Check, Phone, Briefcase } from 'lucide-react';
+import { Mail, Lock, User, Eye, EyeOff, ArrowRight, Building2, Check, Briefcase } from 'lucide-react';
+import PhoneInput from '@/components/PhoneInput';
+import BinIinInput from '@/components/BinIinInput';
 import { toast } from 'sonner';
 import { useLanguage } from '@/i18n';
 
