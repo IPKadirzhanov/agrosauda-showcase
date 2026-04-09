@@ -154,7 +154,7 @@ export default function BusinessAuthPage() {
                         <Building2 className="absolute left-3.5 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground group-focus-within:text-primary transition-colors" />
                         <Input value={companyName} onChange={e => setCompanyName(e.target.value)} placeholder={t.businessAuth.companyName} className="pl-10 h-12 rounded-xl bg-background/50 border-border/50" />
                       </div>
-                      <Input value={binIin} onChange={e => setBinIin(e.target.value)} placeholder={t.businessAuth.binIin} className="h-12 rounded-xl bg-background/50 border-border/50" />
+                      <BinIinInput value={binIin} onChange={setBinIin} placeholder={t.businessAuth.binIin} />
                       <div className="relative group">
                         <User className="absolute left-3.5 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground group-focus-within:text-primary transition-colors" />
                         <Input value={contactPerson} onChange={e => setContactPerson(e.target.value)} placeholder={t.businessAuth.contactPerson} className="pl-10 h-12 rounded-xl bg-background/50 border-border/50" />
