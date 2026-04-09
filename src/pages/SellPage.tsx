@@ -1,4 +1,5 @@
-import { Upload, Camera, CheckCircle } from 'lucide-react';
+import { Camera, CheckCircle } from 'lucide-react';
+import PhoneInput from '@/components/PhoneInput';
 import AnimatedSection from '@/components/AnimatedSection';
 import { useTranslatedData } from '@/hooks/useTranslatedData';
 import { useState } from 'react';
