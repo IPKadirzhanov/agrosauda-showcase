@@ -21,8 +21,9 @@ function formatPhone(digits: string): string {
 }
 
 function extractDigits(raw: string): string {
-  const allDigits = raw.replace(/\D/g, '');
-  return allDigits.slice(0, 10);
+  // Strip +7 prefix if present, then get only digits
+  const cleaned = raw.startsWith('+7') ? raw.slice(2) : raw;
+  return cleaned.replace(/\D/g, '').slice(0, 10);
 }
 
 export default function PhoneInput({ value, onChange, className, placeholder, showIcon = true }: PhoneInputProps) {
@@ -35,7 +36,9 @@ export default function PhoneInput({ value, onChange, className, placeholder, sh
       onChange('');
       return;
     }
-    const clean = input.replace(/\D/g, '').slice(0, 10);
+    // Remove +7 prefix before extracting digits to avoid duplication
+    const withoutPrefix = input.startsWith('+7') ? input.slice(2) : input;
+    const clean = withoutPrefix.replace(/\D/g, '').slice(0, 10);
     onChange(clean.length > 0 ? '+7' + clean : '');
   };
 
