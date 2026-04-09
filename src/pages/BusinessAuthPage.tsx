@@ -159,10 +159,7 @@ export default function BusinessAuthPage() {
                         <User className="absolute left-3.5 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground group-focus-within:text-primary transition-colors" />
                         <Input value={contactPerson} onChange={e => setContactPerson(e.target.value)} placeholder={t.businessAuth.contactPerson} className="pl-10 h-12 rounded-xl bg-background/50 border-border/50" />
                       </div>
-                      <div className="relative group">
-                        <Phone className="absolute left-3.5 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground group-focus-within:text-primary transition-colors" />
-                        <Input type="tel" value={phone} onChange={e => setPhone(e.target.value)} placeholder={t.auth.phonePlaceholder} className="pl-10 h-12 rounded-xl bg-background/50 border-border/50" />
-                      </div>
+                      <PhoneInput value={phone} onChange={setPhone} placeholder={t.auth.phonePlaceholder} />
                     </div>
                   </motion.div>
                 )}

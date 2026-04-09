@@ -6,7 +6,8 @@ import { supabase } from '@/integrations/supabase/client';
 import { lovable } from '@/integrations/lovable';
 import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
-import { Mail, Lock, User, Eye, EyeOff, ArrowRight, Sparkles, Check, Phone, Building2 } from 'lucide-react';
+import { Mail, Lock, User, Eye, EyeOff, ArrowRight, Sparkles, Check, Building2 } from 'lucide-react';
+import PhoneInput from '@/components/PhoneInput';
 import { toast } from 'sonner';
 import { useLanguage } from '@/i18n';
 
