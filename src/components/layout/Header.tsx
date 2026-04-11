@@ -180,7 +180,7 @@ export default function Header() {
                 {profile?.display_name || t.nav.cabinet}
               </Link>
               <button
-                onClick={async () => { await signOut(); navigate('/'); }}
+                onClick={() => { signOut(); navigate('/'); }}
                 className={`p-2 rounded-lg transition-all duration-200 ${
                   showTransparent
                     ? 'text-white/70 hover:text-white hover:bg-white/10'
