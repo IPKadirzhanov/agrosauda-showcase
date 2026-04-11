@@ -180,7 +180,7 @@ export default function Header() {
                 {profile?.display_name || t.nav.cabinet}
               </Link>
               <button
-                onClick={async () => { await signOut(); navigate('/'); }}
+                onClick={() => { signOut(); navigate('/'); }}
                 className={`p-2 rounded-lg transition-all duration-200 ${
                   showTransparent
                     ? 'text-white/70 hover:text-white hover:bg-white/10'
@@ -264,25 +264,35 @@ export default function Header() {
                 </Link>
               ))}
 
-              <div className="flex gap-2 mt-4 pt-4 border-t border-border/50">
-                {user ? (
-                  <Link
-                    to={userRole === 'broker' ? '/dashboard/broker' : userRole === 'business' ? '/dashboard/business' : '/dashboard'}
-                    className="flex-1 flex items-center justify-center gap-2 px-4 py-3 rounded-xl border border-border text-sm font-medium hover:bg-accent transition-all duration-200"
-                  >
-                    <User className="w-4 h-4" /> {t.nav.cabinet}
+              <div className="flex flex-col gap-2 mt-4 pt-4 border-t border-border/50">
+                <div className="flex gap-2">
+                  {user ? (
+                    <Link
+                      to={userRole === 'broker' ? '/dashboard/broker' : userRole === 'business' ? '/dashboard/business' : '/dashboard'}
+                      className="flex-1 flex items-center justify-center gap-2 px-4 py-3 rounded-xl border border-border text-sm font-medium hover:bg-accent transition-all duration-200"
+                    >
+                      <User className="w-4 h-4" /> {t.nav.cabinet}
+                    </Link>
+                  ) : (
+                    <Link
+                      to="/auth"
+                      className="flex-1 flex items-center justify-center gap-2 px-4 py-3 rounded-xl border border-border text-sm font-medium hover:bg-accent transition-all duration-200"
+                    >
+                      <User className="w-4 h-4" /> {t.nav.login}
+                    </Link>
+                  )}
+                  <Link to="/sell" className="flex-1 btn-premium !py-3 !rounded-xl !text-sm text-center">
+                    {t.nav.sell}
                   </Link>
-                ) : (
-                  <Link
-                    to="/auth"
-                    className="flex-1 flex items-center justify-center gap-2 px-4 py-3 rounded-xl border border-border text-sm font-medium hover:bg-accent transition-all duration-200"
+                </div>
+                {user && (
+                  <button
+                    onClick={() => { signOut(); navigate('/'); }}
+                    className="flex items-center justify-center gap-2 px-4 py-3 rounded-xl border border-destructive/30 text-sm font-medium text-destructive hover:bg-destructive/10 transition-all duration-200"
                   >
-                    <User className="w-4 h-4" /> {t.nav.login}
-                  </Link>
+                    <LogOut className="w-4 h-4" /> Выйти
+                  </button>
                 )}
-                <Link to="/sell" className="flex-1 btn-premium !py-3 !rounded-xl !text-sm text-center">
-                  {t.nav.sell}
-                </Link>
               </div>
             </nav>
           </motion.div>
