@@ -100,6 +100,11 @@ function AppLayout() {
         <Route path="/dashboard" element={<DashboardPage />} />
         <Route path="/dashboard/broker" element={<BrokerDashboardPage />} />
         <Route path="/dashboard/business" element={<BusinessDashboardPage />} />
+        <Route path="/offer" element={<OfferPage />} />
+        <Route path="/privacy" element={<PrivacyPage />} />
+        <Route path="/terms" element={<TermsPage />} />
+        <Route path="/requisites" element={<RequisitesPage />} />
+        <Route path="/dashboard/business" element={<BusinessDashboardPage />} />
 
         {/* Admin routes */}
         <Route path="/admin" element={<AdminLayout />}>
