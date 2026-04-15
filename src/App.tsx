@@ -45,6 +45,10 @@ import AdminShortsPage from "./pages/admin/AdminShortsPage";
 import FloatingAIWidget from "./components/FloatingAIWidget";
 import AgroBrokerPage from "./pages/AgroBrokerPage";
 import AdminBrokerPage from "./pages/admin/AdminBrokerPage";
+import OfferPage from "./pages/OfferPage";
+import PrivacyPage from "./pages/PrivacyPage";
+import TermsPage from "./pages/TermsPage";
+import RequisitesPage from "./pages/RequisitesPage";
 
 const queryClient = new QueryClient();
 
@@ -95,6 +99,11 @@ function AppLayout() {
         <Route path="/auth/business" element={<BusinessAuthPage />} />
         <Route path="/dashboard" element={<DashboardPage />} />
         <Route path="/dashboard/broker" element={<BrokerDashboardPage />} />
+        <Route path="/dashboard/business" element={<BusinessDashboardPage />} />
+        <Route path="/offer" element={<OfferPage />} />
+        <Route path="/privacy" element={<PrivacyPage />} />
+        <Route path="/terms" element={<TermsPage />} />
+        <Route path="/requisites" element={<RequisitesPage />} />
         <Route path="/dashboard/business" element={<BusinessDashboardPage />} />
 
         {/* Admin routes */}
