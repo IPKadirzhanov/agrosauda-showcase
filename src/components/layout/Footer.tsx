@@ -24,14 +24,13 @@ export default function Footer() {
       { name: t.footer.aboutUs, path: '/about' },
       { name: t.footer.news, path: '/news' },
       { name: t.footer.contacts, path: '/contact' },
-      { name: t.footer.privacy, path: '#' },
-      { name: t.footer.terms, path: '#' },
+      { name: 'Реквизиты', path: '/requisites' },
     ],
-    [t.footer.support]: [
-      { name: t.footer.helpCenter, path: '/contact' },
-      { name: t.footer.faq, path: '/safe-deal' },
+    'Документы': [
+      { name: 'Публичная оферта', path: '/offer' },
+      { name: t.footer.privacy, path: '/privacy' },
+      { name: t.footer.terms, path: '/terms' },
       { name: t.footer.forSellers, path: '/sell' },
-      { name: t.footer.forBuyers, path: '/safe-deal' },
     ],
   };
 

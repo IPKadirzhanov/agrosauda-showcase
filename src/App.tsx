@@ -45,6 +45,10 @@ import AdminShortsPage from "./pages/admin/AdminShortsPage";
 import FloatingAIWidget from "./components/FloatingAIWidget";
 import AgroBrokerPage from "./pages/AgroBrokerPage";
 import AdminBrokerPage from "./pages/admin/AdminBrokerPage";
+import OfferPage from "./pages/OfferPage";
+import PrivacyPage from "./pages/PrivacyPage";
+import TermsPage from "./pages/TermsPage";
+import RequisitesPage from "./pages/RequisitesPage";
 
 const queryClient = new QueryClient();
 
