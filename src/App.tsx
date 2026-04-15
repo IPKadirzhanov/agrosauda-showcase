@@ -104,7 +104,6 @@ function AppLayout() {
         <Route path="/privacy" element={<PrivacyPage />} />
         <Route path="/terms" element={<TermsPage />} />
         <Route path="/requisites" element={<RequisitesPage />} />
-        <Route path="/dashboard/business" element={<BusinessDashboardPage />} />
 
         {/* Admin routes */}
         <Route path="/admin" element={<AdminLayout />}>
