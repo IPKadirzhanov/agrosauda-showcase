@@ -11,6 +11,8 @@ import {
   User, Package, Heart, MessageSquare, Shield, Clock,
   LogOut, Edit3, Save, X, ChevronRight, ShoppingBag, Plus
 } from 'lucide-react';
+import { Rocket } from 'lucide-react';
+import PromoteListingDialog from '@/components/PromoteListingDialog';
 
 type Tab = 'profile' | 'listings' | 'favorites' | 'messages' | 'deals' | 'activity';
 
@@ -26,6 +28,7 @@ export default function DashboardPage() {
   const [myFavorites, setMyFavorites] = useState<any[]>([]);
   const [myInquiries, setMyInquiries] = useState<any[]>([]);
   const [myDeals, setMyDeals] = useState<any[]>([]);
+  const [promoteProduct, setPromoteProduct] = useState<{ id: string; title: string } | null>(null);
 
   useEffect(() => {
     if (!authLoading && !user) navigate('/auth', { replace: true });
@@ -187,19 +190,30 @@ export default function DashboardPage() {
                 ) : (
                   <div className="space-y-3">
                     {myProducts.map(p => (
-                      <Link key={p.id} to={`/product/${p.id}`} className="flex items-center gap-4 p-4 rounded-xl hover:bg-accent/30 transition-colors">
-                        <div className="w-16 h-16 rounded-lg bg-accent/50 overflow-hidden shrink-0">
-                          {p.image && <img src={p.image} alt="" className="w-full h-full object-cover" />}
-                        </div>
-                        <div className="min-w-0 flex-1">
-                          <p className="font-medium truncate">{p.title}</p>
-                          <p className="text-sm text-primary font-semibold">{formatPrice(p.price)}</p>
-                        </div>
-                        <span className={`text-xs px-2 py-1 rounded-full ${p.status === 'active' ? 'bg-primary/10 text-primary' : 'bg-muted text-muted-foreground'}`}>
+                      <div key={p.id} className="flex items-center gap-4 p-4 rounded-xl hover:bg-accent/30 transition-colors">
+                        <Link to={`/product/${p.id}`} className="flex items-center gap-4 min-w-0 flex-1">
+                          <div className="w-16 h-16 rounded-lg bg-accent/50 overflow-hidden shrink-0">
+                            {p.image && <img src={p.image} alt="" className="w-full h-full object-cover" />}
+                          </div>
+                          <div className="min-w-0 flex-1">
+                            <p className="font-medium truncate">{p.title}</p>
+                            <p className="text-sm text-primary font-semibold">{formatPrice(p.price)}</p>
+                            {p.promoted_until && new Date(p.promoted_until) > new Date() && (
+                              <p className="text-[11px] text-amber-600 font-medium mt-0.5">
+                                ТОП до {formatDate(p.promoted_until)}
+                              </p>
+                            )}
+                          </div>
+                        </Link>
+                        <span className={`hidden sm:inline text-xs px-2 py-1 rounded-full ${p.status === 'active' ? 'bg-primary/10 text-primary' : 'bg-muted text-muted-foreground'}`}>
                           {p.status === 'active' ? t.dashboard.active : p.status}
                         </span>
-                        <ChevronRight className="w-4 h-4 text-muted-foreground" />
-                      </Link>
+                        <Button size="sm" variant="outline" className="rounded-xl gap-1.5 shrink-0"
+                          onClick={() => setPromoteProduct({ id: p.id, title: p.title })}>
+                          <Rocket className="w-4 h-4" /> <span className="hidden sm:inline">Продвинуть</span>
+                        </Button>
+                        <ChevronRight className="w-4 h-4 text-muted-foreground shrink-0" />
+                      </div>
                     ))}
                   </div>
                 )}
