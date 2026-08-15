@@ -328,6 +328,11 @@ export default function DashboardPage() {
           </motion.main>
         </div>
       </div>
+      <PromoteListingDialog
+        open={!!promoteProduct}
+        onOpenChange={(v) => { if (!v) setPromoteProduct(null); }}
+        product={promoteProduct}
+      />
     </div>
   );
 }
