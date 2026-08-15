@@ -541,6 +541,59 @@ export type Database = {
           },
         ]
       }
+      listing_promotions: {
+        Row: {
+          amount: number
+          created_at: string
+          currency: string
+          days: number
+          id: string
+          plan: string
+          product_id: string
+          provider: string
+          provider_payment_id: string | null
+          status: string
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          amount: number
+          created_at?: string
+          currency?: string
+          days: number
+          id?: string
+          plan: string
+          product_id: string
+          provider?: string
+          provider_payment_id?: string | null
+          status?: string
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          amount?: number
+          created_at?: string
+          currency?: string
+          days?: number
+          id?: string
+          plan?: string
+          product_id?: string
+          provider?: string
+          provider_payment_id?: string | null
+          status?: string
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "listing_promotions_product_id_fkey"
+            columns: ["product_id"]
+            isOneToOne: false
+            referencedRelation: "products"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       news_articles: {
         Row: {
           category: string | null
@@ -588,6 +641,8 @@ export type Database = {
           image: string | null
           location: string
           price: number
+          promoted_until: string | null
+          promotion_plan: string | null
           seller_name: string
           seller_user_id: string | null
           specs: Json | null
@@ -605,6 +660,8 @@ export type Database = {
           image?: string | null
           location: string
           price: number
+          promoted_until?: string | null
+          promotion_plan?: string | null
           seller_name: string
           seller_user_id?: string | null
           specs?: Json | null
@@ -622,6 +679,8 @@ export type Database = {
           image?: string | null
           location?: string
           price?: number
+          promoted_until?: string | null
+          promotion_plan?: string | null
           seller_name?: string
           seller_user_id?: string | null
           specs?: Json | null
