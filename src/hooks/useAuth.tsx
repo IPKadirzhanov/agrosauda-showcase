@@ -89,15 +89,19 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     let cancelled = false;
 
     // Step 1: Restore session from storage
-    supabase.auth.getSession().then(async ({ data: { session: s } }) => {
+    supabase.auth.getSession().then(({ data: { session: s } }) => {
       if (cancelled) return;
       if (s?.user) {
         setSession(s);
         setUser(s.user);
-        const { profile: p, role: r } = await loadUserData(s.user);
-        if (cancelled) return;
-        setProfile(p);
-        setUserRole(r);
+        // Defer Supabase data calls out of the auth callback stack (avoids deadlock)
+        setTimeout(() => {
+          loadUserData(s.user).then(({ profile: p, role: r }) => {
+            if (cancelled) return;
+            setProfile(p);
+            setUserRole(r);
+          }).catch(() => {});
+        }, 0);
       }
       setLoading(false);
       setInitialized(true);
@@ -112,12 +116,14 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         if (s?.user) {
           setSession(s);
           setUser(s.user);
-          // Non-blocking fetch for profile/role on auth changes
-          loadUserData(s.user).then(({ profile: p, role: r }) => {
-            if (cancelled) return;
-            setProfile(p);
-            setUserRole(r);
-          });
+          // NEVER call Supabase inside the auth callback — defer it
+          setTimeout(() => {
+            loadUserData(s.user).then(({ profile: p, role: r }) => {
+              if (cancelled) return;
+              setProfile(p);
+              setUserRole(r);
+            }).catch(() => {});
+          }, 0);
         } else {
           setSession(null);
           setUser(null);
