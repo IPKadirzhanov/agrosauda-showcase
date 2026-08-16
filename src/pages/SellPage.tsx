@@ -1,4 +1,4 @@
-import { Camera, CheckCircle } from 'lucide-react';
+import { Camera, CheckCircle, Loader2 } from 'lucide-react';
 import PhoneInput from '@/components/PhoneInput';
 import AnimatedSection from '@/components/AnimatedSection';
 import { useTranslatedData } from '@/hooks/useTranslatedData';
@@ -7,12 +7,47 @@ import { toast } from 'sonner';
 import { useLanguage } from '@/i18n/LanguageContext';
 import SEOHead from '@/components/SEOHead';
 import Breadcrumbs from '@/components/Breadcrumbs';
+import { supabase } from '@/integrations/supabase/client';
+import { useAuth } from '@/hooks/useAuth';
+import { useNavigate } from 'react-router-dom';
 
 export default function SellPage() {
   const { t } = useLanguage();
   const { categories, regions } = useTranslatedData();
+  const { user, loading: authLoading } = useAuth();
+  const navigate = useNavigate();
   const [submitted, setSubmitted] = useState(false);
+  const [saving, setSaving] = useState(false);
   const [form, setForm] = useState({ title: '', category: '', region: '', price: '', condition: t.sell.conditionNew, description: '', seller: '', phone: '' });
+
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (authLoading) return;
+    if (!user) {
+      toast.error('Войдите в аккаунт, чтобы разместить объявление');
+      navigate('/auth');
+      return;
+    }
+    setSaving(true);
+    const { error } = await supabase.from('products').insert({
+      title: form.title.trim(),
+      category_slug: form.category,
+      location: form.region,
+      price: Number(form.price) || 0,
+      condition: form.condition,
+      description: [form.description.trim(), form.phone ? `Телефон: ${form.phone}` : ''].filter(Boolean).join('\n\n'),
+      seller_name: form.seller.trim(),
+      seller_user_id: user.id,
+      status: 'pending',
+    });
+    setSaving(false);
+    if (error) {
+      toast.error(error.message);
+      return;
+    }
+    setSubmitted(true);
+    toast.success(t.sell.toastSuccess);
+  };
 
   if (submitted) {
     return (
@@ -22,7 +57,7 @@ export default function SellPage() {
             <div className="w-20 h-20 rounded-full bg-primary/10 text-primary flex items-center justify-center mx-auto mb-6"><CheckCircle className="w-10 h-10" /></div>
             <h1 className="font-display font-bold text-3xl mb-3">{t.sell.submitted}</h1>
             <p className="text-muted-foreground max-w-md mx-auto mb-6">{t.sell.submittedDesc}</p>
-            <button onClick={() => setSubmitted(false)} className="px-7 py-3 rounded-xl bg-primary text-primary-foreground font-semibold hover:opacity-90 transition-opacity">{t.sell.submitAnother}</button>
+            <button onClick={() => { setSubmitted(false); setForm({ title: '', category: '', region: '', price: '', condition: t.sell.conditionNew, description: '', seller: '', phone: '' }); }} className="px-7 py-3 rounded-xl bg-primary text-primary-foreground font-semibold hover:opacity-90 transition-opacity">{t.sell.submitAnother}</button>
           </AnimatedSection>
         </div>
       </div>
@@ -40,7 +75,7 @@ export default function SellPage() {
         </AnimatedSection>
 
         <AnimatedSection delay={0.1}>
-          <form onSubmit={(e) => { e.preventDefault(); setSubmitted(true); toast.success(t.sell.toastSuccess); }} className="premium-card p-6 sm:p-8 rounded-2xl max-w-3xl mx-auto">
+          <form onSubmit={handleSubmit} className="premium-card p-6 sm:p-8 rounded-2xl max-w-3xl mx-auto">
             <div className="mb-6">
               <label className="text-sm font-medium mb-2 block">{t.sell.photos}</label>
               <div className="border-2 border-dashed border-border rounded-2xl p-10 text-center cursor-pointer hover:border-primary/50 hover:bg-primary/5 transition-colors">
@@ -91,7 +126,9 @@ export default function SellPage() {
               <label className="text-xs font-medium text-muted-foreground mb-1.5 block">{t.sell.descriptionLabel}</label>
               <textarea value={form.description} onChange={e => setForm({...form, description: e.target.value})} rows={4} className="w-full px-4 py-3 rounded-xl border border-border bg-background text-sm focus:outline-none focus:ring-2 focus:ring-primary/30 resize-none" placeholder={t.sell.descriptionPlaceholder} required />
             </div>
-            <button type="submit" className="w-full py-4 rounded-xl bg-primary text-primary-foreground font-bold text-base hover:opacity-90 transition-opacity shadow-lg">{t.sell.submitBtn}</button>
+            <button type="submit" disabled={saving} className="w-full py-4 rounded-xl bg-primary text-primary-foreground font-bold text-base hover:opacity-90 transition-opacity shadow-lg disabled:opacity-60 flex items-center justify-center gap-2">
+              {saving && <Loader2 className="w-4 h-4 animate-spin" />}{t.sell.submitBtn}
+            </button>
           </form>
         </AnimatedSection>
       </div>
