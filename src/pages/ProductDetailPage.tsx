@@ -9,6 +9,7 @@ import { useTranslatedData } from '@/hooks/useTranslatedData';
 import { useState } from 'react';
 import { toast } from 'sonner';
 import { useLanguage } from '@/i18n/LanguageContext';
+import { supabase } from '@/integrations/supabase/client';
 
 export default function ProductDetailPage() {
   const { id } = useParams();
@@ -16,7 +17,29 @@ export default function ProductDetailPage() {
   const { products } = useTranslatedData();
   const product = products.find(p => p.id === id);
   const [liked, setLiked] = useState(false);
+  const [paying, setPaying] = useState(false);
   const similar = products.filter(p => p.id !== id && p.categorySlug === product?.categorySlug).slice(0, 4);
+
+  const isRealProduct = !!id && /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(id);
+
+  async function handleOrder() {
+    if (!isRealProduct) { toast.success(t.productDetail.orderPlaced); return; }
+    setPaying(true);
+    try {
+      const { data, error } = await supabase.functions.invoke('freedompay-init', {
+        body: { purpose: 'safe_deal', product_id: id, return_url: `${window.location.origin}/dashboard` },
+      });
+      if (error || !data?.redirect_url) {
+        toast.error(data?.error || error?.message || 'Не удалось создать платёж');
+        setPaying(false);
+        return;
+      }
+      window.location.href = data.redirect_url;
+    } catch {
+      toast.error('Ошибка соединения с платёжной системой');
+      setPaying(false);
+    }
+  }
 
   if (!product) {
     return (
@@ -87,10 +110,11 @@ export default function ProductDetailPage() {
 
               <div className="space-y-2.5 mb-6">
                 <button
-                  onClick={() => toast.success(t.productDetail.orderPlaced)}
-                  className="w-full py-3.5 rounded-xl bg-primary text-primary-foreground font-semibold hover:opacity-90 transition-opacity shadow-lg"
+                  onClick={handleOrder}
+                  disabled={paying}
+                  className="w-full py-3.5 rounded-xl bg-primary text-primary-foreground font-semibold hover:opacity-90 transition-opacity shadow-lg disabled:opacity-60"
                 >
-                  {t.productDetail.placeOrder}
+                  {paying ? 'Переход к оплате…' : t.productDetail.placeOrder}
                 </button>
                 <button
                   onClick={() => toast.success(t.productDetail.requestSent)}
