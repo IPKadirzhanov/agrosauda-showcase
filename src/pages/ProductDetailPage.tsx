@@ -87,10 +87,11 @@ export default function ProductDetailPage() {
 
               <div className="space-y-2.5 mb-6">
                 <button
-                  onClick={() => toast.success(t.productDetail.orderPlaced)}
-                  className="w-full py-3.5 rounded-xl bg-primary text-primary-foreground font-semibold hover:opacity-90 transition-opacity shadow-lg"
+                  onClick={handleOrder}
+                  disabled={paying}
+                  className="w-full py-3.5 rounded-xl bg-primary text-primary-foreground font-semibold hover:opacity-90 transition-opacity shadow-lg disabled:opacity-60"
                 >
-                  {t.productDetail.placeOrder}
+                  {paying ? 'Переход к оплате…' : t.productDetail.placeOrder}
                 </button>
                 <button
                   onClick={() => toast.success(t.productDetail.requestSent)}
