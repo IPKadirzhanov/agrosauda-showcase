@@ -57,45 +57,72 @@ Deno.serve(async (req) => {
       Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")!,
     );
 
-    const { data: promo } = await admin
-      .from("listing_promotions")
-      .select("*")
-      .eq("id", orderId)
-      .maybeSingle();
-    if (!promo) return await xmlResponse("error", "Order not found", salt, secretKey);
-    if (promo.status === "paid") return await xmlResponse("ok", "Already processed", salt, secretKey);
-
     const paid = body.pg_result === "1";
+    const paymentId = body.pg_payment_id || null;
 
-    if (paid) {
-      await admin
-        .from("listing_promotions")
-        .update({ status: "paid", provider_payment_id: body.pg_payment_id || promo.provider_payment_id })
-        .eq("id", promo.id);
+    // 1) Продвижение объявления
+    const { data: promo } = await admin
+      .from("listing_promotions").select("*").eq("id", orderId).maybeSingle();
+    if (promo) {
+      if (promo.status === "paid") return await xmlResponse("ok", "Already processed", salt, secretKey);
+      if (paid) {
+        await admin.from("listing_promotions")
+          .update({ status: "paid", provider_payment_id: paymentId || promo.provider_payment_id })
+          .eq("id", promo.id);
 
-      const { data: product } = await admin
-        .from("products")
-        .select("promoted_until")
-        .eq("id", promo.product_id)
-        .maybeSingle();
+        const { data: product } = await admin
+          .from("products").select("promoted_until").eq("id", promo.product_id).maybeSingle();
 
-      const now = Date.now();
-      const current = product?.promoted_until ? new Date(product.promoted_until).getTime() : 0;
-      const from = current > now ? current : now;
-      const until = new Date(from + promo.days * 24 * 60 * 60 * 1000).toISOString();
+        const now = Date.now();
+        const current = product?.promoted_until ? new Date(product.promoted_until).getTime() : 0;
+        const from = current > now ? current : now;
+        const until = new Date(from + promo.days * 24 * 60 * 60 * 1000).toISOString();
 
-      await admin
-        .from("products")
-        .update({ promoted_until: until, promotion_plan: promo.plan, featured: true })
-        .eq("id", promo.product_id);
-    } else {
-      await admin
-        .from("listing_promotions")
-        .update({ status: "failed", provider_payment_id: body.pg_payment_id || promo.provider_payment_id })
-        .eq("id", promo.id);
+        await admin.from("products")
+          .update({ promoted_until: until, promotion_plan: promo.plan, featured: true })
+          .eq("id", promo.product_id);
+      } else {
+        await admin.from("listing_promotions")
+          .update({ status: "failed", provider_payment_id: paymentId || promo.provider_payment_id })
+          .eq("id", promo.id);
+      }
+      return await xmlResponse("ok", "Accepted", salt, secretKey);
     }
 
-    return await xmlResponse("ok", "Accepted", salt, secretKey);
+    // 2) Комиссия брокера за заявку
+    const { data: payment } = await admin
+      .from("broker_payments").select("*").eq("id", orderId).maybeSingle();
+    if (payment) {
+      if (payment.status === "paid") return await xmlResponse("ok", "Already processed", salt, secretKey);
+      if (paid) {
+        await admin.from("broker_payments")
+          .update({ status: "paid", tiptoppay_transaction_id: paymentId || payment.tiptoppay_transaction_id })
+          .eq("id", payment.id);
+        const { data: claim } = await admin.rpc("claim_broker_request", {
+          _request_id: payment.request_id,
+          _broker_id: payment.broker_id,
+        });
+        console.log("claim_broker_request:", JSON.stringify(claim));
+      } else {
+        await admin.from("broker_payments")
+          .update({ status: "failed", tiptoppay_transaction_id: paymentId || payment.tiptoppay_transaction_id })
+          .eq("id", payment.id);
+      }
+      return await xmlResponse("ok", "Accepted", salt, secretKey);
+    }
+
+    // 3) Безопасная сделка
+    const { data: order } = await admin
+      .from("safe_deal_orders").select("*").eq("id", orderId).maybeSingle();
+    if (order) {
+      if (order.status === "paid") return await xmlResponse("ok", "Already processed", salt, secretKey);
+      await admin.from("safe_deal_orders")
+        .update({ status: paid ? "paid" : "failed" })
+        .eq("id", order.id);
+      return await xmlResponse("ok", "Accepted", salt, secretKey);
+    }
+
+    return await xmlResponse("error", "Order not found", salt, secretKey);
   } catch (err) {
     console.error("freedompay-result error:", err);
     return await xmlResponse("error", "Server error", randomSalt(), secretKey);
