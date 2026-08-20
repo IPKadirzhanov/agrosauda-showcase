@@ -9,6 +9,7 @@ import { useTranslatedData } from '@/hooks/useTranslatedData';
 import { useState } from 'react';
 import { toast } from 'sonner';
 import { useLanguage } from '@/i18n/LanguageContext';
+import { supabase } from '@/integrations/supabase/client';
 
 export default function ProductDetailPage() {
   const { id } = useParams();
