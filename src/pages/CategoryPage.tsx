@@ -1,6 +1,8 @@
 import { useParams, Link, useLocation } from 'react-router-dom';
 import { useLanguage } from '@/i18n/LanguageContext';
 import { useTranslatedData } from '@/hooks/useTranslatedData';
+import { useCatalogProducts } from '@/hooks/useCatalog';
+
 import SEOHead from '@/components/SEOHead';
 import Breadcrumbs from '@/components/Breadcrumbs';
 import ProductCard from '@/components/ProductCard';
@@ -27,7 +29,9 @@ export default function CategoryPage() {
   const { categorySlug: paramCatSlug, citySlug: paramCitySlug } = useParams<{ categorySlug: string; citySlug?: string }>();
   const location = useLocation();
   const { lang, t } = useLanguage();
-  const { products, categories } = useTranslatedData();
+  const { categories } = useTranslatedData();
+  const { products } = useCatalogProducts();
+
 
   const ruMapping = ruSlugMap[location.pathname];
   const categorySlug = ruMapping?.category || paramCatSlug;

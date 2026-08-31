@@ -7,12 +7,19 @@ import ProductCard from '@/components/ProductCard';
 import SEOHead from '@/components/SEOHead';
 import { useLanguage } from '@/i18n/LanguageContext';
 import { useTranslatedData } from '@/hooks/useTranslatedData';
+import { useCatalogProducts } from '@/hooks/useCatalog';
 import { seoCategories, getCategoryTitle } from '@/data/seoData';
 
 export default function HomePage() {
   const { t } = useLanguage();
-  const { products, categories, stats, testimonials } = useTranslatedData();
-  const featuredProducts = products.filter(p => p.featured);
+  const { categories, stats, testimonials } = useTranslatedData();
+  const { products, dbProducts } = useCatalogProducts();
+  // Сначала реальные объявления (в т.ч. продвинутые), затем демо-товары
+  const featuredProducts = [
+    ...dbProducts.filter(p => p.featured),
+    ...products.filter(p => p.featured && !dbProducts.some(d => d.id === p.id)),
+  ].slice(0, 8);
+
 
   const services = [
     { icon: Shield, title: t.home.serviceSafeDeal, desc: t.home.serviceSafeDealDesc, link: '/safe-deal', gradient: 'from-primary/10 to-primary/5' },

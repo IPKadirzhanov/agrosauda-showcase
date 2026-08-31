@@ -1,21 +1,24 @@
 import { Heart } from 'lucide-react';
 import AnimatedSection from '@/components/AnimatedSection';
 import ProductCard from '@/components/ProductCard';
-import { useTranslatedData } from '@/hooks/useTranslatedData';
-import { useState } from 'react';
+import { useCatalogProducts } from '@/hooks/useCatalog';
+import { useFavorites } from '@/hooks/useFavorites';
 import { Link } from 'react-router-dom';
 import { useLanguage } from '@/i18n/LanguageContext';
 import SEOHead from '@/components/SEOHead';
 
 export default function FavoritesPage() {
   const { t } = useLanguage();
-  const { products } = useTranslatedData();
-  const [favorites] = useState(products.slice(0, 3));
-  const [isEmpty] = useState(false);
+  const { products, loading } = useCatalogProducts();
+  const { ids, loading: favLoading } = useFavorites();
 
-  if (isEmpty) {
+  const favorites = products.filter(p => ids.includes(p.id));
+  const isLoading = loading || favLoading;
+
+  if (!isLoading && favorites.length === 0) {
     return (
       <div className="min-h-screen pt-32 pb-20 text-center">
+        <SEOHead title={t.favorites.title + ' — Agrosauda'} description="Избранные товары на Agrosauda" noindex />
         <div className="container-main px-4">
           <AnimatedSection>
             <div className="w-20 h-20 rounded-full bg-muted flex items-center justify-center mx-auto mb-6">
@@ -38,13 +41,21 @@ export default function FavoritesPage() {
           <h1 className="font-display font-bold text-3xl sm:text-4xl mb-2">{t.favorites.title}</h1>
           <p className="text-muted-foreground">{favorites.length} {t.favorites.productsIn}</p>
         </AnimatedSection>
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-5">
-          {favorites.map((product, i) => (
-            <AnimatedSection key={product.id} delay={i * 0.1}>
-              <ProductCard product={product} />
-            </AnimatedSection>
-          ))}
-        </div>
+        {isLoading ? (
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-5">
+            {Array.from({ length: 4 }).map((_, i) => (
+              <div key={i} className="premium-card rounded-2xl h-80 animate-pulse bg-muted/40" />
+            ))}
+          </div>
+        ) : (
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-5">
+            {favorites.map((product, i) => (
+              <AnimatedSection key={product.id} delay={i * 0.1}>
+                <ProductCard product={product} />
+              </AnimatedSection>
+            ))}
+          </div>
+        )}
       </div>
     </div>
   );
