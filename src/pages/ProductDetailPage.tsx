@@ -5,7 +5,8 @@ import ProductCard from '@/components/ProductCard';
 import Breadcrumbs from '@/components/Breadcrumbs';
 import SEOHead from '@/components/SEOHead';
 import { formatPrice } from '@/data/mockData';
-import { useTranslatedData } from '@/hooks/useTranslatedData';
+import { useCatalogProducts, isUuid } from '@/hooks/useCatalog';
+import { useFavorites } from '@/hooks/useFavorites';
 import { useState } from 'react';
 import { toast } from 'sonner';
 import { useLanguage } from '@/i18n/LanguageContext';
@@ -14,13 +15,15 @@ import { supabase } from '@/integrations/supabase/client';
 export default function ProductDetailPage() {
   const { id } = useParams();
   const { t, lang } = useLanguage();
-  const { products } = useTranslatedData();
+  const { products, loading } = useCatalogProducts();
   const product = products.find(p => p.id === id);
-  const [liked, setLiked] = useState(false);
+  const { isFavorite, toggle } = useFavorites();
+  const liked = !!id && isFavorite(id);
   const [paying, setPaying] = useState(false);
   const similar = products.filter(p => p.id !== id && p.categorySlug === product?.categorySlug).slice(0, 4);
 
-  const isRealProduct = !!id && /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(id);
+  const isRealProduct = isUuid(id);
+
 
   async function handleOrder() {
     if (!isRealProduct) { toast.success(t.productDetail.orderPlaced); return; }
