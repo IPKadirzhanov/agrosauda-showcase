@@ -27,7 +27,9 @@ export default function CategoryPage() {
   const { categorySlug: paramCatSlug, citySlug: paramCitySlug } = useParams<{ categorySlug: string; citySlug?: string }>();
   const location = useLocation();
   const { lang, t } = useLanguage();
-  const { products, categories } = useTranslatedData();
+  const { categories } = useTranslatedData();
+  const { products } = useCatalogProducts();
+
 
   const ruMapping = ruSlugMap[location.pathname];
   const categorySlug = ruMapping?.category || paramCatSlug;

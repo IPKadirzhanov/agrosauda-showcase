@@ -1,16 +1,17 @@
 import { Link } from 'react-router-dom';
 import { Product, formatPrice } from '@/data/mockData';
 import { Heart, MapPin, ArrowRight } from 'lucide-react';
-import { useState } from 'react';
 import { useLanguage } from '@/i18n/LanguageContext';
+import { useFavorites } from '@/hooks/useFavorites';
 
 interface Props {
   product: Product;
 }
 
 export default function ProductCard({ product }: Props) {
-  const [liked, setLiked] = useState(false);
   const { t } = useLanguage();
+  const { isFavorite, toggle } = useFavorites();
+  const liked = isFavorite(product.id);
 
   return (
     <div className="premium-card rounded-2xl overflow-hidden group h-full flex flex-col">
@@ -18,18 +19,21 @@ export default function ProductCard({ product }: Props) {
       <div className="relative aspect-[4/3] overflow-hidden">
         <img
           src={product.image}
-          alt={product.title}
+          alt={`${product.title} — ${product.category}, ${product.location}`}
           className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700 ease-out"
           loading="lazy"
         />
         <div className="absolute inset-0 bg-gradient-to-t from-black/40 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
         
         <button
-          onClick={(e) => { e.preventDefault(); setLiked(!liked); }}
+          type="button"
+          aria-label={t.productDetail.addToFavorites}
+          onClick={(e) => { e.preventDefault(); toggle(product.id); }}
           className="absolute top-3 right-3 w-9 h-9 rounded-full bg-white/80 backdrop-blur-sm border border-white/30 flex items-center justify-center hover:scale-110 transition-all duration-300 shadow-sm"
         >
           <Heart className={`w-4 h-4 ${liked ? 'fill-primary text-primary' : 'text-foreground/60'}`} />
         </button>
+
         <span className={`absolute top-3 left-3 px-3 py-1 rounded-lg text-[11px] font-bold tracking-wide uppercase ${
           product.condition === 'Новый' 
             ? 'bg-primary text-primary-foreground shadow-md' 
