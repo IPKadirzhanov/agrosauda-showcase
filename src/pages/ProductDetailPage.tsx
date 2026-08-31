@@ -45,6 +45,13 @@ export default function ProductDetailPage() {
   }
 
   if (!product) {
+    if (loading) {
+      return (
+        <div className="min-h-screen pt-32 text-center">
+          <div className="w-10 h-10 mx-auto rounded-full border-2 border-primary border-t-transparent animate-spin" />
+        </div>
+      );
+    }
     return (
       <div className="min-h-screen pt-32 text-center">
         <p className="text-4xl mb-4">😕</p>
@@ -53,6 +60,7 @@ export default function ProductDetailPage() {
       </div>
     );
   }
+
 
   const productJsonLd = {
     '@context': 'https://schema.org',
@@ -127,7 +135,7 @@ export default function ProductDetailPage() {
                 </button>
                 <div className="flex gap-2">
                   <button
-                    onClick={() => { setLiked(!liked); toast.success(liked ? t.productDetail.removedFromFavorites : t.productDetail.addedToFavorites); }}
+                    onClick={async () => { if (!id) return; const added = await toggle(id); toast.success(added ? t.productDetail.addedToFavorites : t.productDetail.removedFromFavorites); }}
                     className="flex-1 py-3 rounded-xl border border-border hover:bg-accent transition-colors flex items-center justify-center gap-2 text-sm"
                   >
                     <Heart className={`w-4 h-4 ${liked ? 'fill-primary text-primary' : ''}`} /> {liked ? t.productDetail.inFavorites : t.productDetail.addToFavorites}
