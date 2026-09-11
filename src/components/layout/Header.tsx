@@ -1,13 +1,12 @@
 import { useState, useEffect, useRef, useCallback } from 'react';
 import { Link, useLocation, useNavigate } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Menu, X, Heart, User, LogOut, Globe, ChevronDown } from 'lucide-react';
+import { Heart, User, LogOut, Globe, ChevronDown } from 'lucide-react';
 import { useAuth } from '@/hooks/useAuth';
 import { useLanguage, languages } from '@/i18n';
 
 export default function Header() {
   const [scrolled, setScrolled] = useState(false);
-  const [mobileOpen, setMobileOpen] = useState(false);
   const [langOpen, setLangOpen] = useState(false);
   const location = useLocation();
   const navigate = useNavigate();
@@ -45,7 +44,6 @@ export default function Header() {
     return () => window.removeEventListener('scroll', onScroll);
   }, []);
 
-  useEffect(() => { setMobileOpen(false); }, [location]);
 
   useEffect(() => {
     const handler = (e: MouseEvent) => {
