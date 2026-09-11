@@ -49,6 +49,8 @@ import OfferPage from "./pages/OfferPage";
 import PrivacyPage from "./pages/PrivacyPage";
 import TermsPage from "./pages/TermsPage";
 import RequisitesPage from "./pages/RequisitesPage";
+import ServicesPage from "./pages/ServicesPage";
+import BottomNav from "@/components/layout/BottomNav";
 
 const queryClient = new QueryClient();
 
@@ -104,6 +106,7 @@ function AppLayout() {
         <Route path="/privacy" element={<PrivacyPage />} />
         <Route path="/terms" element={<TermsPage />} />
         <Route path="/requisites" element={<RequisitesPage />} />
+        <Route path="/services" element={<ServicesPage />} />
 
         {/* Admin routes */}
         <Route path="/admin" element={<AdminLayout />}>
@@ -123,7 +126,9 @@ function AppLayout() {
         <Route path="*" element={<NotFound />} />
       </Routes>
       {!isAdmin && !isAIChat && <Footer />}
+      {!isAdmin && !isAIChat && <div className="h-24 xl:hidden" aria-hidden />}
       {!isAdmin && !isAIChat && <FloatingAIWidget />}
+      {!isAdmin && !isAIChat && <BottomNav />}
     </>
   );
 }
