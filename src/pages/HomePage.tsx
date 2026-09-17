@@ -1,41 +1,86 @@
-import { Link } from 'react-router-dom';
+import { useEffect, useMemo, useState } from 'react';
+import { Link, useNavigate } from 'react-router-dom';
 import { motion } from 'framer-motion';
-import { ArrowRight, Shield, Sparkles, BookOpen, TrendingUp, Bot, Newspaper, Play, CheckCircle2, Star, Zap, Globe } from 'lucide-react';
+import {
+  ArrowRight, Search as SearchIcon, ShoppingBag, Tag, TrendingUp, Bot, BookOpen,
+  Newspaper, MapPin, Flame, Store,
+} from 'lucide-react';
 import AnimatedSection from '@/components/AnimatedSection';
-import AnimatedCounter from '@/components/AnimatedCounter';
 import ProductCard from '@/components/ProductCard';
 import SEOHead from '@/components/SEOHead';
+import { supabase } from '@/integrations/supabase/client';
 import { useLanguage } from '@/i18n/LanguageContext';
 import { useTranslatedData } from '@/hooks/useTranslatedData';
 import { useCatalogProducts } from '@/hooks/useCatalog';
-import { seoCategories, getCategoryTitle } from '@/data/seoData';
+import { homeStrings, type HomeLang } from '@/data/homeStrings';
+
+interface DemandRow {
+  id: string;
+  product_type: string;
+  quantity: string | null;
+  location: string | null;
+}
+
+const CATEGORY_IMAGES: Record<string, string> = {
+  tractors: 'https://images.unsplash.com/photo-1605000797499-95a51c5269ae?w=500&h=500&fit=crop',
+  combines: 'https://images.unsplash.com/photo-1574323347407-f5e1ad6d020b?w=500&h=500&fit=crop',
+  seeds: 'https://images.unsplash.com/photo-1416879595882-3373a0480b5b?w=500&h=500&fit=crop',
+  fertilizers: 'https://images.unsplash.com/photo-1592982537447-7440770cbfc9?w=500&h=500&fit=crop',
+  'spare-parts': 'https://images.unsplash.com/photo-1487754180451-c456f719a1fc?w=500&h=500&fit=crop',
+  irrigation: 'https://images.unsplash.com/photo-1500382017468-9049fed747ef?w=500&h=500&fit=crop',
+  livestock: 'https://images.unsplash.com/photo-1500595046743-cd271d694d30?w=500&h=500&fit=crop',
+  seeders: 'https://images.unsplash.com/photo-1464226184884-fa280b87c399?w=500&h=500&fit=crop',
+};
+const FALLBACK_CATEGORY_IMAGE =
+  'https://images.unsplash.com/photo-1500382017468-9049fed747ef?w=500&h=500&fit=crop';
 
 export default function HomePage() {
-  const { t } = useLanguage();
-  const { categories, stats, testimonials } = useTranslatedData();
-  const { products, dbProducts } = useCatalogProducts();
-  // Сначала реальные объявления (в т.ч. продвинутые), затем демо-товары
-  const featuredProducts = [
-    ...dbProducts.filter(p => p.featured),
-    ...products.filter(p => p.featured && !dbProducts.some(d => d.id === p.id)),
-  ].slice(0, 8);
+  const { t, lang } = useLanguage();
+  const s = homeStrings[(lang as HomeLang) || 'ru'];
+  const navigate = useNavigate();
+  const { categories, newsArticles } = useTranslatedData();
+  const { products, dbProducts, hasDbProducts } = useCatalogProducts();
+  const [query, setQuery] = useState('');
+  const [demand, setDemand] = useState<DemandRow[]>([]);
 
+  useEffect(() => {
+    let cancelled = false;
+    supabase
+      .from('broker_requests')
+      .select('id,product_type,quantity,location')
+      .eq('request_type', 'buy')
+      .eq('status', 'active')
+      .order('created_at', { ascending: false })
+      .limit(4)
+      .then(({ data }) => {
+        if (!cancelled) setDemand((data as DemandRow[]) || []);
+      });
+    return () => { cancelled = true; };
+  }, []);
+
+  // Реальные счётчики по категориям из опубликованных объявлений
+  const popularCategories = useMemo(() => {
+    const counts = new Map<string, number>();
+    dbProducts.forEach(p => counts.set(p.categorySlug, (counts.get(p.categorySlug) || 0) + 1));
+    const withCounts = categories.map(c => ({ ...c, real: counts.get(c.slug) || 0 }));
+    const sorted = [...withCounts].sort((a, b) => b.real - a.real);
+    return sorted.slice(0, 6);
+  }, [categories, dbProducts]);
+
+  const latest = (hasDbProducts ? dbProducts : products).slice(0, 8);
+  const topOffers = (hasDbProducts ? dbProducts : products).filter(p => p.featured).slice(0, 4);
 
   const services = [
-    { icon: Shield, title: t.home.serviceSafeDeal, desc: t.home.serviceSafeDealDesc, link: '/safe-deal', gradient: 'from-primary/10 to-primary/5' },
-    { icon: TrendingUp, title: t.home.serviceSubsidies, desc: t.home.serviceSubsidiesDesc, link: '/subsidies', gradient: 'from-accent to-accent/50' },
-    { icon: Bot, title: t.home.serviceAI, desc: t.home.serviceAIDesc, link: '/ai-assistants', gradient: 'from-primary/10 to-primary/5' },
-    { icon: BookOpen, title: t.home.serviceEducation, desc: t.home.serviceEducationDesc, link: '/education', gradient: 'from-accent to-accent/50' },
-    { icon: Newspaper, title: t.home.serviceNews, desc: t.home.serviceNewsDesc, link: '/news', gradient: 'from-primary/10 to-primary/5' },
-    { icon: Sparkles, title: t.home.serviceAnalytics, desc: t.home.serviceAnalyticsDesc, link: '/marketplace', gradient: 'from-accent to-accent/50' },
+    { icon: TrendingUp, title: s.subsidies, desc: s.subsidiesDesc, link: '/subsidies' },
+    { icon: Bot, title: s.ai, desc: s.aiDesc, link: '/ai-assistants' },
+    { icon: BookOpen, title: s.education, desc: s.educationDesc, link: '/education' },
+    { icon: Newspaper, title: s.news, desc: s.newsDesc, link: '/news' },
   ];
 
-  const howSteps = [
-    { step: '01', title: t.home.step1Title, desc: t.home.step1DescAlt, icon: Globe },
-    { step: '02', title: t.home.step2Title, desc: t.home.step2DescAlt, icon: Zap },
-    { step: '03', title: t.home.step3Title, desc: t.home.step3DescAlt, icon: Shield },
-    { step: '04', title: t.home.step4Title, desc: t.home.step4Desc, icon: CheckCircle2 },
-  ];
+  const submitSearch = (e: React.FormEvent) => {
+    e.preventDefault();
+    navigate(query.trim() ? `/search?q=${encodeURIComponent(query.trim())}` : '/search');
+  };
 
   const orgJsonLd = {
     '@context': 'https://schema.org',
@@ -43,7 +88,7 @@ export default function HomePage() {
     name: 'Agrosauda',
     url: 'https://agrosauda.kz',
     logo: 'https://agrosauda.kz/logo1.png',
-    description: 'Крупнейший сельскохозяйственный маркетплейс Казахстана',
+    description: 'Сельскохозяйственный маркетплейс Казахстана',
     areaServed: { '@type': 'Country', name: 'Kazakhstan' },
     sameAs: [],
   };
@@ -55,17 +100,28 @@ export default function HomePage() {
     url: 'https://agrosauda.kz',
     potentialAction: {
       '@type': 'SearchAction',
-      target: 'https://agrosauda.kz/marketplace?search={search_term_string}',
+      target: 'https://agrosauda.kz/search?q={search_term_string}',
       'query-input': 'required name=search_term_string',
     },
   };
+
+  const SectionHead = ({ title, href, action, icon }: { title: string; href: string; action: string; icon?: React.ReactNode }) => (
+    <div className="flex items-end justify-between gap-4 mb-5 sm:mb-7">
+      <h2 className="font-display font-extrabold text-xl sm:text-2xl lg:text-3xl flex items-center gap-2">
+        {icon}{title}
+      </h2>
+      <Link to={href} className="inline-flex items-center gap-1 text-primary font-semibold text-[13px] sm:text-sm whitespace-nowrap hover:gap-2 transition-all">
+        {action} <ArrowRight className="w-4 h-4" />
+      </Link>
+    </div>
+  );
 
   return (
     <div className="min-h-screen">
       <SEOHead
         title="Agrosauda — Сельскохозяйственный маркетплейс Казахстана"
-        description="Agrosauda — крупнейший сельскохозяйственный маркетплейс Казахстана. Покупка и продажа техники, оборудования, семян, удобрений. 12 500+ товаров, безопасная сделка, субсидии."
-        keywords="сельхозтехника, тракторы, комбайны, семена, удобрения, Казахстан, маркетплейс, agrosauda, купить трактор, фермер"
+        description="Покупайте и продавайте технику, семена, удобрения, зерно и оборудование для агробизнеса по всему Казахстану на Agrosauda."
+        keywords="сельхозтехника, тракторы, комбайны, семена, удобрения, зерно, Казахстан, маркетплейс, agrosauda"
         canonical="https://agrosauda.kz/"
         jsonLd={[orgJsonLd, webSiteJsonLd]}
         hreflang={[
@@ -76,166 +132,195 @@ export default function HomePage() {
           { lang: 'x-default', url: 'https://agrosauda.kz/' },
         ]}
       />
-      {/* ═══════════════════════════ HERO ═══════════════════════════ */}
-      <section className="relative min-h-[100vh] flex items-center overflow-hidden">
-        <div className="absolute inset-0 z-0">
-          <img src="https://images.unsplash.com/photo-1500382017468-9049fed747ef?w=1920&h=1080&fit=crop" alt="Agricultural field" className="w-full h-full object-cover" />
-          <div className="absolute inset-0 bg-gradient-to-b from-black/70 via-black/50 to-black/80" />
-          <div className="absolute inset-0 bg-gradient-to-r from-black/60 via-transparent to-black/30" />
-          <div className="absolute bottom-0 left-0 right-0 h-40 bg-gradient-to-t from-background to-transparent" />
-        </div>
 
-        <div className="absolute top-32 right-[15%] z-10 hidden lg:block">
-          <motion.div initial={{ opacity: 0, y: 30 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 1.2, duration: 1 }} className="glass-card rounded-2xl p-4 pr-6 animate-float">
-            <div className="flex items-center gap-3">
-              <div className="w-10 h-10 rounded-xl bg-primary/20 flex items-center justify-center"><Shield className="w-5 h-5 text-primary" /></div>
-              <div>
-                <p className="text-white text-xs font-semibold">{t.home.safeDealCard}</p>
-                <p className="text-white/50 text-[11px]">{t.home.escrowCard}</p>
-              </div>
+      {/* ═══════ HERO ═══════ */}
+      <section className="relative pt-20 sm:pt-24 px-4 sm:px-6 lg:px-8">
+        <div className="container-main">
+          <div className="relative rounded-[24px] sm:rounded-[32px] overflow-hidden">
+            <img
+              src="https://images.unsplash.com/photo-1500382017468-9049fed747ef?w=1920&h=1080&fit=crop"
+              alt="Поля и сельхозтехника в Казахстане"
+              className="absolute inset-0 w-full h-full object-cover"
+            />
+            <div className="absolute inset-0 bg-gradient-to-r from-foreground/85 via-foreground/65 to-foreground/30" />
+            <div className="relative px-5 sm:px-10 lg:px-16 py-14 sm:py-20 lg:py-28 max-w-3xl">
+              <motion.h1
+                initial={{ opacity: 0, y: 24 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.6 }}
+                className="font-display font-extrabold text-[30px] sm:text-[44px] lg:text-[56px] leading-[1.08] text-background mb-4"
+              >
+                {s.heroTitle}
+              </motion.h1>
+              <motion.p
+                initial={{ opacity: 0, y: 24 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.6, delay: 0.1 }}
+                className="text-background/75 text-[15px] sm:text-lg max-w-xl"
+              >
+                {s.heroSubtitle}
+              </motion.p>
             </div>
-          </motion.div>
-        </div>
+          </div>
 
-        <div className="absolute bottom-40 right-[10%] z-10 hidden lg:block">
-          <motion.div initial={{ opacity: 0, y: 30 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 1.5, duration: 1 }} className="glass-card rounded-2xl p-4 pr-6 animate-float-delayed">
-            <div className="flex items-center gap-3">
-              <div className="w-10 h-10 rounded-xl bg-primary/20 flex items-center justify-center"><TrendingUp className="w-5 h-5 text-primary" /></div>
-              <div>
-                <p className="text-white text-xs font-semibold">{t.home.productsCard}</p>
-                <p className="text-white/50 text-[11px]">{t.home.allKzCard}</p>
+          {/* Поиск */}
+          <div className="relative z-10 -mt-7 sm:-mt-9 px-1 sm:px-6">
+            <form onSubmit={submitSearch} className="premium-card !rounded-2xl p-2 flex flex-col sm:flex-row gap-2">
+              <div className="flex-1 flex items-center gap-2 px-3">
+                <SearchIcon className="w-5 h-5 text-muted-foreground shrink-0" />
+                <input
+                  value={query}
+                  onChange={(e) => setQuery(e.target.value)}
+                  placeholder={s.searchPlaceholder}
+                  aria-label={s.searchPlaceholder}
+                  className="w-full bg-transparent py-3 text-[15px] outline-none"
+                />
               </div>
-            </div>
-          </motion.div>
-        </div>
+              <button type="submit" className="btn-premium !py-3.5 !px-8 !rounded-xl !text-[15px]">
+                {s.searchBtn}
+              </button>
+            </form>
+          </div>
 
-        <div className="container-main px-4 sm:px-6 lg:px-8 pt-28 pb-20 relative z-10">
-          <div className="max-w-3xl">
-            <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.7 }}>
-              <span className="premium-badge mb-8 inline-flex !bg-white/10 !border-white/15 !text-white/90">
-                <Sparkles className="w-3.5 h-3.5" /> {t.home.badgeText}
+          {/* Купить / Продать */}
+          <div className="grid grid-cols-2 gap-3 sm:gap-4 mt-4">
+            <Link to="/marketplace" className="premium-card rounded-2xl p-4 sm:p-6 flex items-center gap-3 group">
+              <span className="w-11 h-11 sm:w-12 sm:h-12 rounded-xl bg-primary/10 flex items-center justify-center shrink-0">
+                <ShoppingBag className="w-5 h-5 text-primary" />
               </span>
-            </motion.div>
-
-            <motion.h1 initial={{ opacity: 0, y: 30 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.8, delay: 0.15 }} className="font-display font-extrabold text-[42px] sm:text-[56px] md:text-[68px] lg:text-[78px] leading-[1.02] mb-7 text-white">
-              {t.home.heroTitle1}{' '}
-              <span className="bg-gradient-to-r from-primary to-emerald-300 bg-clip-text text-transparent">{t.home.heroTitle2}</span>{' '}
-              <br className="hidden sm:block" />
-              {t.home.heroTitle3}
-            </motion.h1>
-
-            <motion.p initial={{ opacity: 0, y: 30 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.8, delay: 0.3 }} className="text-lg sm:text-xl text-white/65 max-w-2xl mb-10 leading-relaxed font-light">
-              {t.home.heroDesc}
-            </motion.p>
-
-            <motion.div initial={{ opacity: 0, y: 30 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.8, delay: 0.45 }} className="flex flex-wrap gap-4">
-              <Link to="/marketplace" className="btn-premium inline-flex items-center gap-2.5 !text-[15px]">{t.home.catalogBtn} <ArrowRight className="w-4 h-4" /></Link>
-              <Link to="/sell" className="btn-outline-premium !border-white/20 !text-white hover:!bg-white/8 inline-flex items-center gap-2">{t.home.sellBtn}</Link>
-            </motion.div>
-
-            <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 1 }} className="flex items-center gap-6 mt-12 pt-8 border-t border-white/10">
-              <div className="flex -space-x-2">
-                {['ЕТ', 'АС', 'БК', 'МО'].map((initials, i) => (
-                  <div key={i} className="w-9 h-9 rounded-full bg-primary/30 border-2 border-black/30 flex items-center justify-center text-[10px] font-bold text-white">{initials}</div>
-                ))}
-              </div>
-              <div>
-                <div className="flex items-center gap-1 mb-0.5">{[...Array(5)].map((_, i) => <Star key={i} className="w-3.5 h-3.5 fill-primary text-primary" />)}</div>
-                <p className="text-white/45 text-xs">{t.home.trustText}</p>
-              </div>
-            </motion.div>
+              <span className="min-w-0">
+                <span className="block font-display font-bold text-base sm:text-lg group-hover:text-primary transition-colors">{s.buy}</span>
+                <span className="block text-xs sm:text-sm text-muted-foreground truncate">{s.buyDesc}</span>
+              </span>
+            </Link>
+            <Link to="/sell" className="premium-card rounded-2xl p-4 sm:p-6 flex items-center gap-3 group">
+              <span className="w-11 h-11 sm:w-12 sm:h-12 rounded-xl bg-primary/10 flex items-center justify-center shrink-0">
+                <Tag className="w-5 h-5 text-primary" />
+              </span>
+              <span className="min-w-0">
+                <span className="block font-display font-bold text-base sm:text-lg group-hover:text-primary transition-colors">{s.sell}</span>
+                <span className="block text-xs sm:text-sm text-muted-foreground truncate">{s.sellDesc}</span>
+              </span>
+            </Link>
           </div>
         </div>
       </section>
 
-      {/* STATS BAR */}
-      <section className="relative z-10 -mt-1">
-        <div className="container-main px-4 sm:px-6 lg:px-8">
-          <div className="bg-card rounded-2xl border border-border shadow-lg p-6 sm:p-8">
-            <div className="grid grid-cols-2 md:grid-cols-4 gap-6 md:gap-8">
-              {stats.map((stat, i) => (
-                <AnimatedSection key={i} delay={i * 0.1} className="text-center relative">
-                  <div className="text-3xl sm:text-4xl font-display font-extrabold text-primary mb-1.5"><AnimatedCounter end={stat.value} suffix={stat.suffix} /></div>
-                  <p className="text-xs sm:text-sm text-muted-foreground font-medium">{stat.label}</p>
-                  {i < stats.length - 1 && <div className="absolute right-0 top-1/2 -translate-y-1/2 w-px h-10 bg-border hidden md:block" />}
+      {/* ═══════ ПОПУЛЯРНЫЕ КАТЕГОРИИ ═══════ */}
+      <section className="px-4 sm:px-6 lg:px-8 pt-12 sm:pt-16">
+        <div className="container-main">
+          <SectionHead title={s.popular} href="/marketplace" action={s.allCategories} />
+          <div className="flex gap-3 overflow-x-auto pb-2 -mx-4 px-4 sm:mx-0 sm:px-0 sm:grid sm:grid-cols-3 lg:grid-cols-6 sm:overflow-visible">
+            {popularCategories.map((cat, i) => (
+              <AnimatedSection key={cat.slug} delay={i * 0.04} className="shrink-0 w-[42%] sm:w-auto">
+                <Link to={`/category/${cat.slug}`} className="premium-card rounded-2xl overflow-hidden block group h-full">
+                  <div className="aspect-[4/3] overflow-hidden">
+                    <img
+                      src={CATEGORY_IMAGES[cat.slug] || FALLBACK_CATEGORY_IMAGE}
+                      alt={cat.name}
+                      loading="lazy"
+                      className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
+                    />
+                  </div>
+                  <div className="p-3">
+                    <p className="font-semibold text-sm leading-tight group-hover:text-primary transition-colors">{cat.name}</p>
+                    {cat.real > 0 && (
+                      <p className="text-xs text-muted-foreground mt-0.5">{cat.real} {s.items}</p>
+                    )}
+                  </div>
+                </Link>
+              </AnimatedSection>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* ═══════ СЕЙЧАС ИЩУТ ═══════ */}
+      <section className="px-4 sm:px-6 lg:px-8 pt-12 sm:pt-16">
+        <div className="container-main">
+          <SectionHead
+            title={s.demand}
+            href="/agrobroker"
+            action={s.allDemand}
+            icon={<Flame className="w-5 h-5 text-primary" />}
+          />
+          {demand.length === 0 ? (
+            <div className="premium-card rounded-2xl p-8 text-center text-muted-foreground text-sm">
+              {s.demandEmpty}
+            </div>
+          ) : (
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4">
+              {demand.map((d, i) => (
+                <AnimatedSection key={d.id} delay={i * 0.06}>
+                  <Link to="/agrobroker" className="premium-card rounded-2xl p-4 block h-full">
+                    <p className="font-semibold text-sm mb-1.5 line-clamp-2">{d.product_type}</p>
+                    <p className="text-xs text-muted-foreground flex items-center gap-1">
+                      {d.quantity ? `${d.quantity} · ` : ''}
+                      <MapPin className="w-3 h-3" /> {d.location || '—'}
+                    </p>
+                  </Link>
                 </AnimatedSection>
               ))}
             </div>
-          </div>
+          )}
         </div>
       </section>
 
-      {/* CATEGORIES */}
-      <section className="section-padding">
+      {/* ═══════ НОВЫЕ ОБЪЯВЛЕНИЯ ═══════ */}
+      <section className="px-4 sm:px-6 lg:px-8 pt-12 sm:pt-16">
+        <div className="container-main">
+          <SectionHead title={s.newListings} href="/marketplace" action={s.allListings} />
+          {latest.length === 0 ? (
+            <div className="premium-card rounded-2xl p-10 text-center">
+              <p className="text-muted-foreground text-sm mb-5">{s.listingsEmpty}</p>
+              <Link to="/sell" className="btn-premium inline-flex !py-3 !text-sm">{s.listingsEmptyCta}</Link>
+            </div>
+          ) : (
+            <div className="grid grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-5">
+              {latest.map((p, i) => (
+                <AnimatedSection key={p.id} delay={i * 0.05}><ProductCard product={p} /></AnimatedSection>
+              ))}
+            </div>
+          )}
+        </div>
+      </section>
+
+      {/* ═══════ AGRO SHOP ═══════ */}
+      <section className="px-4 sm:px-6 lg:px-8 pt-12 sm:pt-16">
         <div className="container-main">
           <AnimatedSection>
-            <div className="text-center mb-14">
-              <span className="premium-badge mb-4">{t.home.catalogBadge}</span>
-              <h2 className="font-display font-extrabold text-3xl sm:text-4xl lg:text-[44px] mb-4">{t.home.categoriesTitle}</h2>
-              <p className="text-muted-foreground max-w-lg mx-auto text-base">{t.home.categoriesSubtitle}</p>
-            </div>
-          </AnimatedSection>
-          <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-7 gap-3">
-            {categories.map((cat, i) => (
-              <AnimatedSection key={cat.slug} delay={i * 0.04}>
-                <Link to={`/category/${cat.slug}`} className="premium-card p-5 rounded-xl text-center group block h-full">
-                  <span className="text-3xl mb-3 block group-hover:scale-110 transition-transform duration-500">{cat.icon}</span>
-                  <p className="font-semibold text-sm mb-0.5 group-hover:text-primary transition-colors duration-300">{cat.name}</p>
-                  <p className="text-xs text-muted-foreground">{cat.count} {t.home.productsCount}</p>
-                </Link>
-              </AnimatedSection>
-            ))}
-          </div>
-        </div>
-      </section>
-
-      <div className="section-divider mx-auto max-w-5xl" />
-
-      {/* FEATURED PRODUCTS */}
-      <section className="section-padding relative overflow-hidden">
-        <div className="absolute inset-0 bg-gradient-to-b from-accent/30 via-transparent to-accent/20 pointer-events-none" />
-        <div className="absolute top-0 right-0 w-[500px] h-[500px] bg-primary/5 rounded-full blur-3xl pointer-events-none" />
-        <div className="container-main relative">
-          <AnimatedSection>
-            <div className="flex items-end justify-between mb-12">
-              <div>
-                <span className="premium-badge mb-4">{t.home.recommendedBadge}</span>
-                <h2 className="font-display font-extrabold text-3xl sm:text-4xl lg:text-[44px] mb-2">{t.home.popularTitle}</h2>
-                <p className="text-muted-foreground text-base">{t.home.popularSubtitle}</p>
+            <Link to="/agro-shop" className="relative block rounded-[24px] overflow-hidden group">
+              <img
+                src="https://images.unsplash.com/photo-1605000797499-95a51c5269ae?w=1600&h=700&fit=crop"
+                alt="Agro Shop — проверенные товары для агробизнеса"
+                loading="lazy"
+                className="absolute inset-0 w-full h-full object-cover group-hover:scale-105 transition-transform duration-700"
+              />
+              <div className="absolute inset-0 bg-gradient-to-r from-foreground/85 to-foreground/35" />
+              <div className="relative p-6 sm:p-12 max-w-lg">
+                <span className="inline-flex items-center gap-1.5 text-background/80 text-xs font-semibold uppercase tracking-wide mb-3">
+                  <Store className="w-4 h-4" /> Agrosauda
+                </span>
+                <h2 className="font-display font-extrabold text-2xl sm:text-4xl text-background mb-2">{s.shopTitle}</h2>
+                <p className="text-background/75 text-sm sm:text-base mb-6">{s.shopDesc}</p>
+                <span className="btn-premium inline-flex items-center gap-2 !py-3 !px-6 !text-sm">
+                  {s.shopBtn} <ArrowRight className="w-4 h-4" />
+                </span>
               </div>
-              <Link to="/marketplace" className="hidden sm:inline-flex items-center gap-2 text-primary font-semibold text-sm hover:gap-3 transition-all duration-300">{t.home.allProducts} <ArrowRight className="w-4 h-4" /></Link>
-            </div>
+            </Link>
           </AnimatedSection>
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5">
-            {featuredProducts.map((product, i) => (
-              <AnimatedSection key={product.id} delay={i * 0.1}><ProductCard product={product} /></AnimatedSection>
-            ))}
-          </div>
         </div>
       </section>
 
-      {/* SERVICES GRID */}
-      <section className="section-padding relative">
-        <div className="absolute inset-0 dot-pattern opacity-40 pointer-events-none" />
-        <div className="container-main relative">
-          <AnimatedSection>
-            <div className="text-center mb-14">
-              <span className="premium-badge mb-4">{t.home.ecosystemBadge}</span>
-              <h2 className="font-display font-extrabold text-3xl sm:text-4xl lg:text-[44px] mb-4">{t.home.platformTitle}</h2>
-              <p className="text-muted-foreground max-w-lg mx-auto text-base">{t.home.platformSubtitle}</p>
-            </div>
-          </AnimatedSection>
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5">
+      {/* ═══════ СЕРВИСЫ ═══════ */}
+      <section className="px-4 sm:px-6 lg:px-8 pt-12 sm:pt-16">
+        <div className="container-main">
+          <SectionHead title={s.servicesTitle} href="/services" action={t.common?.more || s.allCategories} />
+          <div className="grid grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4">
             {services.map((item, i) => (
-              <AnimatedSection key={i} delay={i * 0.08}>
-                <Link to={item.link} className="premium-card p-7 rounded-2xl block group relative overflow-hidden h-full">
-                  <div className={`absolute top-0 right-0 w-32 h-32 bg-gradient-to-bl ${item.gradient} rounded-full blur-2xl -translate-y-8 translate-x-8 opacity-60 group-hover:opacity-100 transition-opacity duration-500`} />
-                  <div className="relative">
-                    <div className="w-14 h-14 rounded-2xl bg-gradient-to-br from-primary/15 to-primary/5 border border-primary/10 flex items-center justify-center mb-5 group-hover:scale-110 group-hover:shadow-lg transition-all duration-500"><item.icon className="w-6 h-6 text-primary" /></div>
-                    <h3 className="font-display font-bold text-lg mb-2.5 group-hover:text-primary transition-colors duration-300">{item.title}</h3>
-                    <p className="text-sm text-muted-foreground leading-relaxed">{item.desc}</p>
-                    <div className="mt-4 flex items-center gap-1.5 text-primary text-sm font-medium opacity-0 group-hover:opacity-100 transition-opacity duration-300">{t.home.moreBtn} <ArrowRight className="w-3.5 h-3.5" /></div>
-                  </div>
+              <AnimatedSection key={item.link} delay={i * 0.06}>
+                <Link to={item.link} className="premium-card rounded-2xl p-4 sm:p-6 block h-full group">
+                  <span className="w-11 h-11 rounded-xl bg-primary/10 flex items-center justify-center mb-3">
+                    <item.icon className="w-5 h-5 text-primary" />
+                  </span>
+                  <h3 className="font-display font-bold text-[15px] sm:text-base mb-1 group-hover:text-primary transition-colors">{item.title}</h3>
+                  <p className="text-xs sm:text-sm text-muted-foreground">{item.desc}</p>
                 </Link>
               </AnimatedSection>
             ))}
@@ -243,89 +328,40 @@ export default function HomePage() {
         </div>
       </section>
 
-      {/* HOW IT WORKS */}
-      <section className="section-padding relative overflow-hidden">
-        <div className="absolute inset-0 bg-gradient-to-br from-foreground/[0.025] via-transparent to-primary/[0.03] pointer-events-none" />
-        <div className="container-main relative">
-          <AnimatedSection>
-            <div className="text-center mb-16">
-              <span className="premium-badge mb-4">{t.home.processBadge}</span>
-              <h2 className="font-display font-extrabold text-3xl sm:text-4xl lg:text-[44px] mb-4">{t.home.howItWorks}</h2>
-              <p className="text-muted-foreground text-base">{t.home.howItWorksSubtitle}</p>
+      {/* ═══════ ЛУЧШИЕ ПРЕДЛОЖЕНИЯ ═══════ */}
+      {topOffers.length > 0 && (
+        <section className="px-4 sm:px-6 lg:px-8 pt-12 sm:pt-16">
+          <div className="container-main">
+            <SectionHead title={t.home.popularTitle} href="/marketplace" action={t.home.allProducts} />
+            <div className="grid grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-5">
+              {topOffers.map((p, i) => (
+                <AnimatedSection key={p.id} delay={i * 0.05}><ProductCard product={p} /></AnimatedSection>
+              ))}
             </div>
-          </AnimatedSection>
-          <div className="grid grid-cols-1 md:grid-cols-4 gap-8 relative">
-            <div className="absolute top-10 left-[12.5%] right-[12.5%] h-px bg-gradient-to-r from-transparent via-primary/20 to-transparent hidden md:block" />
-            {howSteps.map((item, i) => (
-              <AnimatedSection key={i} delay={i * 0.12}>
-                <div className="text-center relative">
-                  <div className="w-20 h-20 rounded-3xl bg-gradient-to-br from-primary/12 to-primary/5 border border-primary/10 flex items-center justify-center mx-auto mb-5 relative">
-                    <item.icon className="w-8 h-8 text-primary" />
-                    <span className="absolute -top-2 -right-2 w-7 h-7 rounded-lg bg-primary text-primary-foreground text-[11px] font-bold flex items-center justify-center shadow-md">{item.step}</span>
-                  </div>
-                  <h3 className="font-display font-bold text-lg mb-2">{item.title}</h3>
-                  <p className="text-sm text-muted-foreground leading-relaxed max-w-[240px] mx-auto">{item.desc}</p>
-                </div>
-              </AnimatedSection>
-            ))}
           </div>
-        </div>
-      </section>
+        </section>
+      )}
 
-      {/* TESTIMONIALS */}
-      <section className="section-padding relative">
-        <div className="absolute left-0 top-1/2 -translate-y-1/2 w-[400px] h-[400px] bg-primary/5 rounded-full blur-3xl pointer-events-none" />
-        <div className="container-main relative">
-          <AnimatedSection>
-            <div className="text-center mb-14">
-              <span className="premium-badge mb-4">{t.home.reviewsBadge}</span>
-              <h2 className="font-display font-extrabold text-3xl sm:text-4xl lg:text-[44px] mb-4">{t.home.reviewsTitle}</h2>
-              <p className="text-muted-foreground text-base">{t.home.reviewsSubtitle}</p>
-            </div>
-          </AnimatedSection>
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-            {testimonials.map((item, i) => (
-              <AnimatedSection key={i} delay={i * 0.12}>
-                <div className="premium-card p-7 rounded-2xl relative overflow-hidden group">
-                  <div className="absolute top-0 right-0 w-24 h-24 bg-primary/5 rounded-full blur-2xl group-hover:bg-primary/10 transition-colors duration-500" />
-                  <div className="flex gap-0.5 mb-4">{[...Array(5)].map((_, si) => <Star key={si} className="w-4 h-4 fill-primary/80 text-primary/80" />)}</div>
-                  <p className="text-sm text-muted-foreground leading-relaxed mb-6 relative">"{item.text}"</p>
-                  <div className="flex items-center gap-3 relative">
-                    <div className="w-11 h-11 rounded-full bg-gradient-to-br from-primary/20 to-primary/5 border border-primary/10 text-primary font-display font-bold text-sm flex items-center justify-center">{item.avatar}</div>
-                    <div>
-                      <p className="font-semibold text-sm">{item.name}</p>
-                      <p className="text-xs text-muted-foreground">{item.role}</p>
-                    </div>
-                  </div>
-                </div>
-              </AnimatedSection>
-            ))}
-          </div>
-        </div>
-      </section>
-
-      {/* CTA */}
-      <section className="section-padding">
+      {/* ═══════ НОВОСТИ ═══════ */}
+      <section className="px-4 sm:px-6 lg:px-8 py-12 sm:py-20">
         <div className="container-main">
-          <AnimatedSection>
-            <div className="relative rounded-[28px] overflow-hidden p-12 sm:p-20 text-center">
-              <div className="absolute inset-0 bg-gradient-to-br from-primary via-emerald-600 to-teal-700" />
-              <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_top_right,hsla(0,0%,100%,0.12),transparent_60%)]" />
-              <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_bottom_left,hsla(0,0%,100%,0.08),transparent_50%)]" />
-              <div className="absolute top-8 left-8 w-20 h-20 rounded-full border border-white/10 animate-pulse-soft" />
-              <div className="absolute bottom-8 right-12 w-32 h-32 rounded-full border border-white/[0.07]" />
-              <div className="absolute top-1/2 right-[20%] w-2 h-2 rounded-full bg-white/20 animate-float" />
-              <div className="absolute top-[30%] left-[15%] w-1.5 h-1.5 rounded-full bg-white/15 animate-float-delayed" />
-              <div className="relative z-10">
-                <h2 className="font-display font-extrabold text-3xl sm:text-4xl lg:text-5xl text-white mb-5 leading-tight">{t.home.ctaTitle2}</h2>
-                <p className="text-white/65 max-w-lg mx-auto mb-10 text-base sm:text-lg font-light">{t.home.ctaSubtitle2}</p>
-                <div className="flex flex-wrap justify-center gap-4">
-                  <Link to="/marketplace" className="px-8 py-4 rounded-2xl bg-white text-foreground font-bold text-[15px] hover:bg-white/90 transition-all duration-300 shadow-lg hover:shadow-xl hover:-translate-y-0.5">{t.home.ctaBtn1}</Link>
-                  <Link to="/sell" className="px-8 py-4 rounded-2xl border-2 border-white/25 text-white font-bold text-[15px] hover:bg-white/10 transition-all duration-300">{t.home.ctaBtn2}</Link>
-                </div>
-              </div>
-            </div>
-          </AnimatedSection>
+          <SectionHead title={s.newsTitle} href="/news" action={s.allNews} />
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-5">
+            {newsArticles.slice(0, 3).map((n, i) => (
+              <AnimatedSection key={n.id} delay={i * 0.06}>
+                <Link to="/news" className="premium-card rounded-2xl overflow-hidden block h-full group">
+                  <div className="aspect-[16/9] overflow-hidden">
+                    <img src={n.image} alt={n.title} loading="lazy" className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" />
+                  </div>
+                  <div className="p-4">
+                    <p className="text-[11px] uppercase tracking-wide text-primary font-semibold mb-1.5">{n.category}</p>
+                    <h3 className="font-display font-bold text-[15px] leading-snug mb-2 group-hover:text-primary transition-colors">{n.title}</h3>
+                    <p className="text-xs text-muted-foreground">{n.date}</p>
+                  </div>
+                </Link>
+              </AnimatedSection>
+            ))}
+          </div>
         </div>
       </section>
     </div>
