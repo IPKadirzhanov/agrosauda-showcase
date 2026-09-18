@@ -8,6 +8,7 @@ import { AdminProvider } from "@/hooks/useAdmin";
 import { AuthProvider } from "@/hooks/useAuth";
 import { LanguageProvider } from "@/i18n";
 import HomePage from "./pages/HomePage";
+import SearchPage from "./pages/SearchPage";
 
 import ProductDetailPage from "./pages/ProductDetailPage";
 import SafeDealPage from "./pages/SafeDealPage";
