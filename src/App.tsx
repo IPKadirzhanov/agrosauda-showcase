@@ -65,6 +65,7 @@ function AppLayout() {
       {!isAdmin && <Header />}
       <Routes>
         <Route path="/" element={<HomePage />} />
+        <Route path="/search" element={<SearchPage />} />
         <Route path="/marketplace" element={<AgroShopPage />} />
         <Route path="/product/:id" element={<ProductDetailPage />} />
         <Route path="/safe-deal" element={<SafeDealPage />} />
