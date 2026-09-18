@@ -8,6 +8,7 @@ import { AdminProvider } from "@/hooks/useAdmin";
 import { AuthProvider } from "@/hooks/useAuth";
 import { LanguageProvider } from "@/i18n";
 import HomePage from "./pages/HomePage";
+import SearchPage from "./pages/SearchPage";
 
 import ProductDetailPage from "./pages/ProductDetailPage";
 import SafeDealPage from "./pages/SafeDealPage";
@@ -64,6 +65,7 @@ function AppLayout() {
       {!isAdmin && <Header />}
       <Routes>
         <Route path="/" element={<HomePage />} />
+        <Route path="/search" element={<SearchPage />} />
         <Route path="/marketplace" element={<AgroShopPage />} />
         <Route path="/product/:id" element={<ProductDetailPage />} />
         <Route path="/safe-deal" element={<SafeDealPage />} />

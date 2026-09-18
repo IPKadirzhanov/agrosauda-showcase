@@ -311,7 +311,7 @@ export default function HomePage() {
       {/* ═══════ СЕРВИСЫ ═══════ */}
       <section className="px-4 sm:px-6 lg:px-8 pt-12 sm:pt-16">
         <div className="container-main">
-          <SectionHead title={s.servicesTitle} href="/services" action={t.common?.more || s.allCategories} />
+          <SectionHead title={s.servicesTitle} href="/services" action={s.allCategories} />
           <div className="grid grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4">
             {services.map((item, i) => (
               <AnimatedSection key={item.link} delay={i * 0.06}>
