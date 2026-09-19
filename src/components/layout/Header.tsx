@@ -6,6 +6,7 @@ import { useAuth } from '@/hooks/useAuth';
 import { useLanguage, languages } from '@/i18n';
 
 export default function Header() {
+  const [scrolled, setScrolled] = useState(false);
   const [langOpen, setLangOpen] = useState(false);
   const location = useLocation();
   const navigate = useNavigate();
@@ -47,7 +48,14 @@ export default function Header() {
     return () => document.removeEventListener('mousedown', handler);
   }, []);
 
-  const showTransparent = false;
+  useEffect(() => {
+    const onScroll = () => setScrolled(window.scrollY > 20);
+    window.addEventListener('scroll', onScroll);
+    return () => window.removeEventListener('scroll', onScroll);
+  }, []);
+
+  const isHome = location.pathname === '/';
+  const showTransparent = isHome && !scrolled;
   const currentLang = languages.find(l => l.code === lang);
 
   return (
