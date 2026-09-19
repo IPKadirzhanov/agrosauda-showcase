@@ -19,7 +19,7 @@ export default function FloatingAIWidget() {
   };
 
   return (
-    <div className="fixed bottom-6 right-6 z-50 flex flex-col items-end gap-3">
+    <div className="fixed bottom-24 right-4 xl:bottom-6 xl:right-6 z-40 flex flex-col items-end gap-3">
       <AnimatePresence>
         {open && !isMobile && (
           <motion.div
@@ -44,7 +44,7 @@ export default function FloatingAIWidget() {
         onClick={handleClick}
         whileHover={{ scale: 1.08 }}
         whileTap={{ scale: 0.95 }}
-        className="relative group w-14 h-14 rounded-full flex items-center justify-center cursor-pointer shadow-lg shadow-primary/30 overflow-hidden"
+        className="relative group w-11 h-11 xl:w-14 xl:h-14 rounded-full flex items-center justify-center cursor-pointer shadow-md shadow-primary/20 overflow-hidden opacity-80 hover:opacity-100 transition-opacity"
         style={{
           background: 'linear-gradient(135deg, hsl(var(--primary)), hsl(var(--primary) / 0.7))',
         }}
