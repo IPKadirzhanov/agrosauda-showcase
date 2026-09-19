@@ -53,8 +53,7 @@ export default function Header() {
     return () => document.removeEventListener('mousedown', handler);
   }, []);
 
-  const isHome = location.pathname === '/';
-  const showTransparent = isHome && !scrolled;
+  const showTransparent = false;
   const currentLang = languages.find(l => l.code === lang);
 
   return (
