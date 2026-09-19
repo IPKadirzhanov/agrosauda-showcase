@@ -15,6 +15,7 @@ export default function Header() {
   const { user, profile, signOut, userRole } = useAuth();
   const { t, lang, setLang } = useLanguage();
   const langRef = useRef<HTMLDivElement>(null);
+  const langRefDesktop = useRef<HTMLDivElement>(null);
 
   const navLinks = [
     { name: t.nav.agroShop, path: '/agro-shop' },
@@ -42,7 +43,9 @@ export default function Header() {
 
   useEffect(() => {
     const handler = (e: MouseEvent) => {
-      if (langRef.current && !langRef.current.contains(e.target as Node)) setLangOpen(false);
+      const target = e.target as Node;
+      if (langRef.current?.contains(target) || langRefDesktop.current?.contains(target)) return;
+      setLangOpen(false);
     };
     document.addEventListener('mousedown', handler);
     return () => document.removeEventListener('mousedown', handler);
@@ -170,7 +173,7 @@ export default function Header() {
         {/* Desktop Actions */}
         <div className="hidden xl:flex items-center gap-1.5 shrink-0">
           {/* Language Switcher */}
-          <div className="relative">
+          <div ref={langRefDesktop} className="relative">
             <button
               onClick={() => setLangOpen(!langOpen)}
               className={`flex items-center gap-1 px-2 py-1.5 rounded-lg text-xs font-medium transition-all duration-200 ${
