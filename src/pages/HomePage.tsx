@@ -133,17 +133,18 @@ export default function HomePage() {
         ]}
       />
 
-      {/* ═══════ HERO ═══════ */}
-      <section className="relative pt-20 sm:pt-24 px-4 sm:px-6 lg:px-8">
-        <div className="container-main">
-          <div className="relative rounded-[24px] sm:rounded-[32px] overflow-hidden">
-            <img
-              src="https://images.unsplash.com/photo-1500382017468-9049fed747ef?w=1920&h=1080&fit=crop"
-              alt="Поля и сельхозтехника в Казахстане"
-              className="absolute inset-0 w-full h-full object-cover"
-            />
-            <div className="absolute inset-0 bg-gradient-to-r from-foreground/85 via-foreground/65 to-foreground/30" />
-            <div className="relative px-5 sm:px-10 lg:px-16 py-14 sm:py-20 lg:py-28 max-w-3xl">
+      {/* ═══════ HERO — фото на весь экран под прозрачной шапкой ═══════ */}
+      <section className="relative">
+        <img
+          src="https://images.unsplash.com/photo-1500382017468-9049fed747ef?w=1920&h=1080&fit=crop"
+          alt="Поля и сельхозтехника в Казахстане"
+          className="absolute inset-0 w-full h-full object-cover"
+        />
+        <div className="absolute inset-0 bg-gradient-to-r from-foreground/85 via-foreground/60 to-foreground/25" />
+        <div className="absolute inset-x-0 top-0 h-24 bg-gradient-to-b from-foreground/50 to-transparent" />
+        <div className="relative px-4 sm:px-6 lg:px-8">
+          <div className="container-main">
+            <div className="pt-28 sm:pt-36 lg:pt-44 pb-16 sm:pb-24 lg:pb-32 max-w-3xl">
               <motion.h1
                 initial={{ opacity: 0, y: 24 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.6 }}
                 className="font-display font-extrabold text-[30px] sm:text-[44px] lg:text-[56px] leading-[1.08] text-background mb-4"
@@ -152,15 +153,19 @@ export default function HomePage() {
               </motion.h1>
               <motion.p
                 initial={{ opacity: 0, y: 24 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.6, delay: 0.1 }}
-                className="text-background/75 text-[15px] sm:text-lg max-w-xl"
+                className="text-background/80 text-[15px] sm:text-lg max-w-xl"
               >
                 {s.heroSubtitle}
               </motion.p>
             </div>
           </div>
+        </div>
+      </section>
 
-          {/* Поиск */}
-          <div className="relative z-10 -mt-7 sm:-mt-9 px-1 sm:px-6">
+      {/* Поиск + Купить/Продать */}
+      <section className="relative px-4 sm:px-6 lg:px-8">
+        <div className="container-main">
+          <div className="relative z-10 -mt-7 sm:-mt-9">
             <form onSubmit={submitSearch} className="premium-card !rounded-2xl p-2 flex flex-col sm:flex-row gap-2">
               <div className="flex-1 flex items-center gap-2 px-3">
                 <SearchIcon className="w-5 h-5 text-muted-foreground shrink-0" />
@@ -178,7 +183,6 @@ export default function HomePage() {
             </form>
           </div>
 
-          {/* Купить / Продать */}
           <div className="grid grid-cols-2 gap-3 sm:gap-4 mt-4">
             <Link to="/marketplace" className="premium-card rounded-2xl p-4 sm:p-6 flex items-center gap-3 group">
               <span className="w-11 h-11 sm:w-12 sm:h-12 rounded-xl bg-primary/10 flex items-center justify-center shrink-0">
