@@ -110,10 +110,67 @@ export default function Header() {
           })}
         </nav>
 
+        {/* Mobile Actions */}
+        <div className="flex xl:hidden items-center gap-1 shrink-0">
+          {/* Language Switcher (mobile) */}
+          <div ref={langRef} className="relative">
+            <button
+              onClick={() => setLangOpen(!langOpen)}
+              className={`flex items-center gap-1 px-2 py-1.5 rounded-lg text-xs font-medium transition-all duration-200 ${
+                showTransparent
+                  ? 'text-white/80 hover:text-white hover:bg-white/10'
+                  : 'text-muted-foreground hover:text-foreground hover:bg-accent'
+              }`}
+            >
+              <Globe className="w-4 h-4" />
+              <span className="text-[11px] uppercase tracking-wide">{currentLang?.code}</span>
+            </button>
+            <AnimatePresence>
+              {langOpen && (
+                <motion.div
+                  initial={{ opacity: 0, y: 4, scale: 0.96 }}
+                  animate={{ opacity: 1, y: 0, scale: 1 }}
+                  exit={{ opacity: 0, y: 4, scale: 0.96 }}
+                  transition={{ duration: 0.15 }}
+                  className="absolute right-0 top-full mt-1.5 w-36 rounded-xl border border-border bg-card shadow-lg overflow-hidden z-50"
+                >
+                  {languages.map(l => (
+                    <button
+                      key={l.code}
+                      onClick={() => { setLang(l.code as any); setLangOpen(false); }}
+                      className={`w-full flex items-center gap-2.5 px-3 py-2 text-[13px] transition-colors ${
+                        lang === l.code
+                          ? 'bg-primary/10 text-primary font-medium'
+                          : 'text-foreground hover:bg-accent/60'
+                      }`}
+                    >
+                      <span className="text-sm">{l.flag}</span>
+                      {l.label}
+                    </button>
+                  ))}
+                </motion.div>
+              )}
+            </AnimatePresence>
+          </div>
+
+          {/* Profile / Login (mobile) */}
+          <Link
+            to={user ? (userRole === 'broker' ? '/dashboard/broker' : userRole === 'business' ? '/dashboard/business' : '/dashboard') : '/auth'}
+            className={`p-2 rounded-full transition-all duration-200 ${
+              showTransparent
+                ? 'text-white/85 hover:text-white hover:bg-white/10'
+                : 'text-muted-foreground hover:text-foreground hover:bg-accent'
+            }`}
+            aria-label={user ? t.nav.cabinet : t.nav.login}
+          >
+            <User className="w-5 h-5" />
+          </Link>
+        </div>
+
         {/* Desktop Actions */}
         <div className="hidden xl:flex items-center gap-1.5 shrink-0">
           {/* Language Switcher */}
-          <div ref={langRef} className="relative">
+          <div className="relative">
             <button
               onClick={() => setLangOpen(!langOpen)}
               className={`flex items-center gap-1 px-2 py-1.5 rounded-lg text-xs font-medium transition-all duration-200 ${
