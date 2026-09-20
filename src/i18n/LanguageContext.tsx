@@ -15,22 +15,22 @@ interface LanguageContextType {
 const translations: Record<LangCode, TranslationKeys> = { ru, kz, en, cn };
 
 const LanguageContext = createContext<LanguageContextType>({
-  lang: 'ru',
+  lang: 'kz',
   setLang: () => {},
-  t: ru,
+  t: kz,
 });
 
 export const languages: { code: LangCode; label: string; flag: string }[] = [
-  { code: 'ru', label: 'Русский', flag: '🇷🇺' },
   { code: 'kz', label: 'Қазақша', flag: '🇰🇿' },
-  { code: 'en', label: 'English', flag: '🇬🇧' },
+  { code: 'ru', label: 'Русский', flag: '🇷🇺' },
   { code: 'cn', label: '中文', flag: '🇨🇳' },
+  { code: 'en', label: 'English', flag: '🇬🇧' },
 ];
 
 export function LanguageProvider({ children }: { children: ReactNode }) {
   const [lang, setLangState] = useState<LangCode>(() => {
     const saved = localStorage.getItem('agrosauda_lang');
-    return (saved as LangCode) || 'ru';
+    return (saved as LangCode) || 'kz';
   });
 
   const setLang = useCallback((newLang: LangCode) => {
