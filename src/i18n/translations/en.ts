@@ -260,7 +260,7 @@ export const en: TranslationKeys = {
   },
   sell: {
     title: 'Sell a Product', subtitle: 'Create a listing and find a buyer',
-    pageTitle: 'Sell a Product', pageSubtitle: "List your product on Kazakhstan's largest agri marketplace",
+    pageTitle: 'Post a Listing', pageSubtitle: "List your product on Kazakhstan's largest agri marketplace",
     submitted: 'Listing Submitted!', submittedDesc: 'Your listing is under moderation and will be published within 24 hours.',
     submitAnother: 'Post Another', photos: 'Product Photos', photosHint: 'Click or drag photos',
     photosLimit: 'Up to 10 photos, JPG or PNG, max 5 MB',

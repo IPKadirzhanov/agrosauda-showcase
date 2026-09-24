@@ -240,7 +240,7 @@ export const cn: TranslationKeys = {
   },
   sell: {
     title: '出售商品', subtitle: '发布广告并找到买家',
-    pageTitle: '出售商品', pageSubtitle: '在哈萨克斯坦最大的农业市场上发布您的商品',
+    pageTitle: '发布广告', pageSubtitle: '在哈萨克斯坦最大的农业市场上发布您的商品',
     submitted: '广告已提交！', submittedDesc: '您的广告正在审核中，将在24小时内发布。',
     submitAnother: '再发布一个', photos: '商品照片', photosHint: '点击或拖拽照片',
     photosLimit: '最多10张照片，JPG或PNG，最大5 MB',
