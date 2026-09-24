@@ -34,13 +34,18 @@ export default function ProductCard({ product }: Props) {
           <Heart className={`w-4 h-4 ${liked ? 'fill-primary text-primary' : 'text-foreground/60'}`} />
         </button>
 
-        <span className={`absolute top-3 left-3 px-3 py-1 rounded-lg text-[11px] font-bold tracking-wide uppercase ${
-          product.condition === 'Новый' 
-            ? 'bg-primary text-primary-foreground shadow-md' 
-            : 'bg-foreground/80 text-background'
-        }`}>
-          {product.condition === 'Новый' ? t.common.newCondition : t.common.usedCondition}
-        </span>
+        <div className="absolute top-3 left-3 flex flex-col items-start gap-1.5">
+          <span className={`px-3 py-1 rounded-lg text-[11px] font-extrabold tracking-wide uppercase shadow-md ${
+            product.listingType === 'buy'
+              ? 'bg-secondary text-secondary-foreground ring-2 ring-primary'
+              : 'bg-primary text-primary-foreground'
+          }`}>
+            {product.listingType === 'buy' ? 'Куплю' : 'Продаю'}
+          </span>
+          <span className="px-2.5 py-0.5 rounded-md text-[10px] font-bold uppercase bg-foreground/70 text-background">
+            {product.condition === 'Новый' ? t.common.newCondition : t.common.usedCondition}
+          </span>
+        </div>
       </div>
 
       {/* Content */}

@@ -11,6 +11,7 @@ export interface Product {
   image: string;
   featured?: boolean;
   specs?: Record<string, string>;
+  listingType?: 'buy' | 'sell';
 }
 
 export interface Category {
@@ -152,6 +153,18 @@ export const products: Product[] = [
     description: 'Самоходный опрыскиватель с шириной захвата 36 м и баком 4000 л. GPS управление.',
     image: 'https://images.unsplash.com/photo-1560493676-04071c5f467b?w=600&h=400&fit=crop', featured: true,
     specs: { 'Ширина захвата': '36 м', 'Бак': '4 000 л', 'GPS': 'Да' }
+  },
+  {
+    id: 'demo-buy-1', title: 'Куплю пшеницу 3 класса, 500 тонн', category: 'Зерно', categorySlug: 'seeds',
+    price: 110000, location: 'Костанай', seller: 'Демо: ТОО ЗерноЭкспорт', condition: 'Новый', listingType: 'buy',
+    description: 'Демо-объявление. Закупаем пшеницу 3 класса, клейковина от 23%. Цена за тонну, самовывоз.',
+    image: 'https://images.unsplash.com/photo-1574323347407-f5e1ad6d020b?w=600&h=400&fit=crop',
+  },
+  {
+    id: 'demo-buy-2', title: 'Куплю трактор МТЗ-82 б/у', category: 'Тракторы', categorySlug: 'tractors',
+    price: 9000000, location: 'Акмолинская обл.', seller: 'Демо: КХ Береке', condition: 'Б/У', listingType: 'buy',
+    description: 'Демо-объявление. Ищем МТЗ-82 в рабочем состоянии, не старше 2015 года.',
+    image: 'https://images.unsplash.com/photo-1605338803155-8b46c2edc992?w=600&h=400&fit=crop',
   },
 ];
 
