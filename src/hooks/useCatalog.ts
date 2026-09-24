@@ -40,6 +40,7 @@ export function mapDbProduct(
     image: row.image || FALLBACK_IMAGE,
     featured: isPromoted || !!row.featured,
     specs: (row.specs as Record<string, string>) || undefined,
+    listingType: (row.specs as Record<string, string> | null)?.listing_type === 'buy' ? 'buy' : 'sell',
     promotedUntil: row.promoted_until,
     createdAt: row.created_at,
   };

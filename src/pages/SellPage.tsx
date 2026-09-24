@@ -10,6 +10,7 @@ import Breadcrumbs from '@/components/Breadcrumbs';
 import { supabase } from '@/integrations/supabase/client';
 import { useAuth } from '@/hooks/useAuth';
 import { useNavigate } from 'react-router-dom';
+import { motion } from 'framer-motion';
 
 export default function SellPage() {
   const { t } = useLanguage();
@@ -18,6 +19,7 @@ export default function SellPage() {
   const navigate = useNavigate();
   const [submitted, setSubmitted] = useState(false);
   const [saving, setSaving] = useState(false);
+  const [listingType, setListingType] = useState<'sell' | 'buy'>('sell');
   const [form, setForm] = useState({ title: '', category: '', region: '', price: '', condition: t.sell.conditionNew, description: '', seller: '', phone: '' });
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -76,6 +78,18 @@ export default function SellPage() {
 
         <AnimatedSection delay={0.1}>
           <form onSubmit={handleSubmit} className="premium-card p-6 sm:p-8 rounded-2xl max-w-3xl mx-auto">
+            <div className="relative grid grid-cols-2 p-1.5 mb-6 rounded-2xl border border-border/60 bg-card/60 backdrop-blur-xl">
+              {(['sell', 'buy'] as const).map(type => (
+                <button key={type} type="button" onClick={() => setListingType(type)}
+                  className={`relative z-10 py-3 rounded-xl text-sm font-bold transition-colors ${listingType === type ? 'text-primary-foreground' : 'text-muted-foreground hover:text-foreground'}`}>
+                  {listingType === type && (
+                    <motion.span layoutId="sell-type-indicator" transition={{ type: 'spring', stiffness: 380, damping: 32 }}
+                      className="absolute inset-0 -z-10 rounded-xl bg-primary shadow-[0_0_18px_hsl(var(--primary)/0.5)]" />
+                  )}
+                  {type === 'sell' ? 'Продаю' : 'Покупаю'}
+                </button>
+              ))}
+            </div>
             <div className="mb-6">
               <label className="text-sm font-medium mb-2 block">{t.sell.photos}</label>
               <div className="border-2 border-dashed border-border rounded-2xl p-10 text-center cursor-pointer hover:border-primary/50 hover:bg-primary/5 transition-colors">
